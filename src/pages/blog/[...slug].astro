@@ -14,6 +14,7 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 <Layout title={entry.data.title}>
+    <a href="/" class="back-link">&larr; Back to Writings</a>
     <article>
         <h1>{entry.data.title}</h1>
         <p class="pub-date">Published on: {entry.data.pubDate.toDateString()}</p>
@@ -27,6 +28,17 @@ const { Content } = await entry.render();
     article {
         max-width: 80ch;
         margin: auto;
+    }
+    .back-link {
+        display: inline-block;
+        margin-bottom: 2rem;
+        text-decoration: none;
+        color: #0f0;
+        border-bottom: 1px dashed #0f0;
+    }
+    .back-link:hover {
+        color: #0a0a0a;
+        background-color: #0f0;
     }
     h1 {
         font-size: 2rem;
