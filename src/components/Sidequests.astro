@@ -1,0 +1,60 @@
+---
+const sidequests = [
+    { name: 'Learn to play the piano', progress: '25%' },
+    { name: 'Read 50 books this year', progress: '60%' },
+    { name: 'Run a marathon', progress: '10%' },
+    { name: 'Visit Japan', progress: 'Not Started' },
+    { name: 'Learn to cook a new dish weekly', progress: '5 weeks' },
+];
+---
+
+<aside class="sidequests">
+    <h2>Sidequests</h2>
+    <ul>
+        {sidequests.map(quest => (
+            <li>
+                <span class="quest-name">{quest.name}</span>
+                <span class="quest-progress">{quest.progress}</span>
+            </li>
+        ))}
+    </ul>
+</aside>
+
+<style>
+    .sidequests {
+        padding: 1rem;
+        border-left: 1px solid #0f0;
+        height: 100vh;
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 250px; /* Adjust width as needed */
+        font-family: 'Courier New', Courier, monospace;
+        color: #0f0;
+    }
+    h2 {
+        text-align: center;
+        margin-top: 0;
+        text-shadow: 0 0 5px #0f0;
+        border-bottom: 1px solid #0f0;
+        padding-bottom: 0.5rem;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .quest-name {
+        flex-grow: 1;
+    }
+    .quest-progress {
+        margin-left: 1rem;
+        font-weight: bold;
+    }
+</style>

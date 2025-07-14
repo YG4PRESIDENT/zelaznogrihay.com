@@ -1,0 +1,52 @@
+---
+const pirateShip = `
+                                     |__
+                                     |\\/
+                                     ---
+                                     / | [
+                              !      | |||
+                            _/|     _/|-++'
+                        +  +--|    |--|--|_ |-
+                     { /|__|  |/\\__|  |--- |||__/
+                    +---------------___[}-_===_.'____                 /
+                ____\`-' ||___-{]_| _[}-  |     |_[___}==--            \\/   _
+ __..._____--==/___]_|__|_____________________________[___]____--==''        /
+|                                                                    /
+ \\___________________________________________________________________/
+`
+---
+
+<header id="main-header">
+    <pre>{pirateShip}</pre>
+</header>
+
+<script>
+    const header = document.getElementById('main-header');
+    window.addEventListener('scroll', () => {
+        const scrollPosition = window.scrollY;
+        const fadeOutDistance = 200; // a distance in pixels to fade out
+        if (scrollPosition < fadeOutDistance) {
+            header.style.opacity = `${1 - scrollPosition / fadeOutDistance}`;
+        } else {
+            header.style.opacity = '0';
+        }
+    });
+</script>
+
+<style>
+    header {
+        text-align: center;
+        padding: 1rem 0;
+        font-family: 'Courier New', Courier, monospace;
+        color: #0f0;
+        text-shadow: 0 0 5px #0f0;
+        transition: opacity 0.3s ease-out;
+        will-change: opacity;
+    }
+    pre {
+        margin: 0;
+        font-size: 0.8rem;
+        line-height: 1;
+        white-space: pre;
+    }
+</style>

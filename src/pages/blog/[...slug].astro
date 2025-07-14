@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+    const blogEntries = await getCollection('blog');
+    return blogEntries.map(entry => ({
+        params: { slug: entry.slug },
+        props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+<Layout title={entry.data.title}>
+    <article>
+        <h1>{entry.data.title}</h1>
+        <p class="pub-date">Published on: {entry.data.pubDate.toDateString()}</p>
+        <div class="content">
+            <Content />
+        </div>
+    </article>
+</Layout>
+
+<style>
+    article {
+        max-width: 80ch;
+        margin: auto;
+    }
+    h1 {
+        font-size: 2rem;
+        text-shadow: 0 0 5px #0f0;
+    }
+    .pub-date {
+        font-style: italic;
+        color: #aaa;
+        margin-bottom: 2rem;
+    }
+    .content :global(h2) {
+        font-size: 1.5rem;
+        border-bottom: 1px solid #0f0;
+        padding-bottom: 0.25rem;
+        margin-top: 2rem;
+    }
+    .content :global(p) {
+        line-height: 1.6;
+    }
+</style>
