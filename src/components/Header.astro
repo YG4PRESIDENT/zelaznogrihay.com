@@ -1,17 +1,8 @@
 ---
-const pirateShip = `
-      __|__ |___| |\\
-    |o__| |___| | \\
-    |___| |___| |o \\
-   _|___| |___| |__o\\
-  /...\\_____|___|____\\_/
-  \\   o * o * * o o  /
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-`
 ---
 
 <header id="main-header">
-    <pre>{pirateShip}</pre>
+    <img src="/images/FullLogo (1).png" alt="Virtual Pirates Logo" class="logo-image" />
 </header>
 
 <script>
@@ -36,6 +27,12 @@ const pirateShip = `
         text-shadow: 0 0 5px #0f0;
         transition: opacity 0.3s ease-out;
         will-change: opacity;
+    }
+    .logo-image {
+        max-width: 100%;
+        height: auto;
+        max-height: 200px;
+        filter: drop-shadow(0 0 10px #0f0);
     }
     pre {
         margin: 0;
