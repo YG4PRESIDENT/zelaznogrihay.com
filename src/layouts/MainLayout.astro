@@ -51,33 +51,73 @@ const { title } = Astro.props;
         const sidebar = document.querySelector('.sidebar');
         const mainContainer = document.querySelector('.main-container');
         
-        // Check if sidebar state is stored
-        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-        if (sidebarCollapsed) {
-            sidebar.classList.add('collapsed');
-            mainContainer.classList.add('sidebar-collapsed');
-        }
-        
-        sidebarToggle.addEventListener('click', () => {
+        // Function to handle sidebar toggle
+        const toggleSidebar = () => {
             sidebar.classList.toggle('collapsed');
             mainContainer.classList.toggle('sidebar-collapsed');
             
-            // Store sidebar state
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        });
+            // Store sidebar state - separate storage for mobile and desktop
+            if (window.innerWidth < 768) {
+                localStorage.setItem('sidebarCollapsedMobile', sidebar.classList.contains('collapsed'));
+            } else {
+                localStorage.setItem('sidebarCollapsedDesktop', sidebar.classList.contains('collapsed'));
+            }
+        };
         
         // Handle resize events
         const handleResize = () => {
-            if (window.innerWidth < 768) {
+            const isMobile = window.innerWidth < 768;
+            
+            if (isMobile) {
                 sidebar.classList.add('mobile');
+                
+                // Apply mobile-specific collapsed state
+                const mobileSidebarCollapsed = localStorage.getItem('sidebarCollapsedMobile') === 'true';
+                if (mobileSidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContainer.classList.add('sidebar-collapsed');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContainer.classList.remove('sidebar-collapsed');
+                }
             } else {
                 sidebar.classList.remove('mobile');
+                
+                // Apply desktop-specific collapsed state
+                const desktopSidebarCollapsed = localStorage.getItem('sidebarCollapsedDesktop') === 'true';
+                if (desktopSidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContainer.classList.add('sidebar-collapsed');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContainer.classList.remove('sidebar-collapsed');
+                }
             }
         };
+        
+        // Add click event listener
+        sidebarToggle.addEventListener('click', toggleSidebar);
         
         // Initial call and event listener
         handleResize();
         window.addEventListener('resize', handleResize);
+        
+        // Add a visible indicator to the toggle button to show state
+        const updateToggleIcon = () => {
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            const isMobile = sidebar.classList.contains('mobile');
+            
+            if (isMobile) {
+                sidebarToggle.innerHTML = isCollapsed ? '&#9650;' : '&#9660;'; // Up arrow : Down arrow
+            } else {
+                sidebarToggle.innerHTML = isCollapsed ? '&#9654;' : '&#9664;'; // Right arrow : Left arrow
+            }
+        };
+        
+        // Update the toggle icon initially and when toggled
+        updateToggleIcon();
+        sidebarToggle.addEventListener('click', updateToggleIcon);
+        window.addEventListener('resize', updateToggleIcon);
     });
 </script>
 
@@ -110,6 +150,7 @@ const { title } = Astro.props;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        padding-top: 1.3rem; /* Reduced by 15% from original 1.5rem */
         transition: all 0.3s ease;
     }
     
@@ -134,7 +175,7 @@ const { title } = Astro.props;
     .logo-image {
         max-width: 100%;
         height: auto;
-        max-height: 350px;
+        max-height: 625px; /* 500px + 25% increase */
         object-fit: contain;
         transition: transform 0.3s ease;
     }
@@ -170,10 +211,10 @@ const { title } = Astro.props;
         position: absolute;
         right: -15px;
         top: 20px;
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
         background-color: var(--accent-color);
-        border: none;
+        border: 2px solid var(--bg-color);
         border-radius: 50%;
         color: var(--bg-color);
         display: flex;
@@ -182,7 +223,9 @@ const { title } = Astro.props;
         cursor: pointer;
         z-index: 20;
         transition: all 0.3s ease;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        font-size: 1.2rem;
+        font-weight: bold;
     }
     
     .sidebar-toggle:hover {
@@ -213,7 +256,7 @@ const { title } = Astro.props;
     /* Mobile styles */
     @media (max-width: 767px) {
         .logo-image {
-            max-height: 150px;
+            max-height: 187px; /* Increased by 25% from 150px */
         }
         
         #main-header {
@@ -240,9 +283,15 @@ const { title } = Astro.props;
         }
         
         .sidebar.mobile.collapsed {
-            transform: translateY(100%);
+            transform: translateY(calc(100% - 40px));
             width: 100%;
-            opacity: 0;
+        }
+        
+        /* Ensure the toggle button is always visible on mobile */
+        .sidebar.mobile .sidebar-toggle {
+            opacity: 1;
+            visibility: visible;
+            z-index: 40;
         }
         
         .sidebar.mobile:not(.collapsed) {
@@ -250,9 +299,14 @@ const { title } = Astro.props;
         }
         
         .sidebar-toggle {
-            top: -15px;
+            top: -20px;
             right: 20px;
             transform: rotate(180deg);
+            width: 45px;
+            height: 45px;
+            background-color: var(--accent-color);
+            border: 3px solid var(--bg-color);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
         }
         
         .sidebar.mobile:not(.collapsed) .sidebar-toggle {
@@ -267,7 +321,7 @@ const { title } = Astro.props;
     /* Desktop enhancements */
     @media (min-width: 768px) {
         .logo-image {
-            max-height: 250px;
+            max-height: 312px; /* Increased by 25% from 250px */
         }
         
         #main-header {
