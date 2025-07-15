@@ -57,8 +57,20 @@ const { title } = Astro.props;
         
         // Function to handle sidebar toggle
         const toggleSidebar = () => {
+            const isCollapsing = !sidebar.classList.contains('collapsed');
             sidebar.classList.toggle('collapsed');
             mainContainer.classList.toggle('sidebar-collapsed');
+            
+            // Handle body scrolling on mobile
+            if (window.innerWidth < 768) {
+                if (isCollapsing) {
+                    // Sidebar is being collapsed, enable body scrolling
+                    document.body.style.overflow = '';
+                } else {
+                    // Sidebar is being expanded, disable body scrolling
+                    document.body.style.overflow = 'hidden';
+                }
+            }
             
             // Store sidebar state - separate storage for mobile and desktop
             if (window.innerWidth < 768) {
@@ -75,17 +87,27 @@ const { title } = Astro.props;
             if (isMobile) {
                 sidebar.classList.add('mobile');
                 
-                // Apply mobile-specific collapsed state
-                const mobileSidebarCollapsed = localStorage.getItem('sidebarCollapsedMobile') === 'true';
-                if (mobileSidebarCollapsed) {
+                // Get mobile-specific collapsed state, default to collapsed on mobile
+                let mobileSidebarCollapsed = localStorage.getItem('sidebarCollapsedMobile');
+                
+                // If no preference is stored yet, default to collapsed on mobile
+                if (mobileSidebarCollapsed === null) {
+                    mobileSidebarCollapsed = 'true';
+                    localStorage.setItem('sidebarCollapsedMobile', 'true');
+                }
+                
+                if (mobileSidebarCollapsed === 'true') {
                     sidebar.classList.add('collapsed');
                     mainContainer.classList.add('sidebar-collapsed');
+                    document.body.style.overflow = ''; // Enable scrolling when collapsed
                 } else {
                     sidebar.classList.remove('collapsed');
                     mainContainer.classList.remove('sidebar-collapsed');
+                    document.body.style.overflow = 'hidden'; // Disable scrolling when open
                 }
             } else {
                 sidebar.classList.remove('mobile');
+                document.body.style.overflow = ''; // Always enable scrolling on desktop
                 
                 // Apply desktop-specific collapsed state
                 const desktopSidebarCollapsed = localStorage.getItem('sidebarCollapsedDesktop') === 'true';
@@ -240,9 +262,19 @@ const { title } = Astro.props;
     }
     
     .sidebar-content {
-        overflow-y: auto;
+        overflow: hidden;
         height: 100%;
         transition: opacity 0.3s ease;
+    }
+    
+    /* Make sidebar content scrollable on mobile */
+    @media (max-width: 767px) {
+        .sidebar-content {
+            overflow-y: auto;
+            max-height: calc(70vh - 45px); /* Match the sidebar max-height */
+            padding-bottom: 20px; /* Add padding at bottom for better scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
     }
     
     .sidebar.collapsed .sidebar-content {
@@ -283,14 +315,14 @@ const { title } = Astro.props;
             left: 0;
             width: 100%;
             height: auto;
-            max-height: 70vh; /* Increased height to show more content */
+            max-height: 70vh; /* Increased for more content visibility */
             border-right: none;
             border-top: 1px solid var(--accent-color);
             z-index: 30;
             transform: translateY(calc(100% - 40px));
             transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--bg-color); /* Ensure background is visible */
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5); /* Add shadow for depth */
         }
         
         .sidebar.mobile.collapsed {
@@ -307,12 +339,6 @@ const { title } = Astro.props;
         
         .sidebar.mobile:not(.collapsed) {
             transform: translateY(0);
-        }
-        
-        .sidebar.mobile .sidebar-content {
-            overflow-y: auto;
-            max-height: calc(70vh - 45px); /* Account for toggle button */
-            padding-bottom: 20px;
         }
         
         .sidebar-toggle {
