@@ -1,20 +1,41 @@
 ---
-const sidequests = [
-    { name: 'Learn to play the piano', progress: '25%' },
-    { name: 'Read 50 books this year', progress: '60%' },
-    { name: 'Run a marathon', progress: '10%' },
-    { name: 'Visit Japan', progress: 'Not Started' },
-    { name: 'Learn to cook a new dish weekly', progress: '5 weeks' },
+const travelQuests = [
+    { name: 'Cross Africa by rail', category: 'travel' },
+    { name: 'Visit Turkey with father', category: 'travel' },
+    { name: 'Cherry blossoms in Japan with wife', category: 'travel' },
+    { name: 'Live among African villages', category: 'travel' },
+    { name: 'Dance at Carnival in Brazil', category: 'travel' },
+    { name: 'Expedition to Antarctica', category: 'travel' },
+    { name: 'Trek through Patagonia with Huck', category: 'travel' },
 ];
+
+const lifeQuests = [
+    { name: 'Launch Brotein to market success', category: 'achievement' },
+    { name: 'Found a publicly traded company', category: 'achievement' },
+    { name: 'Contribute to anime creation', category: 'creative' },
+    { name: 'Complete a marathon', category: 'physical' },
+    { name: 'Succeed as a digital nomad', category: 'lifestyle' },
+    { name: 'Gift mom a riverside home', category: 'family' },
+];
+
+const allQuests = [...travelQuests, ...lifeQuests];
 ---
 
 <div class="sidequests">
-    <h2>Sidequests</h2>
+    <h2>Life Quests</h2>
     <div class="quests-container">
-        {sidequests.map(quest => (
-            <div class="quest-item">
+        {lifeQuests.map(quest => (
+            <div class="quest-item life">
                 <span class="quest-name">{quest.name}</span>
-                <span class="quest-progress">{quest.progress}</span>
+            </div>
+        ))}
+    </div>
+    
+    <h2>Voyages</h2>
+    <div class="quests-container">
+        {travelQuests.map(quest => (
+            <div class="quest-item travel">
+                <span class="quest-name">{quest.name}</span>
             </div>
         ))}
     </div>
@@ -94,35 +115,28 @@ const sidequests = [
         font-weight: 500;
     }
 
-    .quest-progress {
-        font-weight: bold;
-        color: var(--accent-color);
-        text-align: right;
-        min-width: fit-content;
-        padding: 0.1rem 0.4rem;
-        border-radius: 3px;
-        background-color: rgba(212, 175, 55, 0.1);
-        font-size: 0.8rem;
+    .quest-item.travel {
+        border-left: 3px solid var(--accent-color); /* Using pirate gold accent color */
+    }
+    
+    .quest-item.life {
+        border-left: 3px solid var(--accent-color); /* Using pirate gold accent color */
     }
 
-    /* Mobile: Stack progress on new line for very small screens */
+    /* Mobile styles for small screens */
     @media (max-width: 480px) {
         .quest-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.4rem;
             padding: 0.75rem;
-        }
-
-        .quest-progress {
-            text-align: left;
-            font-size: 0.8rem;
-            align-self: flex-end;
         }
         
         h2 {
             font-size: 1.1rem;
             margin-bottom: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
         }
     }
     
@@ -134,13 +148,15 @@ const sidequests = [
         }
         
         .quest-item {
-            flex-direction: column;
             padding: 0.75rem;
         }
         
-        .quest-progress {
-            align-self: flex-end;
-            margin-top: 0.5rem;
+        h2 {
+            margin-top: 1.5rem;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
         }
     }
 </style>
