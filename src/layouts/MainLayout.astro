@@ -1,0 +1,297 @@
+---
+import Sidequests from '../components/Sidequests.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+        <div class="main-container">
+            <header id="main-header">
+                <div class="header-container">
+                    <img src="/images/full-logo-new.png" alt="Ship Logo" class="logo-image" />
+                </div>
+            </header>
+            
+            <div class="content-container">
+                <aside class="sidebar">
+                    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidequests">
+                        <span class="toggle-icon">☰</span>
+                    </button>
+                    <div class="sidebar-content">
+                        <Sidequests />
+                    </div>
+                </aside>
+                
+                <main>
+                    <slot />
+                </main>
+            </div>
+        </div>
+	</body>
+</html>
+
+<script>
+    // Handle sidebar toggle
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        
+        // Check if sidebar state is stored
+        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (sidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+            mainContainer.classList.add('sidebar-collapsed');
+        }
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContainer.classList.toggle('sidebar-collapsed');
+            
+            // Store sidebar state
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        });
+        
+        // Handle resize events
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('mobile');
+            } else {
+                sidebar.classList.remove('mobile');
+            }
+        };
+        
+        // Initial call and event listener
+        handleResize();
+        window.addEventListener('resize', handleResize);
+    });
+</script>
+
+<style is:global>
+	:root {
+		--bg-color: #0a0a0a;
+		--text-color: #f5f5f0;
+		--accent-color: #d4af37;
+		--accent-dark: #8b4513;
+		--accent-light: rgba(212, 175, 55, 0.2);
+		--sidebar-width: 250px;
+		--sidebar-collapsed-width: 50px;
+	}
+	
+	html {
+		font-family: 'Courier New', Courier, monospace;
+		background: var(--bg-color);
+		color: var(--text-color);
+		font-size: 16px;
+	}
+
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    
+    /* Main container layout */
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        transition: all 0.3s ease;
+    }
+    
+    /* Header styles */
+    #main-header {
+        width: 100%;
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid var(--accent-color);
+        box-sizing: border-box;
+        background-color: var(--bg-color);
+        z-index: 10;
+    }
+    
+    .header-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .logo-image {
+        max-width: 100%;
+        height: auto;
+        max-height: 350px;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+    
+    .logo-image:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Content container (sidebar + main) */
+    .content-container {
+        display: grid;
+        grid-template-columns: var(--sidebar-width) 1fr;
+        flex: 1;
+        position: relative;
+        transition: grid-template-columns 0.3s ease;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+        width: var(--sidebar-width);
+        background-color: var(--bg-color);
+        border-right: 1px solid var(--accent-color);
+        transition: all 0.3s ease;
+        position: relative;
+        flex-shrink: 0;
+    }
+    
+    .sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+    }
+    
+    .sidebar-toggle {
+        position: absolute;
+        right: -15px;
+        top: 20px;
+        width: 30px;
+        height: 30px;
+        background-color: var(--accent-color);
+        border: none;
+        border-radius: 50%;
+        color: var(--bg-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .sidebar-toggle:hover {
+        background-color: var(--accent-dark);
+    }
+    
+    .sidebar-content {
+        overflow: hidden;
+        height: 100%;
+        transition: opacity 0.3s ease;
+    }
+    
+    .sidebar.collapsed .sidebar-content {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    /* Main content area */
+    main {
+        padding: 1.5rem;
+        box-sizing: border-box;
+        min-height: 100%;
+        transition: all 0.3s ease;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Mobile styles */
+    @media (max-width: 767px) {
+        .logo-image {
+            max-height: 150px;
+        }
+        
+        #main-header {
+            padding: 1rem 0.5rem;
+        }
+        
+        .content-container {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            max-height: 50vh;
+            border-right: none;
+            border-top: 1px solid var(--accent-color);
+            z-index: 30;
+            transform: translateY(calc(100% - 40px));
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.mobile.collapsed {
+            transform: translateY(100%);
+            width: 100%;
+            opacity: 0;
+        }
+        
+        .sidebar.mobile:not(.collapsed) {
+            transform: translateY(0);
+        }
+        
+        .sidebar-toggle {
+            top: -15px;
+            right: 20px;
+            transform: rotate(180deg);
+        }
+        
+        .sidebar.mobile:not(.collapsed) .sidebar-toggle {
+            transform: rotate(0deg);
+        }
+        
+        main {
+            padding: 1rem 0.75rem;
+        }
+    }
+    
+    /* Desktop enhancements */
+    @media (min-width: 768px) {
+        .logo-image {
+            max-height: 250px;
+        }
+        
+        #main-header {
+            padding: 2rem;
+        }
+        
+        .main-container.sidebar-collapsed .content-container {
+            grid-template-columns: var(--sidebar-collapsed-width) 1fr;
+        }
+        
+        /* Ensure content doesn't get overruled when sidebar collapses */
+        .main-container.sidebar-collapsed main {
+            padding-left: 2rem;
+        }
+    }
+    
+    /* Global link styles */
+    a {
+        color: var(--accent-color);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    a:hover {
+        color: var(--text-color);
+    }
+</style>

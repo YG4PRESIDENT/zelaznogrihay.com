@@ -2,9 +2,9 @@
 ---
 
 <header id="main-header">
-    <div class="header-container">
-        <img src="/images/full-logo-new.png" alt="Virtual Pirates Logo" class="logo-image" />
-    </div>
+	<div class="header-container">
+		<img src="/images/full-logo-new.png" alt="Virtual Pirates Logo" class="logo-image" />
+	</div>
 </header>
 
 <script>
@@ -23,17 +23,16 @@
 <style>
     header {
         width: 100%;
-        padding: 1rem 0.5rem;
+        padding: 1.5rem 1rem;
         font-family: 'Courier New', Courier, monospace;
-        color: #0f0;
-        text-shadow: 0 0 5px #0f0;
+        color: var(--text-color);
         transition: opacity 0.3s ease-out;
         will-change: opacity;
-        border-bottom: 1px solid #0f0;
+        border-bottom: 1px solid var(--accent-color);
         box-sizing: border-box;
         position: relative;
         z-index: 10;
-        background-color: #0a0a0a;
+        background-color: var(--bg-color);
     }
     
     .header-container {
@@ -47,8 +46,15 @@
     .logo-image {
         max-width: 100%;
         height: auto;
-        max-height: 100px;
+        max-height: 300px;
         object-fit: contain;
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
+        transition: all 0.3s ease;
+    }
+    
+    .logo-image:hover {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
     }
 
     /* Desktop: Larger logo */
@@ -62,8 +68,8 @@
         }
 
         .logo-image {
-            max-width: 450px;
-            max-height: 160px;
+            max-width: 700px;
+            max-height: 400px;
         }
     }
 

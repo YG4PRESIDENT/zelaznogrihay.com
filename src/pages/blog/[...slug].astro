@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
+import BlogPost from '../../layouts/BlogPost.astro';
 
 export async function getStaticPaths() {
     const blogEntries = await getCollection('blog');
@@ -13,49 +13,49 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
-<Layout title={entry.data.title}>
-    <a href="/" class="back-link">&larr; Back to Writings</a>
-    <article>
-        <h1>{entry.data.title}</h1>
-        <p class="pub-date">Published on: {entry.data.pubDate.toDateString()}</p>
-        <div class="content">
-            <Content />
-        </div>
-    </article>
-</Layout>
+<BlogPost frontmatter={entry.data}>
+    <a href="/home" class="back-link">&larr; Back to Writings</a>
+    <div class="content">
+        <Content />
+    </div>
+</BlogPost>
 
 <style>
-    article {
-        max-width: 80ch;
-        margin: auto;
-    }
     .back-link {
         display: inline-block;
         margin-bottom: 2rem;
         text-decoration: none;
-        color: #0f0;
-        border-bottom: 1px dashed #0f0;
+        color: var(--accent-color);
+        border-bottom: 1px dashed var(--accent-color);
+        transition: all 0.2s ease;
     }
+    
     .back-link:hover {
-        color: #0a0a0a;
-        background-color: #0f0;
+        color: var(--bg-color);
+        background-color: var(--accent-color);
+        transform: translateX(-3px);
     }
-    h1 {
-        font-size: 2rem;
-        text-shadow: 0 0 5px #0f0;
-    }
-    .pub-date {
-        font-style: italic;
-        color: #aaa;
-        margin-bottom: 2rem;
-    }
+    
     .content :global(h2) {
         font-size: 1.5rem;
-        border-bottom: 1px solid #0f0;
+        border-bottom: 1px solid var(--accent-color);
         padding-bottom: 0.25rem;
         margin-top: 2rem;
+        color: var(--text-color);
     }
+    
     .content :global(p) {
         line-height: 1.6;
+        color: var(--text-color);
+    }
+    
+    .content :global(a) {
+        color: var(--accent-color);
+        text-decoration: underline;
+        transition: color 0.2s ease;
+    }
+    
+    .content :global(a:hover) {
+        color: var(--accent-light);
     }
 </style>
