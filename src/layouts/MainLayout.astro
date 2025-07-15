@@ -15,6 +15,10 @@ const { title } = Astro.props;
 		<meta name="description" content="Astro description" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
+		<!-- Additional favicon formats for better cross-browser support -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
@@ -157,17 +161,20 @@ const { title } = Astro.props;
     /* Header styles */
     #main-header {
         width: 100%;
-        padding: 1.5rem 1rem;
+        padding: 0.5rem 1rem 0;
         border-bottom: 1px solid var(--accent-color);
         box-sizing: border-box;
         background-color: var(--bg-color);
         z-index: 10;
+        margin-bottom: -15px; /* Negative margin to pull content up */
     }
     
     .header-container {
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 0;
+        margin: 0;
         max-width: 100%;
         overflow: hidden;
     }
@@ -175,9 +182,9 @@ const { title } = Astro.props;
     .logo-image {
         max-width: 100%;
         height: auto;
-        max-height: 625px; /* 500px + 25% increase */
-        object-fit: contain;
-        transition: transform 0.3s ease;
+        max-height: 250px; /* Reduced to move content up */
+        transition: all 0.3s ease;
+        margin-bottom: -20px; /* Negative margin to pull content up */
     }
     
     .logo-image:hover {
@@ -245,12 +252,13 @@ const { title } = Astro.props;
     
     /* Main content area */
     main {
-        padding: 1.5rem;
+        padding: 0.5rem 1.5rem;
         box-sizing: border-box;
         min-height: 100%;
         transition: all 0.3s ease;
         width: 100%;
         overflow-x: hidden;
+        margin-top: -10px; /* Negative margin to pull content up */
     }
     
     /* Mobile styles */
@@ -260,7 +268,8 @@ const { title } = Astro.props;
         }
         
         #main-header {
-            padding: 1rem 0.5rem;
+            padding: 0.3rem 0.5rem 0;
+            margin-bottom: -15px;
         }
         
         .content-container {
@@ -325,7 +334,8 @@ const { title } = Astro.props;
         }
         
         #main-header {
-            padding: 2rem;
+            padding: 0.3rem 1rem 0;
+            margin-bottom: -15px;
         }
         
         .main-container.sidebar-collapsed .content-container {
