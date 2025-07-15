@@ -8,9 +8,9 @@ const posts = (await getCollection('blog')).sort(
 ---
 
 <Layout title="zelaznogrihay.com - Home">
-	<section>
+	<section class="writings-section">
 		<h2>Writings</h2>
-		<ul>
+		<ul class="post-list">
 			{posts.map(post => (
 				<li>
 					<a href={`/blog/${post.slug}/`}>
@@ -26,36 +26,99 @@ const posts = (await getCollection('blog')).sort(
 </Layout>
 
 <style>
+	.writings-section {
+		padding: 0.5rem 0;
+	}
+
 	h2 {
 		font-size: 1.5rem;
 		border-bottom: 1px solid #0f0;
 		padding-bottom: 0.5rem;
-		margin-bottom: 1.5rem;
+		margin-bottom: 1rem;
+		text-shadow: 0 0 5px #0f0;
 	}
-	ul {
+
+	.post-list {
 		list-style: none;
 		padding: 0;
+		margin: 0;
 	}
+
 	li a {
 		display: flex;
-		justify-content: space-between;
-		padding: 0.5rem;
-		margin: -0.5rem;
-		transition: background-color 0.2s ease-in-out;
-		border: none;
+		flex-direction: column;
+		padding: 0.75rem 0.5rem;
+		margin: 0.25rem 0;
+		transition: all 0.2s ease-in-out;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		word-break: break-word;
+		overflow-wrap: break-word;
+		width: 100%;
+		box-sizing: border-box;
 	}
+
+	/* Desktop: Side-by-side layout */
+	@media (min-width: 768px) {
+		li a {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0.75rem 1rem;
+			margin: 0.5rem 0;
+		}
+		
+		.writings-section {
+			padding: 1rem 0;
+		}
+	}
+
 	li a:hover {
-		background-color: #0f0;
-		color: #0a0a0a;
+		background-color: rgba(0, 255, 0, 0.1);
+		border-color: #0f0;
+		transform: translateX(3px);
 	}
+
 	.title {
 		font-weight: bold;
+		margin-bottom: 0.25rem;
+		font-size: 1rem;
 	}
+
+	/* Desktop: Remove margin */
+	@media (min-width: 768px) {
+		.title {
+			margin-bottom: 0;
+		}
+	}
+
 	time {
 		font-style: italic;
-		color: #aaa;
+		color: rgba(0, 255, 0, 0.6);
+		font-size: 0.8rem;
 	}
+
 	li a:hover time {
-		color: #555;
+		color: rgba(0, 255, 0, 0.8);
+	}
+
+	/* Mobile: Better spacing */
+	@media (max-width: 767px) {
+		h2 {
+			font-size: 1.2rem;
+			margin-bottom: 0.75rem;
+			padding-bottom: 0.3rem;
+		}
+
+		li a {
+			margin: 0;
+			padding: 0.5rem 0;
+			border-bottom: 1px dotted rgba(0, 255, 0, 0.2);
+			border-radius: 0;
+		}
+		
+		li:last-child a {
+			border-bottom: none;
+		}
 	}
 </style>

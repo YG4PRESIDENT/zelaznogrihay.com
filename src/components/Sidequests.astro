@@ -10,51 +10,128 @@ const sidequests = [
 
 <aside class="sidequests">
     <h2>Sidequests</h2>
-    <ul>
+    <div class="quests-container">
         {sidequests.map(quest => (
-            <li>
+            <div class="quest-item">
                 <span class="quest-name">{quest.name}</span>
                 <span class="quest-progress">{quest.progress}</span>
-            </li>
+            </div>
         ))}
-    </ul>
+    </div>
 </aside>
 
 <style>
     .sidequests {
         padding: 1rem;
-        border-left: 1px solid #0f0;
-        height: 100vh;
-        position: fixed;
-        right: 0;
-        top: 0;
-        width: 250px; /* Adjust width as needed */
         font-family: 'Courier New', Courier, monospace;
         color: #0f0;
+        order: 2;
+        flex-shrink: 0;
     }
+
+    /* Mobile: Full width, vertical layout */
+    .sidequests {
+        width: 100%;
+        border-top: 1px solid #0f0;
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    /* Desktop: Fixed width sidebar */
+    @media (min-width: 768px) {
+        .sidequests {
+            width: 250px;
+            border-top: none;
+            border-left: 1px solid #0f0;
+            margin-top: 0;
+            height: auto;
+            min-height: calc(100vh - 2rem);
+            position: sticky;
+            top: 1rem;
+            padding-top: 0;
+        }
+    }
+
     h2 {
         text-align: center;
         margin-top: 0;
+        margin-bottom: 1rem;
         text-shadow: 0 0 5px #0f0;
         border-bottom: 1px solid #0f0;
         padding-bottom: 0.5rem;
+        font-size: 1.2rem;
     }
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+
+    /* ASCII art removed */
+
+    .quests-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        width: 100%;
     }
-    li {
+    
+    .quest-item {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem;
+        align-items: center;
         font-size: 0.9rem;
+        padding: 0.25rem 0;
+        border-bottom: 1px dotted rgba(0, 255, 0, 0.2);
     }
+
     .quest-name {
         flex-grow: 1;
+        margin-right: 0.5rem;
     }
+
     .quest-progress {
-        margin-left: 1rem;
         font-weight: bold;
+        color: #0f0;
+        text-align: right;
+        min-width: fit-content;
+    }
+
+    /* Mobile: Stack progress on new line for very small screens */
+    @media (max-width: 480px) {
+        .quest-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            padding: 0.5rem 0;
+        }
+
+        .quest-progress {
+            text-align: left;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+    }
+    
+    /* Medium screens: Show in a grid */
+    @media (min-width: 481px) and (max-width: 767px) {
+        .quests-container {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .quest-item {
+            flex-direction: column;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .quest-progress {
+            align-self: flex-end;
+            margin-top: 0.25rem;
+        }
     }
 </style>
