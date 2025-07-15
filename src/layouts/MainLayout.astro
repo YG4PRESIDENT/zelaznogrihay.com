@@ -134,7 +134,13 @@ const { title } = Astro.props;
             const isMobile = sidebar.classList.contains('mobile');
             
             if (isMobile) {
+                // Update both icon and add/remove active class for styling
                 sidebarToggle.innerHTML = isCollapsed ? '&#9650;' : '&#9660;'; // Up arrow : Down arrow
+                if (isCollapsed) {
+                    sidebarToggle.classList.remove('toggle-active');
+                } else {
+                    sidebarToggle.classList.add('toggle-active');
+                }
             } else {
                 sidebarToggle.innerHTML = isCollapsed ? '&#9654;' : '&#9664;'; // Right arrow : Left arrow
             }
@@ -238,14 +244,14 @@ const { title } = Astro.props;
     
     .sidebar-toggle {
         position: absolute;
-        right: -15px;
-        top: 20px;
-        width: 40px;
-        height: 40px;
-        background-color: var(--accent-color);
-        border: 2px solid var(--bg-color);
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
-        color: var(--bg-color);
+        border: 2px solid var(--accent-color);
+        background-color: var(--bg-color);
+        color: var(--accent-color);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -259,6 +265,14 @@ const { title } = Astro.props;
     
     .sidebar-toggle:hover {
         background-color: var(--accent-dark);
+        color: var(--text-color);
+    }
+    
+    /* Active state styling for toggle button */
+    .sidebar-toggle.toggle-active {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
     }
     
     .sidebar-content {
@@ -350,10 +364,23 @@ const { title } = Astro.props;
             background-color: var(--accent-color);
             border: 3px solid var(--bg-color);
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+            color: var(--bg-color);
+            transition: all 0.3s ease;
         }
         
         .sidebar.mobile:not(.collapsed) .sidebar-toggle {
             transform: rotate(0deg);
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            border: 3px solid var(--accent-color);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.9);
+        }
+        
+        /* Active state for mobile toggle */
+        .sidebar-toggle.toggle-active {
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
         }
         
         main {
