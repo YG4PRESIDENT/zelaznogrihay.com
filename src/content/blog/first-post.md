@@ -1,24 +1,9 @@
 ---
-title: 'My First Post'
-description: 'This is the beginning of my new digital space.'
-pubDate: '2024-07-29'
+title: 'Officially Live #1'
+description: 'The beginning of documenting my life journey.'
+pubDate: '2025-07-15T00:10:00-07:00'
 ---
 
-## The Journey Begins
+I made this to be where I will document my life, figured i'd do it for my future children, grandchildren, friends, etc. So I can look back on my time here and truly see the connected dots.
 
-This is the first entry in my new digital journal. I'm building this space to share my thoughts, writings, and pictures with the world, and maybe one day, with my future children.
-
-The idea is to keep it simple, a reflection of my own thoughts in a quiet corner of the internet.
-
-![A cartoonish treasure map on a scroll.](/images/treasure-map.png)
-
-*A map to find what's valuable.*
-
-### What to Expect
-
-- Musings on life and technology.
-- Short stories and creative writing.
-- Photos from my travels and daily life.
-- Progress on my sidequests!
-
-I'm excited to see where this journey takes me.
+Just thought it'd be fun. 
