@@ -1,0 +1,33 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# These are default cache settings to ensure users get fresh content
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Cache static assets with a longer duration
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache images with a longer duration
+[[headers]]
+  for = "*.{png,jpg,jpeg,gif,webp,svg,ico}"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache fonts with a longer duration
+[[headers]]
+  for = "*.{woff,woff2,ttf,otf,eot}"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Ensure HTML and data files are never cached
+[[headers]]
+  for = "/*.{html,json}"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
