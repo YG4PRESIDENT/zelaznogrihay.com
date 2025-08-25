@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+import MainLayout from '../layouts/MainLayout.astro';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<MainLayout title="zelaznogrihay.com - Home">
+	<section class="writings-section">
+		<h2>Writings</h2>
+		<ul class="post-list">
+			{posts.map(post => (
+				<li>
+					<a href={`/blog/${post.slug}/`}>
+						<span class="title">{post.data.title}</span>
+						<time datetime={post.data.pubDate.toISOString()}>
+							{new Date(post.data.pubDate).toLocaleDateString('en-US', {
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric',
+								timeZone: 'America/Los_Angeles'
+							})}
+						</time>
+					</a>
+				</li>
+			))}
+		</ul>
+	</section>
+</MainLayout>
+
+<script>
+	// Check if user is authenticated
+	document.addEventListener('DOMContentLoaded', () => {
+		if (localStorage.getItem('authenticated') !== 'true') {
+			window.location.href = '/';
+		}
+	});
+</script>
+
+<style>
+	.writings-section {
+		padding: 0.5rem 0;
+	}
+
+	h2 {
+		font-size: 1.5rem;
+		border-bottom: 1px solid #d4af37;
+		padding-bottom: 0.5rem;
+		margin-bottom: 1rem;
+		color: #f5f5f0;
+	}
+
+	.post-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	li a {
+		display: flex;
+		flex-direction: column;
+		padding: 0.75rem 0.5rem;
+		margin: 0.25rem 0;
+		transition: all 0.2s ease-in-out;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		word-break: break-word;
+		overflow-wrap: break-word;
+		width: 100%;
+		box-sizing: border-box;
+		color: #f5f5f0;
+		text-decoration: none;
+	}
+
+	/* Desktop: Side-by-side layout */
+	@media (min-width: 768px) {
+		li a {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0.75rem 1rem;
+			margin: 0.5rem 0;
+		}
+		
+		.writings-section {
+			padding: 1rem 0;
+		}
+	}
+
+	li a:hover {
+		background-color: rgba(212, 175, 55, 0.1);
+		border-color: #d4af37;
+		transform: translateX(3px);
+	}
+
+	.title {
+		font-weight: bold;
+		margin-bottom: 0.25rem;
+		font-size: 1rem;
+	}
+
+	/* Desktop: Remove margin */
+	@media (min-width: 768px) {
+		.title {
+			margin-bottom: 0;
+		}
+	}
+
+	time {
+		font-style: italic;
+		color: rgba(245, 245, 240, 0.6);
+		font-size: 0.8rem;
+	}
+
+	li a:hover time {
+		color: rgba(245, 245, 240, 0.8);
+	}
+
+	/* Mobile: Better spacing */
+	@media (max-width: 767px) {
+		h2 {
+			font-size: 1.2rem;
+			margin-bottom: 0.75rem;
+			padding-bottom: 0.3rem;
+		}
+
+		li a {
+			margin: 0;
+			padding: 0.5rem 0;
+			border-bottom: 1px dotted rgba(212, 175, 55, 0.2);
+			border-radius: 0;
+		}
+		
+		li:last-child a {
+			border-bottom: none;
+		}
+	}
+</style>

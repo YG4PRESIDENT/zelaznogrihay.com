@@ -1,0 +1,113 @@
+---
+import MainLayout from './MainLayout.astro';
+
+const { frontmatter } = Astro.props;
+---
+
+<MainLayout title={`${frontmatter.title} | zelazrihay.com`}>
+	<article class="blog-post">
+		<header>
+			<h1>{frontmatter.title}</h1>
+			{frontmatter.subtitle && <h2 class="subtitle">{frontmatter.subtitle}</h2>}
+			<div class="post-meta">
+				<time datetime={frontmatter.pubDate.toISOString()}>
+					{frontmatter.pubDate.toDateString()}
+				</time>
+			</div>
+		</header>
+		<div class="post-content">
+			<slot />
+		</div>
+	</article>
+</MainLayout>
+
+<style>
+	.blog-post {
+		max-width: 100%;
+		margin: 0 auto;
+		background-color: rgba(26, 60, 94, 0.1);
+		padding: 1.5rem;
+		border-radius: 8px;
+		border: 1px solid rgba(212, 175, 55, 0.2);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	}
+
+	header {
+		margin-bottom: 2rem;
+		border-bottom: 1px solid var(--accent-color);
+		padding-bottom: 1rem;
+		position: relative;
+	}
+	
+	header::after {
+		content: '☠';
+		position: absolute;
+		right: 0;
+		bottom: 0.5rem;
+		font-size: 1.5rem;
+		color: var(--accent-color);
+		opacity: 0.5;
+	}
+
+	h1 {
+		font-size: 1.8rem;
+		margin: 0 0 0.5rem 0;
+		color: var(--accent-color);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+	}
+
+	.subtitle {
+		font-size: 1.2rem;
+		margin: 0 0 1rem 0;
+		font-style: italic;
+		color: rgba(245, 245, 240, 0.8);
+	}
+
+	.post-meta {
+		font-size: 0.9rem;
+		color: var(--accent-color);
+	}
+
+	.post-content {
+		line-height: 1.6;
+		font-size: 1.05rem;
+	}
+	
+	.post-content :global(h2) {
+		color: var(--accent-color);
+		margin-top: 2rem;
+		border-bottom: 1px dashed rgba(212, 175, 55, 0.3);
+		padding-bottom: 0.5rem;
+	}
+	
+	.post-content :global(p) {
+		margin: 1.2rem 0;
+	}
+	
+	.post-content :global(blockquote) {
+		border-left: 3px solid var(--accent-color);
+		padding-left: 1rem;
+		margin-left: 0;
+		color: rgba(245, 245, 240, 0.8);
+		font-style: italic;
+	}
+
+	/* Desktop enhancements */
+	@media (min-width: 768px) {
+		.blog-post {
+			padding: 2rem;
+		}
+		
+		h1 {
+			font-size: 2.2rem;
+		}
+
+		.subtitle {
+			font-size: 1.4rem;
+		}
+		
+		.post-content {
+			font-size: 1.1rem;
+		}
+	}
+</style>

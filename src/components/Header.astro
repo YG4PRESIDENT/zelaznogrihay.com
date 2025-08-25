@@ -2,7 +2,9 @@
 ---
 
 <header id="main-header">
-    <img src="/images/full-logo-new.png" alt="Virtual Pirates Logo" class="logo-image" />
+	<div class="header-container">
+		<img src="/images/full-logo-new.png" alt="Virtual Pirates Logo" class="logo-image" />
+	</div>
 </header>
 
 <script>
@@ -20,19 +22,57 @@
 
 <style>
     header {
-        text-align: left;
-        padding: 1rem 0;
+        width: 100%;
+        padding: 1.5rem 1rem;
         font-family: 'Courier New', Courier, monospace;
-        color: #0f0;
-        text-shadow: 0 0 5px #0f0;
+        color: var(--text-color);
         transition: opacity 0.3s ease-out;
         will-change: opacity;
+        border-bottom: 1px solid var(--accent-color);
+        box-sizing: border-box;
+        position: relative;
+        z-index: 10;
+        background-color: var(--bg-color);
     }
+    
+    .header-container {
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
     .logo-image {
-        max-width: 300px;
+        max-width: 100%;
         height: auto;
-        max-height: 150px;
+        max-height: 375px; /* Increased by 25% from 300px */
+        object-fit: contain;
+        filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.9));
+        transition: all 0.3s ease;
     }
+    
+    .logo-image:hover {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
+    }
+
+    /* Desktop: Larger logo */
+    @media (min-width: 768px) {
+        header {
+            padding: 1.5rem 2rem;
+        }
+        
+        .header-container {
+            justify-content: flex-start;
+        }
+
+        .logo-image {
+            max-width: 875px; /* Increased by 25% from 700px */
+            max-height: 500px; /* Increased by 25% from 400px */
+        }
+    }
+
     pre {
         margin: 0;
         font-size: 0.8rem;

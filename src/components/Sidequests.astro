@@ -1,60 +1,165 @@
 ---
-const sidequests = [
-    { name: 'Learn to play the piano', progress: '25%' },
-    { name: 'Read 50 books this year', progress: '60%' },
-    { name: 'Run a marathon', progress: '10%' },
-    { name: 'Visit Japan', progress: 'Not Started' },
-    { name: 'Learn to cook a new dish weekly', progress: '5 weeks' },
+const travelQuests = [
+    { name: 'Cross Africa by rail', category: 'travel' },
+    { name: 'Visit Turkey with father', category: 'travel' },
+    { name: 'Cherry blossoms in Japan with wife', category: 'travel' },
+    { name: 'Get tradition needle tap tattoo by old saggy titter woman ', category: 'travel' },
+    { name: 'Live among African villages', category: 'travel' },
+    { name: 'Dance at Carnival in Brazil', category: 'travel' },
+    { name: 'Expedition to Antarctica', category: 'travel' },
+    { name: 'Trek through Patagonia with Huck', category: 'travel' },
 ];
+
+const lifeQuests = [
+    { name: 'Launch Brotein to market success', category: 'achievement' },
+    { name: 'Found a publicly traded company', category: 'achievement' },
+    { name: 'Contribute to anime creation', category: 'creative' },
+    { name: 'Complete a marathon', category: 'physical' },
+    { name: 'Succeed as a digital nomad', category: 'lifestyle' },
+    { name: 'Travel to 7 wonders of the world (5/7)', category: 'family' },
+
+
+];
+
+const allQuests = [...travelQuests, ...lifeQuests];
 ---
 
-<aside class="sidequests">
-    <h2>Sidequests</h2>
-    <ul>
-        {sidequests.map(quest => (
-            <li>
+<div class="sidequests">
+    <h2>Life Quests</h2>
+    <div class="quests-container">
+        {lifeQuests.map(quest => (
+            <div class="quest-item life">
                 <span class="quest-name">{quest.name}</span>
-                <span class="quest-progress">{quest.progress}</span>
-            </li>
+            </div>
         ))}
-    </ul>
-</aside>
+    </div>
+    
+    <h2>Voyages</h2>
+    <div class="quests-container">
+        {travelQuests.map(quest => (
+            <div class="quest-item travel">
+                <span class="quest-name">{quest.name}</span>
+            </div>
+        ))}
+    </div>
+</div>
 
 <style>
     .sidequests {
         padding: 1rem;
-        border-left: 1px solid #0f0;
-        height: 100vh;
-        position: fixed;
-        right: 0;
-        top: 0;
-        width: 250px; /* Adjust width as needed */
         font-family: 'Courier New', Courier, monospace;
-        color: #0f0;
+        color: var(--text-color);
+        height: 100%;
+        overflow-y: auto;
     }
+
+    /* Mobile styles */
+    @media (max-width: 767px) {
+        .sidequests {
+            width: 100%;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+    }
+
+    /* Desktop styles */
+    @media (min-width: 768px) {
+        .sidequests {
+            height: 100%;
+            padding: 1.5rem 1rem;
+        }
+    }
+
     h2 {
         text-align: center;
         margin-top: 0;
-        text-shadow: 0 0 5px #0f0;
-        border-bottom: 1px solid #0f0;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--accent-color);
         padding-bottom: 0.5rem;
+        font-size: 1.2rem;
+        color: var(--accent-color);
     }
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+
+    /* Pirate theme decorative element */
+    h2::before {
+        content: '☠';
+        margin-right: 0.5rem;
+        display: inline-block;
     }
-    li {
+
+    .quests-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
+    .quest-item {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem;
+        align-items: center;
         font-size: 0.9rem;
+        padding: 0.5rem;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        background-color: rgba(26, 60, 94, 0.1);
     }
+    
+    .quest-item:hover {
+        border-color: var(--accent-color);
+        transform: translateX(3px);
+        background-color: rgba(26, 60, 94, 0.2);
+    }
+
     .quest-name {
         flex-grow: 1;
+        margin-right: 0.5rem;
+        font-weight: 500;
     }
-    .quest-progress {
-        margin-left: 1rem;
-        font-weight: bold;
+
+    .quest-item.travel {
+        border-left: 3px solid var(--accent-color); /* Using pirate gold accent color */
+    }
+    
+    .quest-item.life {
+        border-left: 3px solid var(--accent-color); /* Using pirate gold accent color */
+    }
+
+    /* Mobile styles for small screens */
+    @media (max-width: 480px) {
+        .quest-item {
+            padding: 0.75rem;
+        }
+        
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
+        }
+    }
+    
+    /* Medium screens: Show in a grid */
+    @media (min-width: 481px) and (max-width: 767px) {
+        .quests-container {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .quest-item {
+            padding: 0.75rem;
+        }
+        
+        h2 {
+            margin-top: 1.5rem;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
+        }
     }
 </style>

@@ -1,0 +1,422 @@
+---
+import Sidequests from '../components/Sidequests.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<!-- Additional favicon formats for better cross-browser support -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+        <div class="main-container">
+            <header id="main-header">
+                <div class="header-container">
+                    <img src="/images/full-logo-new.png" alt="Ship Logo" class="logo-image" />
+                </div>
+            </header>
+            
+            <div class="content-container">
+                <aside class="sidebar">
+                    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidequests">
+                        <span class="toggle-icon">☰</span>
+                    </button>
+                    <div class="sidebar-content">
+                        <Sidequests />
+                    </div>
+                </aside>
+                
+                <main>
+                    <slot />
+                </main>
+            </div>
+        </div>
+	</body>
+</html>
+
+<script>
+    // Handle sidebar toggle
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContainer = document.querySelector('.main-container');
+        
+        // Function to handle sidebar toggle
+        const toggleSidebar = () => {
+            const isCollapsing = !sidebar.classList.contains('collapsed');
+            sidebar.classList.toggle('collapsed');
+            mainContainer.classList.toggle('sidebar-collapsed');
+            
+            // Handle body scrolling on mobile
+            if (window.innerWidth < 768) {
+                if (isCollapsing) {
+                    // Sidebar is being collapsed, enable body scrolling
+                    document.body.style.overflow = '';
+                } else {
+                    // Sidebar is being expanded, disable body scrolling
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            // Store sidebar state - separate storage for mobile and desktop
+            if (window.innerWidth < 768) {
+                localStorage.setItem('sidebarCollapsedMobile', sidebar.classList.contains('collapsed'));
+            } else {
+                localStorage.setItem('sidebarCollapsedDesktop', sidebar.classList.contains('collapsed'));
+            }
+        };
+        
+        // Handle resize events
+        const handleResize = () => {
+            const isMobile = window.innerWidth < 768;
+            
+            if (isMobile) {
+                sidebar.classList.add('mobile');
+                
+                // Get mobile-specific collapsed state, default to collapsed on mobile
+                let mobileSidebarCollapsed = localStorage.getItem('sidebarCollapsedMobile');
+                
+                // If no preference is stored yet, default to collapsed on mobile
+                if (mobileSidebarCollapsed === null) {
+                    mobileSidebarCollapsed = 'true';
+                    localStorage.setItem('sidebarCollapsedMobile', 'true');
+                }
+                
+                if (mobileSidebarCollapsed === 'true') {
+                    sidebar.classList.add('collapsed');
+                    mainContainer.classList.add('sidebar-collapsed');
+                    document.body.style.overflow = ''; // Enable scrolling when collapsed
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContainer.classList.remove('sidebar-collapsed');
+                    document.body.style.overflow = 'hidden'; // Disable scrolling when open
+                }
+            } else {
+                sidebar.classList.remove('mobile');
+                document.body.style.overflow = ''; // Always enable scrolling on desktop
+                
+                // Apply desktop-specific collapsed state
+                const desktopSidebarCollapsed = localStorage.getItem('sidebarCollapsedDesktop') === 'true';
+                if (desktopSidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContainer.classList.add('sidebar-collapsed');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContainer.classList.remove('sidebar-collapsed');
+                }
+            }
+        };
+        
+        // Add click event listener
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        
+        // Initial call and event listener
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        
+        // Add a visible indicator to the toggle button to show state
+        const updateToggleIcon = () => {
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            const isMobile = sidebar.classList.contains('mobile');
+            
+            if (isMobile) {
+                // Update both icon and add/remove active class for styling
+                sidebarToggle.innerHTML = isCollapsed ? '&#9650;' : '&#9660;'; // Up arrow : Down arrow
+                if (isCollapsed) {
+                    sidebarToggle.classList.remove('toggle-active');
+                } else {
+                    sidebarToggle.classList.add('toggle-active');
+                }
+            } else {
+                sidebarToggle.innerHTML = isCollapsed ? '&#9654;' : '&#9664;'; // Right arrow : Left arrow
+            }
+        };
+        
+        // Update the toggle icon initially and when toggled
+        updateToggleIcon();
+        sidebarToggle.addEventListener('click', updateToggleIcon);
+        window.addEventListener('resize', updateToggleIcon);
+    });
+</script>
+
+<style is:global>
+	:root {
+		--bg-color: #0a0a0a;
+		--text-color: #f5f5f0;
+		--accent-color: #d4af37;
+		--accent-dark: #8b4513;
+		--accent-light: rgba(212, 175, 55, 0.2);
+		--sidebar-width: 250px;
+		--sidebar-collapsed-width: 50px;
+	}
+	
+	html {
+		font-family: 'Courier New', Courier, monospace;
+		background: var(--bg-color);
+		color: var(--text-color);
+		font-size: 16px;
+	}
+
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    
+    /* Main container layout */
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        padding-top: 1.3rem; /* Reduced by 15% from original 1.5rem */
+        transition: all 0.3s ease;
+    }
+    
+    /* Header styles */
+    #main-header {
+        width: 100%;
+        padding: 0.5rem 1rem 0;
+        border-bottom: 1px solid var(--accent-color);
+        box-sizing: border-box;
+        background-color: var(--bg-color);
+        z-index: 10;
+        margin-bottom: -15px; /* Negative margin to pull content up */
+    }
+    
+    .header-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .logo-image {
+        max-width: 100%;
+        height: auto;
+        max-height: 250px; /* Reduced to move content up */
+        transition: all 0.3s ease;
+        margin-bottom: -20px; /* Negative margin to pull content up */
+    }
+    
+    .logo-image:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Content container (sidebar + main) */
+    .content-container {
+        display: grid;
+        grid-template-columns: var(--sidebar-width) 1fr;
+        flex: 1;
+        position: relative;
+        transition: grid-template-columns 0.3s ease;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+        width: var(--sidebar-width);
+        background-color: var(--bg-color);
+        border-right: 1px solid var(--accent-color);
+        transition: all 0.3s ease;
+        position: relative;
+        flex-shrink: 0;
+    }
+    
+    .sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+    }
+    
+    .sidebar-toggle {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-color);
+        background-color: var(--bg-color);
+        color: var(--accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    
+    .sidebar-toggle:hover {
+        background-color: var(--accent-dark);
+        color: var(--text-color);
+    }
+    
+    /* Active state styling for toggle button */
+    .sidebar-toggle.toggle-active {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+    }
+    
+    .sidebar-content {
+        overflow: hidden;
+        height: 100%;
+        transition: opacity 0.3s ease;
+    }
+    
+    /* Make sidebar content scrollable on mobile */
+    @media (max-width: 767px) {
+        .sidebar-content {
+            overflow-y: auto;
+            max-height: calc(70vh - 45px); /* Match the sidebar max-height */
+            padding-bottom: 20px; /* Add padding at bottom for better scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+    }
+    
+    .sidebar.collapsed .sidebar-content {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    /* Main content area */
+    main {
+        padding: 0.5rem 1.5rem;
+        box-sizing: border-box;
+        min-height: 100%;
+        transition: all 0.3s ease;
+        width: 100%;
+        overflow-x: hidden;
+        margin-top: -10px; /* Negative margin to pull content up */
+    }
+    
+    /* Mobile styles */
+    @media (max-width: 767px) {
+        .logo-image {
+            max-height: 187px; /* Increased by 25% from 150px */
+        }
+        
+        #main-header {
+            padding: 0.3rem 0.5rem 0;
+            margin-bottom: -15px;
+        }
+        
+        .content-container {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            max-height: 70vh; /* Increased for more content visibility */
+            border-right: none;
+            border-top: 1px solid var(--accent-color);
+            z-index: 30;
+            transform: translateY(calc(100% - 40px));
+            transition: transform 0.3s ease;
+            background-color: var(--bg-color); /* Ensure background is visible */
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5); /* Add shadow for depth */
+        }
+        
+        .sidebar.mobile.collapsed {
+            transform: translateY(calc(100% - 40px));
+            width: 100%;
+        }
+        
+        /* Ensure the toggle button is always visible on mobile */
+        .sidebar.mobile .sidebar-toggle {
+            opacity: 1;
+            visibility: visible;
+            z-index: 40;
+        }
+        
+        .sidebar.mobile:not(.collapsed) {
+            transform: translateY(0);
+        }
+        
+        .sidebar-toggle {
+            top: -20px;
+            right: 20px;
+            transform: rotate(180deg);
+            width: 45px;
+            height: 45px;
+            background-color: var(--accent-color);
+            border: 3px solid var(--bg-color);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+            color: var(--bg-color);
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar.mobile:not(.collapsed) .sidebar-toggle {
+            transform: rotate(0deg);
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            border: 3px solid var(--accent-color);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.9);
+        }
+        
+        /* Active state for mobile toggle */
+        .sidebar-toggle.toggle-active {
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        main {
+            padding: 1rem 0.75rem;
+        }
+    }
+    
+    /* Desktop enhancements */
+    @media (min-width: 768px) {
+        .logo-image {
+            max-height: 312px; /* Increased by 25% from 250px */
+        }
+        
+        #main-header {
+            padding: 0.3rem 1rem 0;
+            margin-bottom: -15px;
+        }
+        
+        .main-container.sidebar-collapsed .content-container {
+            grid-template-columns: var(--sidebar-collapsed-width) 1fr;
+        }
+        
+        /* Ensure content doesn't get overruled when sidebar collapses */
+        .main-container.sidebar-collapsed main {
+            padding-left: 2rem;
+        }
+    }
+    
+    /* Global link styles */
+    a {
+        color: var(--accent-color);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    a:hover {
+        color: var(--text-color);
+    }
+</style>

@@ -1,0 +1,249 @@
+---
+---
+
+<div class="terminal-container" id="terminal-auth">
+    <div class="ship-logo">
+        <img src="/images/full-logo-new.png" alt="Ship Logo" />
+    </div>
+    <div class="terminal">
+        <div class="terminal-header">
+            <span>Terminal v1.0</span>
+        </div>
+        <div class="terminal-body">
+            <div class="terminal-output" id="terminal-output">
+                <p>Welcome aboard the ship.</p>
+                <p>Authentication required to proceed.</p>
+                <p class="hint">Hint: What do pirates say to board a ship?</p>
+            </div>
+            <div class="terminal-input-line">
+                <span class="prompt">$</span>
+                <input type="text" id="terminal-input" autofocus spellcheck="false" autocomplete="off" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // List of accepted commands to authenticate
+    const validCommands = ['ahoy', 'set sail', 'board ship', 'yo ho', 'avast'];
+    
+    // Pirate-themed responses for incorrect commands
+    const pirateResponses = [
+        "Arr! That be not the right command, matey!",
+        "Shiver me timbers! Ye need to try somethin' else.",
+        "Blimey! That won't get ye aboard this vessel.",
+        "By Davy Jones' locker! That command be wrong.",
+        "Ye'll be walkin' the plank with that command!"
+    ];
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        
+        // Focus the input when the page loads
+        terminalInput.focus();
+        
+        // Check if user has already authenticated
+        if (localStorage.getItem('authenticated') === 'true') {
+            window.location.href = '/home';
+            return;
+        }
+        
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim().toLowerCase();
+                
+                // Add command to output
+                const commandLine = document.createElement('p');
+                commandLine.innerHTML = `<span class="prompt">$</span> ${command}`;
+                terminalOutput.appendChild(commandLine);
+                
+                // Process command
+                if (validCommands.includes(command)) {
+                    // Success!
+                    const successLine = document.createElement('p');
+                    successLine.textContent = "Authentication successful. Welcome aboard!";
+                    successLine.classList.add('success');
+                    terminalOutput.appendChild(successLine);
+                    
+                    // Store authentication in localStorage
+                    localStorage.setItem('authenticated', 'true');
+                    
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = '/home';
+                    }, 1500);
+                } else {
+                    // Failed command
+                    const errorLine = document.createElement('p');
+                    const randomResponse = pirateResponses[Math.floor(Math.random() * pirateResponses.length)];
+                    errorLine.textContent = randomResponse;
+                    errorLine.classList.add('error');
+                    terminalOutput.appendChild(errorLine);
+                }
+                
+                // Clear input
+                terminalInput.value = '';
+                
+                // Scroll to bottom
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+        });
+    });
+</script>
+
+<style>
+    .terminal-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100%;
+        background-color: #0a0a0a;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+    
+    .ship-logo {
+        margin-bottom: 2rem;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+    
+    .ship-logo img {
+        max-width: 100%;
+        height: auto;
+        max-height: 350px;
+        filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.9));
+        animation: gentle-float 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes gentle-float {
+        0% {
+            transform: translateY(0);
+        }
+        100% {
+            transform: translateY(-10px);
+        }
+    }
+    
+    .terminal {
+        width: 100%;
+        max-width: 600px;
+        background-color: #111;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        border: 1px solid #d4af37;
+        animation: terminal-glow 4s ease-in-out infinite alternate;
+    }
+    
+    @keyframes terminal-glow {
+        0% {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+        100% {
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        }
+    }
+    
+    .terminal-header {
+        background-color: #222;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #333;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .terminal-header span {
+        color: #d4af37;
+        font-family: 'Courier New', monospace;
+        font-size: 0.8rem;
+    }
+    
+    .terminal-body {
+        padding: 1rem;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .terminal-output {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+        font-family: 'Courier New', monospace;
+        color: #f5f5f0;
+    }
+    
+    .terminal-output p {
+        margin: 0.5rem 0;
+        line-height: 1.4;
+    }
+    
+    .terminal-output .error {
+        color: #8b0000;
+    }
+    
+    .terminal-output .success {
+        color: #d4af37;
+    }
+    
+    .terminal-output .hint {
+        color: #555;
+        font-style: italic;
+    }
+    
+    .terminal-input-line {
+        display: flex;
+        align-items: center;
+    }
+    
+    .prompt {
+        color: #d4af37;
+        margin-right: 0.5rem;
+        font-weight: bold;
+    }
+    
+    #terminal-input {
+        background: transparent;
+        border: none;
+        color: #f5f5f0;
+        font-family: 'Courier New', monospace;
+        font-size: 1rem;
+        flex: 1;
+        caret-color: #f5f5f0;
+        outline: none;
+    }
+    
+    /* Desktop enhancements */
+    @media (min-width: 768px) {
+        .ship-logo img {
+            max-height: 450px;
+        }
+        
+        .terminal {
+            max-width: 700px;
+        }
+        
+        .terminal-body {
+            height: 350px;
+        }
+        
+        .ship-logo:hover {
+            opacity: 1;
+        }
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 480px) {
+        .terminal-body {
+            height: 250px;
+        }
+        
+        .ship-logo img {
+            max-height: 100px;
+        }
+    }
+</style>

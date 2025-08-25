@@ -1,61 +1,39 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
-
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+import TerminalAuth from '../components/TerminalAuth.astro';
 ---
 
-<Layout title="zelaznogrihay.com - Home">
-	<section>
-		<h2>Writings</h2>
-		<ul>
-			{posts.map(post => (
-				<li>
-					<a href={`/blog/${post.slug}/`}>
-						<span class="title">{post.data.title}</span>
-						<time datetime={post.data.pubDate.toISOString()}>
-							{post.data.pubDate.toDateString()}
-						</time>
-					</a>
-				</li>
-			))}
-		</ul>
-	</section>
-</Layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <meta name="description" content="zelaznogrihay.com - Enter the ship" />
+    <meta name="generator" content={Astro.generator} />
+    <title>zelaznogrihay.com - Enter</title>
+</head>
+<body>
+    <TerminalAuth />
+</body>
+</html>
+
+<script>
+	// Check if user is already authenticated
+	document.addEventListener('DOMContentLoaded', () => {
+		if (localStorage.getItem('authenticated') === 'true') {
+			window.location.href = '/home';
+		}
+	});
+</script>
 
 <style>
-	h2 {
-		font-size: 1.5rem;
-		border-bottom: 1px solid #0f0;
-		padding-bottom: 0.5rem;
-		margin-bottom: 1.5rem;
-	}
-	ul {
-		list-style: none;
+	body {
+		margin: 0;
 		padding: 0;
-	}
-	li a {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.5rem;
-		margin: -0.5rem;
-		transition: background-color 0.2s ease-in-out;
-		border: none;
-	}
-	li a:hover {
-		background-color: #0f0;
-		color: #0a0a0a;
-	}
-	.title {
-		font-weight: bold;
-	}
-	time {
-		font-style: italic;
-		color: #aaa;
-	}
-	li a:hover time {
-		color: #555;
+		background-color: #0a0a0a;
+		overflow: hidden;
 	}
 </style>
