@@ -15,7 +15,7 @@ const {
     description = 'The writings, work, and mind map of Yahir Gonzalez.',
     showSidebar = true,
     fullWidth = false,
-    compactHeader = false,
+    compactHeader = true,
 } = Astro.props;
 ---
 
@@ -36,7 +36,7 @@ const {
         <div class:list={['main-container', { 'without-sidebar': !showSidebar, 'full-width-page': fullWidth, 'compact-header': compactHeader }]}>
             <header id="main-header">
                 <div class="header-container">
-                    <a href="/home" class="logo-link" aria-label="Go home">
+                    <a href="/" class="logo-link" aria-label="Go home">
                         <img src="/images/full-logo-new.png" alt="Ship Logo" class="logo-image" />
                     </a>
                 </div>
@@ -65,11 +65,6 @@ const {
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem('authenticated') !== 'true') {
-            window.location.href = '/';
-            return;
-        }
-
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const sidebar = document.querySelector<HTMLElement>('.sidebar');
         const mainContainer = document.querySelector<HTMLElement>('.main-container');
