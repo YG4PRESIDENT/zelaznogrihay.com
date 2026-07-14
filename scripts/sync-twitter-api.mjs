@@ -12,7 +12,7 @@ if (!bearerToken) {
 }
 
 const current = JSON.parse(await fs.readFile(outputPath, 'utf8'));
-const handle = process.env.X_USERNAME || current.handle || 'yahirg142';
+const handle = process.env.X_USERNAME || current.handle || 'ygs_wrld';
 const headers = { Authorization: `Bearer ${bearerToken}` };
 
 const userResponse = await fetch(`https://api.x.com/2/users/by/username/${encodeURIComponent(handle)}`, { headers });

@@ -128,37 +128,51 @@
 
                 manifest.edges.forEach((edge, index) => {
                     if (graph.hasNode(edge.source) && graph.hasNode(edge.target)) {
+                        const crossCategory = graph.getNodeAttribute(edge.source, 'category') !==
+                            graph.getNodeAttribute(edge.target, 'category');
                         graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
-                            color: '#164d19',
-                            size: 0.28,
+                            color: '#0b2610',
+                            size: 0.14,
+                            crossCategory,
                         });
                     }
                 });
 
                 renderer = new Sigma(graph, container, {
                     allowInvalidContainer: false,
-                    defaultEdgeColor: '#164d19',
-                    defaultNodeColor: '#b8c0cc',
+                    defaultEdgeColor: '#0b2610',
+                    defaultNodeColor: '#777d86',
                     edgeColor: 'default',
                     labelColor: { color: '#f5f5f0' },
                     labelFont: 'Courier New, Courier, monospace',
-                    labelDensity: 0.055,
-                    labelGridCellSize: 110,
-                    labelRenderedSizeThreshold: 9,
+                    labelDensity: 0.025,
+                    labelGridCellSize: 140,
+                    labelRenderedSizeThreshold: 5,
                     hideEdgesOnMove: false,
-                    minCameraRatio: 0.03,
-                    maxCameraRatio: 8,
+                    minCameraRatio: 0.08,
+                    maxCameraRatio: 10,
                     nodeReducer: (node, data) => {
                         if (!selectedNode) return data;
-                        if (node === selectedNode) return { ...data, highlighted: true, zIndex: 2 };
+                        if (node === selectedNode) {
+                            return {
+                                ...data,
+                                color: '#39ff14',
+                                size: data.size * 1.8,
+                                forceLabel: true,
+                                highlighted: true,
+                                zIndex: 2,
+                            };
+                        }
                         if (graph.areNeighbors(node, selectedNode)) return { ...data, zIndex: 1 };
-                        return { ...data, color: 'rgba(108, 112, 134, 0.22)', label: '' };
+                        return { ...data, color: '#232824', label: '' };
                     },
                     edgeReducer: (edge, data) => {
-                        if (!selectedNode) return data;
+                        if (!selectedNode) {
+                            return data.crossCategory ? { ...data, hidden: true } : data;
+                        }
                         const [source, target] = graph.extremities(edge);
                         return source === selectedNode || target === selectedNode
-                            ? { ...data, color: 'rgba(57, 255, 20, 0.72)', size: 0.9, zIndex: 1 }
+                            ? { ...data, color: '#39ff14', size: 0.7, zIndex: 1 }
                             : { ...data, hidden: true };
                     },
                 });
@@ -181,12 +195,12 @@
     .mind-map-shell {
         position: relative;
         width: 100%;
-        height: calc(100vh - 275px);
-        min-height: 560px;
+        height: calc(100svh - 198px);
+        min-height: 620px;
         overflow: hidden;
         background:
-            radial-gradient(circle at 50% 45%, rgba(57, 255, 20, 0.025), transparent 45%),
-            #080a08;
+            radial-gradient(circle at 50% 48%, rgba(57, 255, 20, 0.018), transparent 48%),
+            #070907;
     }
 
     .mind-map-canvas {
@@ -349,8 +363,8 @@
 
     @media (max-width: 767px) {
         .mind-map-shell {
-            height: calc(100svh - 205px);
-            min-height: 480px;
+            height: calc(100svh - 148px);
+            min-height: 520px;
         }
 
         .mind-map-panel {

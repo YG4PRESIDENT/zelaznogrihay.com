@@ -9,95 +9,151 @@ const sections = [
 ];
 ---
 
-<MainLayout title="Work | zelaznogrihay.com" description="Things Yahir Gonzalez has built, considered, and is working on now.">
-    <div class="page-shell work-page">
+<MainLayout
+    title="Work | zelaznogrihay.com"
+    description="Things Yahir Gonzalez has built, considered, and is working on now."
+    showSidebar={false}
+>
+    <section class="work-page">
         <h1 class="page-title">Work</h1>
-        {sections.map(section => {
-            const items = workItems.filter(item => item.group === section.key);
-            return (
-                <section class="work-section">
-                    <h2>{section.title}</h2>
-                    {items.length > 0 ? (
-                        <ul class="simple-list">
+
+        <div class="work-grid">
+            {sections.map(section => {
+                const items = workItems.filter(item => item.group === section.key);
+                return (
+                    <section class="work-column">
+                        <header>
+                            <h2>{section.title}</h2>
+                            <span>{items.length}</span>
+                        </header>
+
+                        <ul>
                             {items.map(item => (
-                                <li class="simple-row work-row">
-                                    {item.link ? (
-                                        <a href={item.link} target="_blank" rel="noreferrer">
-                                            <span class="work-copy">
-                                                <strong>{item.title}</strong>
-                                                <span>{item.description}</span>
-                                            </span>
-                                            <span class="row-meta">{item.year}</span>
-                                        </a>
-                                    ) : (
-                                        <div class="row-content">
-                                            <span class="work-copy">
-                                                <strong>{item.title}</strong>
-                                                <span>{item.description}</span>
-                                            </span>
-                                            <span class="row-meta">{item.year}</span>
-                                        </div>
-                                    )}
+                                <li>
+                                    <div class="item-heading">
+                                        {item.link ? (
+                                            <a href={item.link} target="_blank" rel="noreferrer">{item.title}</a>
+                                        ) : (
+                                            <strong>{item.title}</strong>
+                                        )}
+                                        <time>{item.year}</time>
+                                    </div>
+                                    <p>{item.description}</p>
                                 </li>
                             ))}
                         </ul>
-                    ) : (
-                        <p class="empty-copy">Nothing here yet.</p>
-                    )}
-                </section>
-            );
-        })}
-    </div>
+                    </section>
+                );
+            })}
+        </div>
+    </section>
 </MainLayout>
 
 <style>
     .work-page {
-        max-width: 900px;
+        width: min(100%, 1240px);
+        margin: 0 auto;
     }
 
-    .work-section {
-        margin-bottom: 2.35rem;
+    .work-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid rgba(57, 255, 20, 0.22);
+        border-bottom: 1px solid rgba(57, 255, 20, 0.22);
     }
 
-    .work-section h2 {
-        margin: 0;
-        padding-bottom: 0.45rem;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.55);
-        color: var(--text-color);
-        font-size: 1.15rem;
-    }
-
-    .work-copy {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
+    .work-column {
         min-width: 0;
+        padding: 1.15rem 1.35rem 1.4rem;
     }
 
-    .work-copy strong {
+    .work-column + .work-column {
+        border-left: 1px solid rgba(57, 255, 20, 0.16);
+    }
+
+    .work-column header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.85rem;
+        padding-bottom: 0.65rem;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.32);
+    }
+
+    .work-column h2 {
+        margin: 0;
         color: var(--text-color);
-        font-size: 0.98rem;
+        font-size: 1rem;
     }
 
-    .work-copy > span {
+    .work-column header span {
+        color: var(--terminal-green);
+        font-size: 0.68rem;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        padding: 0.85rem 0;
+        border-bottom: 1px dotted rgba(212, 175, 55, 0.2);
+    }
+
+    li:last-child {
+        border-bottom: 0;
+    }
+
+    .item-heading {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.8rem;
+    }
+
+    .item-heading strong,
+    .item-heading a {
+        min-width: 0;
+        color: var(--text-color);
+        font-size: 0.84rem;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .item-heading a:hover {
+        color: var(--terminal-green);
+    }
+
+    time {
+        flex: 0 0 auto;
         color: var(--muted-text);
-        font-size: 0.85rem;
-        line-height: 1.45;
+        font-size: 0.66rem;
+        font-style: italic;
     }
 
-    .empty-copy {
+    li p {
+        margin: 0.42rem 0 0;
         color: var(--muted-text);
-        font-size: 0.85rem;
+        font-size: 0.75rem;
+        line-height: 1.55;
     }
 
-    @media (max-width: 600px) {
-        .work-section {
-            margin-bottom: 1.8rem;
+    @media (max-width: 900px) {
+        .work-grid {
+            grid-template-columns: 1fr;
+            border-bottom: 0;
         }
 
-        .work-row > :global(a),
-        .work-row > :global(.row-content) {
-            align-items: flex-start;
+        .work-column {
+            padding-inline: 0;
+            border-bottom: 1px solid rgba(57, 255, 20, 0.22);
+        }
+
+        .work-column + .work-column {
+            border-left: 0;
         }
     }
 </style>

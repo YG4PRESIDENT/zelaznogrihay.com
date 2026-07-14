@@ -57,7 +57,7 @@ const tweetFiles = files.filter(file => /(^|\/)data\/tweets(?:-part\d+)?\.js$/i.
 
 if (tweetFiles.length === 0) throw new Error(`No data/tweets*.js files found in ${archivePath}`);
 
-let handle = 'yahirg142';
+let handle = 'ygs_wrld';
 const accountFile = files.find(file => /(^|\/)data\/account\.js$/i.test(file));
 if (accountFile) {
     const { stdout } = await execFileAsync('unzip', ['-p', archivePath, accountFile], { maxBuffer: 20 * 1024 * 1024 });

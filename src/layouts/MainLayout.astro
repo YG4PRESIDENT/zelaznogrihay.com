@@ -7,6 +7,7 @@ interface Props {
     description?: string;
     showSidebar?: boolean;
     fullWidth?: boolean;
+    compactHeader?: boolean;
 }
 
 const {
@@ -14,6 +15,7 @@ const {
     description = 'The writings, work, tweets, and mind map of Yahir Gonzalez.',
     showSidebar = true,
     fullWidth = false,
+    compactHeader = false,
 } = Astro.props;
 ---
 
@@ -31,7 +33,7 @@ const {
         <title>{title}</title>
     </head>
     <body>
-        <div class:list={['main-container', { 'without-sidebar': !showSidebar, 'full-width-page': fullWidth }]}>
+        <div class:list={['main-container', { 'without-sidebar': !showSidebar, 'full-width-page': fullWidth, 'compact-header': compactHeader }]}>
             <header id="main-header">
                 <div class="header-container">
                     <a href="/home" class="logo-link" aria-label="Go home">
@@ -193,6 +195,19 @@ const {
         transform: scale(1.025);
     }
 
+    .compact-header {
+        padding-top: 0.35rem;
+    }
+
+    .compact-header #main-header {
+        padding-top: 0;
+    }
+
+    .compact-header .logo-image {
+        max-height: 150px;
+        margin-bottom: -10px;
+    }
+
     .content-container {
         display: grid;
         grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
@@ -344,6 +359,11 @@ const {
         .logo-image {
             max-height: 155px;
             margin-bottom: -10px;
+        }
+
+        .compact-header .logo-image {
+            max-height: 105px;
+            margin-bottom: -7px;
         }
 
         .content-container {

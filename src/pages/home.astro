@@ -1,185 +1,81 @@
 ---
-import { getCollection } from 'astro:content';
 import MainLayout from '../layouts/MainLayout.astro';
-import workItems from '../data/work.json';
-import tweetData from '../data/tweets.json';
-import { groupTweets } from '../lib/tweets';
-
-const posts = (await getCollection('blog')).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
-
-const currentWork = workItems.filter(item => item.group === 'now');
-const latestTweets = groupTweets(tweetData.tweets).slice(0, 5);
 ---
 
-<MainLayout title="zelaznogrihay.com - Home">
-    <div class="page-shell home-page">
-        <section class="home-section now-section">
-            <h1>Now</h1>
-            <p>Building, writing, and connecting the dots.</p>
-        </section>
-
-        <section class="home-section">
-            <div class="section-heading">
-                <h2>Current Work</h2>
-                <a href="/work">View all</a>
-            </div>
-            {currentWork.length > 0 ? (
-                <ul class="simple-list">
-                    {currentWork.map(item => (
-                        <li class="simple-row">
-                            <div class="row-content">
-                                <span>{item.title}</span>
-                                <span class="row-meta">{item.year}</span>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p class="empty-copy">Current projects are being connected.</p>
-            )}
-        </section>
-
-        <section class="home-section">
-            <div class="section-heading">
-                <h2>Latest Writing</h2>
-                <a href="/writings">View all</a>
-            </div>
-            <ul class="simple-list">
-                {posts.slice(0, 3).map(post => (
-                    <li class="simple-row">
-                        <a href={`/blog/${post.id.replace(/\.(md|mdx)$/i, '')}/`}>
-                            <span>{post.data.title}</span>
-                            <time class="row-meta" datetime={post.data.pubDate.toISOString()}>
-                                {new Date(post.data.pubDate).toLocaleDateString('en-US', {
-                                    year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Chicago'
-                                })}
-                            </time>
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </section>
-
-        <section class="home-section">
-            <div class="section-heading">
-                <h2>Latest Tweets</h2>
-                <a href="/tweets">View all</a>
-            </div>
-            {latestTweets.length > 0 ? (
-                <ul class="tweet-preview-list">
-                    {latestTweets.map(tweet => (
-                        <li>
-                            {tweet.parts.map((part, index) => (
-                                <p class:list={{ 'thread-part': tweet.parts.length > 1 && index > 0 }}>{part.text}</p>
-                            ))}
-                            <a href={tweet.url} target="_blank" rel="noreferrer">
-                                {new Date(tweet.createdAt).toLocaleDateString('en-US', {
-                                    year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Chicago'
-                                })}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p class="empty-copy">The tweet archive is being connected.</p>
-            )}
-        </section>
-    </div>
+<MainLayout
+    title="zelaznogrihay.com - Home"
+    description="The personal website of Yahir Gonzalez."
+    showSidebar={false}
+>
+    <section class="home-page">
+        <p class="home-label">Now</p>
+        <h1>Building products, writing, and connecting ideas.</h1>
+        <p class="home-copy">
+            This is where I keep the things I am making, the things I am thinking about,
+            and the map connecting it all.
+        </p>
+        <p class="current-line"><span>Currently</span> Rankett, Orph, Betio, and Lift ATX.</p>
+    </section>
 </MainLayout>
 
 <style>
     .home-page {
-        max-width: 860px;
+        width: min(100%, 720px);
+        margin: 0 auto;
+        padding: clamp(2.5rem, 8vh, 6rem) 0 4rem;
     }
 
-    .home-section {
-        margin-bottom: 2.2rem;
-    }
-
-    .home-section:last-child {
-        margin-bottom: 0;
-    }
-
-    .home-section h1,
-    .home-section h2 {
-        margin: 0;
-        color: var(--text-color);
-        font-size: 1.25rem;
-    }
-
-    .now-section {
-        padding-bottom: 1.2rem;
-        border-bottom: 1px solid var(--accent-color);
-    }
-
-    .now-section p {
-        margin: 0.7rem 0 0;
-        color: var(--muted-text);
-        line-height: 1.6;
-        overflow-wrap: anywhere;
-    }
-
-    .section-heading {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid var(--accent-color);
-    }
-
-    .section-heading a {
+    .home-label {
+        margin: 0 0 1rem;
         color: var(--terminal-green);
-        font-size: 0.78rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
     }
 
-    .empty-copy {
-        color: var(--muted-text);
-        font-size: 0.9rem;
-    }
-
-    .tweet-preview-list {
-        list-style: none;
+    h1 {
+        max-width: 680px;
         margin: 0;
-        padding: 0;
-    }
-
-    .tweet-preview-list li {
-        padding: 0.85rem 0.5rem;
-        border-bottom: 1px dotted rgba(212, 175, 55, 0.24);
-    }
-
-    .tweet-preview-list p {
-        margin: 0 0 0.4rem;
         color: var(--text-color);
-        line-height: 1.55;
-        white-space: pre-wrap;
+        font-size: clamp(1.7rem, 4vw, 2.7rem);
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.035em;
     }
 
-    .tweet-preview-list .thread-part {
-        padding-top: 0.65rem;
-        border-top: 1px dotted rgba(57, 255, 20, 0.2);
-    }
-
-    .tweet-preview-list a {
+    .home-copy {
+        max-width: 620px;
+        margin: 1.5rem 0 0;
         color: var(--muted-text);
-        font-size: 0.76rem;
+        font-size: 0.98rem;
+        line-height: 1.75;
+    }
+
+    .current-line {
+        margin: 2.4rem 0 0;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(57, 255, 20, 0.18);
+        color: var(--muted-text);
+        font-size: 0.82rem;
+        line-height: 1.6;
+    }
+
+    .current-line span {
+        margin-right: 0.75rem;
+        color: var(--terminal-green);
     }
 
     @media (max-width: 767px) {
-        .home-section {
-            margin-bottom: 1.65rem;
+        .home-page {
+            padding-top: 2.2rem;
         }
 
-        .home-section h1,
-        .home-section h2 {
-            font-size: 1.08rem;
+        h1 {
+            font-size: 1.65rem;
         }
 
-        .tweet-preview-list li {
-            padding-inline: 0;
+        .home-copy {
+            font-size: 0.9rem;
         }
     }
 </style>

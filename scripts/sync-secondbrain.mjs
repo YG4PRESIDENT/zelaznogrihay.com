@@ -19,16 +19,25 @@ const excludedDirectories = new Set(['sources', 'clusters']);
 const excludedFiles = new Set(['log.md']);
 
 const colors = {
-    entities: '#f5c6e7',
-    concepts: '#89b2fa',
-    projects: '#fabf87',
-    summaries: '#a6e5a1',
-    synthesis: '#ffd700',
-    queries: '#a026e0',
-    canvases: '#71d7c4',
-    dashboards: '#9ea2b3',
-    unresolved: '#6c7086',
-    wiki: '#b8c0cc',
+    entities: '#9b7890',
+    concepts: '#587aa2',
+    projects: '#a9784f',
+    summaries: '#658b63',
+    synthesis: '#9b8528',
+    queries: '#6c3b82',
+    canvases: '#4d8980',
+    dashboards: '#686d78',
+    wiki: '#777d86',
+};
+
+const clusterLayout = {
+    summaries: { x: 0, y: 0, radius: 105 },
+    entities: { x: -205, y: -5, radius: 62 },
+    concepts: { x: 200, y: -5, radius: 56 },
+    projects: { x: 0, y: -165, radius: 28 },
+    queries: { x: -112, y: 148, radius: 28 },
+    synthesis: { x: 112, y: 148, radius: 24 },
+    other: { x: 0, y: 198, radius: 26 },
 };
 
 const workOverrides = {
@@ -286,21 +295,8 @@ for (const record of records) {
         if (!targetText || targetText.startsWith('../raw/') || targetText.startsWith('raw/')) continue;
 
         const resolved = resolveRecord(targetText);
-        let targetId = resolved?.id;
-        if (!targetId) {
-            const label = targetText.split('/').pop()?.replace(/[-_]+/g, ' ') || targetText;
-            targetId = `unresolved/${targetText.toLowerCase()}`;
-            if (!nodes.has(targetId)) {
-                nodes.set(targetId, {
-                    id: targetId,
-                    label,
-                    type: 'unresolved',
-                    color: colors.unresolved,
-                    resolved: false,
-                    detailPath: null,
-                });
-            }
-        }
+        if (!resolved) continue;
+        const targetId = resolved.id;
 
         if (targetId === record.id) continue;
         const key = [record.id, targetId].sort().join('\u0000');
@@ -351,6 +347,37 @@ if (graph.order > 1 && graph.size > 0) {
     });
 }
 
+function clusterFor(type) {
+    return Object.hasOwn(clusterLayout, type) ? type : 'other';
+}
+
+const clusterBounds = new Map();
+for (const node of nodes.values()) {
+    const cluster = clusterFor(node.type);
+    const { x, y } = graph.getNodeAttributes(node.id);
+    const bounds = clusterBounds.get(cluster) || {
+        minX: x, maxX: x, minY: y, maxY: y,
+    };
+    bounds.minX = Math.min(bounds.minX, x);
+    bounds.maxX = Math.max(bounds.maxX, x);
+    bounds.minY = Math.min(bounds.minY, y);
+    bounds.maxY = Math.max(bounds.maxY, y);
+    clusterBounds.set(cluster, bounds);
+}
+
+for (const node of nodes.values()) {
+    const cluster = clusterFor(node.type);
+    const target = clusterLayout[cluster];
+    const bounds = clusterBounds.get(cluster);
+    const { x, y } = graph.getNodeAttributes(node.id);
+    const middleX = (bounds.minX + bounds.maxX) / 2;
+    const middleY = (bounds.minY + bounds.maxY) / 2;
+    const span = Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY, 1);
+
+    graph.setNodeAttribute(node.id, 'x', target.x + ((x - middleX) / span) * target.radius * 2);
+    graph.setNodeAttribute(node.id, 'y', target.y + ((y - middleY) / span) * target.radius * 2);
+}
+
 const connected = new Map([...nodes.keys()].map(id => [id, new Set()]));
 for (const edge of filteredEdges) {
     connected.get(edge.source)?.add(edge.target);
@@ -383,7 +410,7 @@ const manifestNodes = [...nodes.values()].map(node => {
         ...node,
         x: Number(position.x.toFixed(5)),
         y: Number(position.y.toFixed(5)),
-        size: Number((2.2 + Math.min(Math.sqrt(nodeDegree) * 0.72, 5.8)).toFixed(2)),
+        size: Number((0.9 + Math.min(Math.sqrt(nodeDegree) * 0.24, 2.5)).toFixed(2)),
     };
 });
 
