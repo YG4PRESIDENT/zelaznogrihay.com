@@ -1,0 +1,380 @@
+<section class="mind-map-shell" aria-label="Interactive SecondBrain mind map">
+    <div id="mind-map-canvas" class="mind-map-canvas"></div>
+    <div id="mind-map-loading" class="mind-map-loading">Charting the map…</div>
+
+    <aside id="mind-map-panel" class="mind-map-panel" aria-live="polite" aria-hidden="true">
+        <button id="mind-map-panel-close" class="panel-close" type="button" aria-label="Close summary">×</button>
+        <p id="mind-map-node-type" class="node-type"></p>
+        <h1 id="mind-map-node-title"></h1>
+        <div id="mind-map-node-content" class="node-content"></div>
+        <div id="mind-map-related-wrap" class="related-wrap" hidden>
+            <h2>Connected</h2>
+            <div id="mind-map-related" class="related-links"></div>
+        </div>
+    </aside>
+</section>
+
+<script>
+    import Graph from 'graphology';
+    import Sigma from 'sigma';
+
+    const container = document.getElementById('mind-map-canvas');
+    const loading = document.getElementById('mind-map-loading');
+    const panel = document.getElementById('mind-map-panel');
+    const closeButton = document.getElementById('mind-map-panel-close');
+    const typeElement = document.getElementById('mind-map-node-type');
+    const titleElement = document.getElementById('mind-map-node-title');
+    const contentElement = document.getElementById('mind-map-node-content');
+    const relatedWrap = document.getElementById('mind-map-related-wrap');
+    const relatedElement = document.getElementById('mind-map-related');
+
+    if (
+        container && loading && panel && closeButton && typeElement && titleElement &&
+        contentElement && relatedWrap && relatedElement
+    ) {
+        let renderer;
+        let graph;
+        let selectedNode = null;
+        const detailCache = new Map();
+
+        const closePanel = () => {
+            selectedNode = null;
+            panel.classList.remove('open');
+            panel.setAttribute('aria-hidden', 'true');
+            renderer?.refresh();
+        };
+
+        const focusNode = async (nodeId) => {
+            if (!graph?.hasNode(nodeId)) return;
+            selectedNode = nodeId;
+            renderer?.refresh();
+
+            const attributes = graph.getNodeAttributes(nodeId);
+            typeElement.textContent = String(attributes.category || 'wiki').replace(/s$/, '');
+            titleElement.textContent = attributes.label || nodeId;
+            contentElement.innerHTML = attributes.resolved ? '<p class="loading-copy">Loading summary…</p>' : '<p>No wiki summary exists for this linked node yet.</p>';
+            relatedElement.innerHTML = '';
+            relatedWrap.hidden = true;
+            panel.classList.add('open');
+            panel.setAttribute('aria-hidden', 'false');
+
+            const camera = renderer?.getCamera();
+            const display = renderer?.getNodeDisplayData(nodeId);
+            if (camera && display) {
+                camera.animate({ x: display.x, y: display.y, ratio: Math.min(camera.getState().ratio, 0.65) }, { duration: 420 });
+            }
+
+            if (!attributes.detailPath) return;
+
+            try {
+                let detail = detailCache.get(attributes.detailPath);
+                if (!detail) {
+                    const response = await fetch(attributes.detailPath);
+                    if (!response.ok) throw new Error(`Summary returned ${response.status}`);
+                    detail = await response.json();
+                    detailCache.set(attributes.detailPath, detail);
+                }
+
+                contentElement.innerHTML = detail.html || '<p>No summary text.</p>';
+                const related = Array.isArray(detail.related) ? detail.related : [];
+                if (related.length > 0) {
+                    relatedWrap.hidden = false;
+                    for (const item of related) {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'related-link';
+                        button.dataset.nodeId = item.id;
+                        button.textContent = item.label;
+                        relatedElement.appendChild(button);
+                    }
+                }
+            } catch (error) {
+                contentElement.innerHTML = '<p>The summary could not be loaded.</p>';
+                console.error(error);
+            }
+        };
+
+        closeButton.addEventListener('click', closePanel);
+
+        panel.addEventListener('click', event => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+            const link = target.closest('[data-node-id]');
+            if (!(link instanceof HTMLElement) || !link.dataset.nodeId) return;
+            event.preventDefault();
+            focusNode(link.dataset.nodeId);
+        });
+
+        fetch('/data/mind-map/graph.json')
+            .then(response => {
+                if (!response.ok) throw new Error(`Map returned ${response.status}`);
+                return response.json();
+            })
+            .then(manifest => {
+                graph = new Graph({ type: 'undirected', multi: false, allowSelfLoops: false });
+
+                for (const node of manifest.nodes) {
+                    graph.addNode(node.id, {
+                        label: node.label,
+                        x: node.x,
+                        y: node.y,
+                        size: node.size,
+                        color: node.color,
+                        category: node.type,
+                        resolved: node.resolved,
+                        detailPath: node.detailPath,
+                    });
+                }
+
+                manifest.edges.forEach((edge, index) => {
+                    if (graph.hasNode(edge.source) && graph.hasNode(edge.target)) {
+                        graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
+                            color: '#164d19',
+                            size: 0.28,
+                        });
+                    }
+                });
+
+                renderer = new Sigma(graph, container, {
+                    allowInvalidContainer: false,
+                    defaultEdgeColor: '#164d19',
+                    defaultNodeColor: '#b8c0cc',
+                    edgeColor: 'default',
+                    labelColor: { color: '#f5f5f0' },
+                    labelFont: 'Courier New, Courier, monospace',
+                    labelDensity: 0.055,
+                    labelGridCellSize: 110,
+                    labelRenderedSizeThreshold: 9,
+                    hideEdgesOnMove: false,
+                    minCameraRatio: 0.03,
+                    maxCameraRatio: 8,
+                    nodeReducer: (node, data) => {
+                        if (!selectedNode) return data;
+                        if (node === selectedNode) return { ...data, highlighted: true, zIndex: 2 };
+                        if (graph.areNeighbors(node, selectedNode)) return { ...data, zIndex: 1 };
+                        return { ...data, color: 'rgba(108, 112, 134, 0.22)', label: '' };
+                    },
+                    edgeReducer: (edge, data) => {
+                        if (!selectedNode) return data;
+                        const [source, target] = graph.extremities(edge);
+                        return source === selectedNode || target === selectedNode
+                            ? { ...data, color: 'rgba(57, 255, 20, 0.72)', size: 0.9, zIndex: 1 }
+                            : { ...data, hidden: true };
+                    },
+                });
+
+                renderer.on('clickNode', ({ node }) => focusNode(node));
+                renderer.on('clickStage', closePanel);
+                renderer.on('enterNode', () => { container.style.cursor = 'pointer'; });
+                renderer.on('leaveNode', () => { container.style.cursor = 'grab'; });
+                renderer.getCamera().animatedReset({ duration: 650 });
+                loading.remove();
+            })
+            .catch(error => {
+                loading.textContent = 'The Mind Map could not be loaded.';
+                console.error(error);
+            });
+    }
+</script>
+
+<style>
+    .mind-map-shell {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 275px);
+        min-height: 560px;
+        overflow: hidden;
+        background:
+            radial-gradient(circle at 50% 45%, rgba(57, 255, 20, 0.025), transparent 45%),
+            #080a08;
+    }
+
+    .mind-map-canvas {
+        position: absolute;
+        inset: 0;
+        cursor: grab;
+    }
+
+    .mind-map-canvas:active {
+        cursor: grabbing;
+    }
+
+    .mind-map-loading {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: rgba(57, 255, 20, 0.65);
+        font-size: 0.85rem;
+        pointer-events: none;
+    }
+
+    .mind-map-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(420px, 38vw);
+        padding: 2rem 1.5rem 2.5rem;
+        overflow-y: auto;
+        background: rgba(10, 12, 10, 0.97);
+        border-left: 1px solid rgba(57, 255, 20, 0.55);
+        box-shadow: -12px 0 35px rgba(0, 0, 0, 0.62);
+        transform: translateX(105%);
+        transition: transform 0.25s ease;
+        z-index: 8;
+    }
+
+    .mind-map-panel.open {
+        transform: translateX(0);
+    }
+
+    .panel-close {
+        position: absolute;
+        top: 0.65rem;
+        right: 0.8rem;
+        width: 30px;
+        height: 30px;
+        border: 0;
+        background: transparent;
+        color: rgba(245, 245, 240, 0.65);
+        font: 1.6rem/1 'Courier New', monospace;
+        cursor: pointer;
+    }
+
+    .panel-close:hover {
+        color: var(--terminal-green);
+    }
+
+    .node-type {
+        margin: 0 0 0.45rem;
+        color: var(--terminal-green);
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .mind-map-panel h1 {
+        margin: 0 2rem 1.2rem 0;
+        color: var(--text-color);
+        font-size: 1.35rem;
+        line-height: 1.25;
+    }
+
+    .node-content {
+        color: rgba(245, 245, 240, 0.86);
+        font-size: 0.86rem;
+        line-height: 1.62;
+        overflow-wrap: anywhere;
+    }
+
+    .node-content :global(h1),
+    .node-content :global(h2),
+    .node-content :global(h3) {
+        margin: 1.45rem 0 0.65rem;
+        color: var(--text-color);
+        font-size: 1rem;
+    }
+
+    .node-content :global(p) {
+        margin: 0.75rem 0;
+    }
+
+    .node-content :global(blockquote) {
+        margin: 0.9rem 0;
+        padding-left: 0.85rem;
+        border-left: 2px solid rgba(57, 255, 20, 0.45);
+        color: var(--muted-text);
+    }
+
+    .node-content :global(a) {
+        color: var(--terminal-green);
+        text-decoration: underline;
+        text-decoration-color: rgba(57, 255, 20, 0.35);
+        cursor: pointer;
+    }
+
+    .node-content :global(pre) {
+        overflow-x: auto;
+        padding: 0.75rem;
+        background: #050605;
+        border: 1px solid rgba(57, 255, 20, 0.15);
+    }
+
+    .node-content :global(table) {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+    }
+
+    .node-content :global(th),
+    .node-content :global(td) {
+        padding: 0.35rem 0.5rem;
+        border: 1px solid rgba(245, 245, 240, 0.15);
+    }
+
+    .related-wrap {
+        margin-top: 1.7rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(57, 255, 20, 0.22);
+    }
+
+    .related-wrap h2 {
+        margin: 0 0 0.8rem;
+        color: var(--text-color);
+        font-size: 0.82rem;
+    }
+
+    .related-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .related-link {
+        padding: 0.3rem 0.45rem;
+        border: 1px solid rgba(57, 255, 20, 0.22);
+        border-radius: 3px;
+        background: transparent;
+        color: rgba(245, 245, 240, 0.72);
+        font: 0.7rem/1.3 'Courier New', monospace;
+        cursor: pointer;
+    }
+
+    .related-link:hover {
+        border-color: var(--terminal-green);
+        color: var(--terminal-green);
+    }
+
+    @media (max-width: 767px) {
+        .mind-map-shell {
+            height: calc(100svh - 205px);
+            min-height: 480px;
+        }
+
+        .mind-map-panel {
+            top: auto;
+            left: 0;
+            width: 100%;
+            height: min(58vh, 520px);
+            padding: 1.6rem 1rem 2.25rem;
+            border-top: 1px solid rgba(57, 255, 20, 0.55);
+            border-left: 0;
+            transform: translateY(105%);
+            box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.68);
+        }
+
+        .mind-map-panel.open {
+            transform: translateY(0);
+        }
+
+        .mind-map-panel h1 {
+            font-size: 1.12rem;
+        }
+
+        .node-content {
+            font-size: 0.82rem;
+        }
+    }
+</style>

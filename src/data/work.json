@@ -1,0 +1,162 @@
+[
+  {
+    "id": "phib",
+    "title": "$PHIB",
+    "description": "A memecoin project explored through tokenomics, transaction mechanics, branding, and launch planning.",
+    "year": "2022",
+    "group": "ideas",
+    "link": null
+  },
+  {
+    "id": "austin-treasure-map",
+    "title": "Austin Treasure Map",
+    "description": "A gamified map of 90+ hand-picked Austin places built for finding a new local adventure.",
+    "year": "2026",
+    "group": "built",
+    "link": "https://yg4president.github.io/austin-treasure-map/"
+  },
+  {
+    "id": "betio",
+    "title": "Betio",
+    "description": "An iOS-first simulated sports prediction experience with a native app, API, and operator console.",
+    "year": "2026",
+    "group": "now",
+    "link": null
+  },
+  {
+    "id": "bigboigig",
+    "title": "BigBoiGig",
+    "description": "A complete technical, content, local SEO, and growth operating system for a home-comfort company.",
+    "year": "2026",
+    "group": "built",
+    "link": null
+  },
+  {
+    "id": "brotein",
+    "title": "Brotein",
+    "description": "An iOS nutrition app for scanning menus and evaluating meals for their muscle-building potential.",
+    "year": "2025",
+    "group": "built",
+    "link": null
+  },
+  {
+    "id": "insight-ai",
+    "title": "Insight AI",
+    "description": "A productized AI-visibility audit and lead funnel that became part of the thinking behind Rankett.",
+    "year": "2025",
+    "group": "built",
+    "link": null
+  },
+  {
+    "id": "irl-lore",
+    "title": "IRL Lore",
+    "description": "An AI-assisted journaling concept that turns daily entries into personal lore and monthly retrospectives.",
+    "year": "2025",
+    "group": "ideas",
+    "link": null
+  },
+  {
+    "id": "lift-atx",
+    "title": "Lift ATX",
+    "description": "A custom member website and local sponsorship system for the Lift ATX gym community.",
+    "year": "2026",
+    "group": "now",
+    "link": "https://github.com/YG4PRESIDENT/liftatx"
+  },
+  {
+    "id": "mlb-kalshi-luck-bot",
+    "title": "MLB Kalshi Luck Bot",
+    "description": "A live-game MLB paper-trading research harness with a luck-adjusted win-probability model.",
+    "year": "2026",
+    "group": "built",
+    "link": null
+  },
+  {
+    "id": "orph",
+    "title": "Orph",
+    "description": "An iMessage-first fitness app for conversational workout, nutrition, and supplement logging.",
+    "year": "2026",
+    "group": "now",
+    "link": null
+  },
+  {
+    "id": "outpace",
+    "title": "Outpace",
+    "description": "An Apple Health step-tracking app with a daily iMessage-style leaderboard for friend groups.",
+    "year": "2025",
+    "group": "built",
+    "link": "https://github.com/YG4PRESIDENT/official-outpace-website"
+  },
+  {
+    "id": "baby-tracking-app",
+    "title": "Privacy-Friendly Baby Tracking App (CS 461 capstone)",
+    "description": "A privacy-first baby tracking app designed around local storage, encryption, and opt-in cloud backup.",
+    "year": "2024",
+    "group": "built",
+    "link": null
+  },
+  {
+    "id": "rankett",
+    "title": "Rankett",
+    "description": "A white-label AI search optimization platform built for marketing and SEO agencies.",
+    "year": "2026",
+    "group": "now",
+    "link": "https://rankett.com"
+  },
+  {
+    "id": "sante-designs",
+    "title": "Sante Designs",
+    "description": "A custom fashion and graphic-design brand website built with motion-led interactions.",
+    "year": "2026",
+    "group": "built",
+    "link": "https://github.com/YG4PRESIDENT/santedesigns.com"
+  },
+  {
+    "id": "snap-map-app",
+    "title": "Snap Map App (concept)",
+    "description": "An early location-based social app concept inspired by the interaction model of Snap Map.",
+    "year": "2019",
+    "group": "ideas",
+    "link": null
+  },
+  {
+    "id": "swipr",
+    "title": "Swipr",
+    "description": "A swipe-based prediction product built around short sessions and accuracy-based outcomes.",
+    "year": "2026",
+    "group": "built",
+    "link": null
+  },
+  {
+    "id": "te-amo",
+    "title": "Té Amo — Tea and Art House",
+    "description": "A Mexican-American tea and art house concept centered on drinks, food, local art, and community.",
+    "year": "2023",
+    "group": "ideas",
+    "link": null
+  },
+  {
+    "id": "vrtl-bet",
+    "title": "Vrtl Bet",
+    "description": "A friend-focused betting and prediction product concept under the VRTL Pirates umbrella.",
+    "year": "2025",
+    "group": "ideas",
+    "link": null
+  },
+  {
+    "id": "wagerwrld",
+    "title": "WagerWrld",
+    "description": "A sports-betting-with-friends app concept that preceded the later Swipr work.",
+    "year": "2024",
+    "group": "ideas",
+    "link": null
+  },
+  {
+    "id": "youtube-tool",
+    "title": "YouTube Tool",
+    "description": "A hosted Rankett microservice for turning YouTube content into AI-visibility work.",
+    "year": "2026",
+    "group": "built",
+    "link": null
+  }
+]

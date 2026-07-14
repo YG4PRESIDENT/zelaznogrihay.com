@@ -1,0 +1,126 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import tweetData from '../data/tweets.json';
+import { groupTweets } from '../lib/tweets';
+
+const entries = groupTweets(tweetData.tweets);
+---
+
+<MainLayout title="Tweets | zelaznogrihay.com" description="Tweets by Yahir Gonzalez, newest first.">
+    <section class="page-shell tweets-page">
+        <h1 class="page-title">Tweets</h1>
+        {entries.length > 0 ? (
+            <ol class="tweets-list">
+                {entries.map(entry => (
+                    <li id={`tweet-${entry.id}`}>
+                        {entry.parts.map((tweet, index) => (
+                            <div class:list={['tweet-part', { 'thread-part': entry.parts.length > 1 && index > 0 }]}>
+                                <p>{tweet.text}</p>
+                                {tweet.media?.length > 0 && (
+                                    <div class="tweet-media">
+                                        {tweet.media.map(media => (
+                                            <img src={media.url} alt={media.alt || ''} loading="lazy" />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                        <a class="tweet-date" href={entry.url} target="_blank" rel="noreferrer">
+                            {new Date(entry.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric', month: 'short', day: 'numeric', timeZone: 'America/Chicago'
+                            })}
+                        </a>
+                    </li>
+                ))}
+            </ol>
+        ) : (
+            <div class="empty-state">
+                <p>The tweet archive is being connected.</p>
+                <a href={`https://x.com/${tweetData.handle}`} target="_blank" rel="noreferrer">@{tweetData.handle} on X</a>
+            </div>
+        )}
+    </section>
+</MainLayout>
+
+<style>
+    .tweets-page {
+        max-width: 760px;
+    }
+
+    .tweets-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tweets-list > li {
+        padding: 1.1rem 0.55rem;
+        border-bottom: 1px dotted rgba(212, 175, 55, 0.25);
+    }
+
+    .tweets-list > li:last-child {
+        border-bottom: 0;
+    }
+
+    .tweets-list p {
+        margin: 0 0 0.65rem;
+        color: var(--text-color);
+        line-height: 1.62;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .tweet-part.thread-part {
+        margin-top: 0.9rem;
+        padding-top: 0.9rem;
+        border-top: 1px dotted rgba(57, 255, 20, 0.2);
+    }
+
+    .tweet-date {
+        color: var(--muted-text);
+        font-size: 0.78rem;
+    }
+
+    .tweet-date:hover {
+        color: var(--terminal-green);
+    }
+
+    .tweet-media {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin: 0.8rem 0;
+    }
+
+    .tweet-media img {
+        display: block;
+        width: 100%;
+        max-height: 420px;
+        object-fit: cover;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 4px;
+    }
+
+    .empty-state {
+        padding: 1rem 0;
+        color: var(--muted-text);
+    }
+
+    .empty-state p {
+        margin-top: 0;
+    }
+
+    .empty-state a {
+        color: var(--terminal-green);
+    }
+
+    @media (max-width: 600px) {
+        .tweets-list > li {
+            padding-inline: 0;
+        }
+
+        .tweet-media {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

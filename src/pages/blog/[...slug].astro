@@ -1,20 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 
 export async function getStaticPaths() {
     const blogEntries = await getCollection('blog');
     return blogEntries.map(entry => ({
-        params: { slug: entry.slug },
+        params: { slug: entry.id.replace(/\.(md|mdx)$/i, '') },
         props: { entry },
     }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 ---
 <BlogPost frontmatter={entry.data}>
-    <a href="/home" class="back-link">&larr; Back to Writings</a>
+    <a href="/writings" class="back-link">&larr; Back to Writings</a>
     <div class="content">
         <Content />
     </div>

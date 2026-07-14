@@ -1,0 +1,103 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import workItems from '../data/work.json';
+
+const sections = [
+    { key: 'built', title: 'Built' },
+    { key: 'ideas', title: 'Ideas' },
+    { key: 'now', title: 'Now' },
+];
+---
+
+<MainLayout title="Work | zelaznogrihay.com" description="Things Yahir Gonzalez has built, considered, and is working on now.">
+    <div class="page-shell work-page">
+        <h1 class="page-title">Work</h1>
+        {sections.map(section => {
+            const items = workItems.filter(item => item.group === section.key);
+            return (
+                <section class="work-section">
+                    <h2>{section.title}</h2>
+                    {items.length > 0 ? (
+                        <ul class="simple-list">
+                            {items.map(item => (
+                                <li class="simple-row work-row">
+                                    {item.link ? (
+                                        <a href={item.link} target="_blank" rel="noreferrer">
+                                            <span class="work-copy">
+                                                <strong>{item.title}</strong>
+                                                <span>{item.description}</span>
+                                            </span>
+                                            <span class="row-meta">{item.year}</span>
+                                        </a>
+                                    ) : (
+                                        <div class="row-content">
+                                            <span class="work-copy">
+                                                <strong>{item.title}</strong>
+                                                <span>{item.description}</span>
+                                            </span>
+                                            <span class="row-meta">{item.year}</span>
+                                        </div>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p class="empty-copy">Nothing here yet.</p>
+                    )}
+                </section>
+            );
+        })}
+    </div>
+</MainLayout>
+
+<style>
+    .work-page {
+        max-width: 900px;
+    }
+
+    .work-section {
+        margin-bottom: 2.35rem;
+    }
+
+    .work-section h2 {
+        margin: 0;
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.55);
+        color: var(--text-color);
+        font-size: 1.15rem;
+    }
+
+    .work-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        min-width: 0;
+    }
+
+    .work-copy strong {
+        color: var(--text-color);
+        font-size: 0.98rem;
+    }
+
+    .work-copy > span {
+        color: var(--muted-text);
+        font-size: 0.85rem;
+        line-height: 1.45;
+    }
+
+    .empty-copy {
+        color: var(--muted-text);
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+        .work-section {
+            margin-bottom: 1.8rem;
+        }
+
+        .work-row > :global(a),
+        .work-row > :global(.row-content) {
+            align-items: flex-start;
+        }
+    }
+</style>

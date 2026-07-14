@@ -1,0 +1,95 @@
+---
+const pathname = Astro.url.pathname;
+
+const links = [
+    { href: '/home', label: 'Home', active: pathname === '/home' || pathname === '/home/' },
+    { href: '/mind-map', label: 'Mind Map', active: pathname.startsWith('/mind-map') },
+    { href: '/work', label: 'Work', active: pathname.startsWith('/work') },
+    { href: '/writings', label: 'Writings', active: pathname.startsWith('/writings') || pathname.startsWith('/blog') },
+    { href: '/tweets', label: 'Tweets', active: pathname.startsWith('/tweets') },
+];
+---
+
+<nav class="site-nav" aria-label="Primary navigation">
+    <ul>
+        {links.map(link => (
+            <li>
+                <a href={link.href} class:list={{ active: link.active }} aria-current={link.active ? 'page' : undefined}>
+                    {link.label}
+                </a>
+            </li>
+        ))}
+    </ul>
+</nav>
+
+<style>
+    .site-nav {
+        width: 100%;
+        min-width: 0;
+        max-width: 100vw;
+        overflow-x: auto;
+        scrollbar-width: none;
+        border-top: 1px solid rgba(57, 255, 20, 0.18);
+        background: var(--bg-color);
+    }
+
+    .site-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    ul {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: max-content;
+        min-width: 100%;
+        list-style: none;
+        margin: 0;
+        padding: 0.8rem 1rem 0.75rem;
+        box-sizing: border-box;
+    }
+
+    li {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    li:not(:last-child)::after {
+        content: '·';
+        color: rgba(57, 255, 20, 0.45);
+        margin: 0 0.75rem;
+    }
+
+    a {
+        color: rgba(57, 255, 20, 0.7);
+        font-size: 0.94rem;
+        letter-spacing: 0.03em;
+        padding-bottom: 0.2rem;
+        border-bottom: 1px solid transparent;
+        text-decoration: none;
+    }
+
+    a:hover,
+    a.active {
+        color: var(--terminal-green);
+        border-bottom-color: var(--terminal-green);
+        text-shadow: 0 0 8px rgba(57, 255, 20, 0.45);
+    }
+
+    @media (max-width: 600px) {
+        ul {
+            justify-content: flex-start;
+            min-width: max-content;
+            padding-inline: 0.8rem;
+        }
+
+        li:not(:last-child)::after {
+            margin-inline: 0.6rem;
+        }
+
+        a {
+            font-size: 0.84rem;
+        }
+    }
+</style>
