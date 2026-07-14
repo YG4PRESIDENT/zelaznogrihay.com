@@ -39,27 +39,37 @@ const newestSavedId = current.tweets
     })[0];
 if (newestSavedId) query.set('since_id', newestSavedId);
 
-const tweetsResponse = await fetch(`https://api.x.com/2/users/${userId}/tweets?${query}`, { headers });
-if (!tweetsResponse.ok) throw new Error(`X posts lookup failed: ${tweetsResponse.status}`);
-const payload = await tweetsResponse.json();
-const mediaByKey = new Map((payload.includes?.media || []).map(media => [media.media_key, media]));
+const latest = [];
+let paginationToken;
 
-const latest = (payload.data || []).map(tweet => ({
-    id: tweet.id,
-    text: tweet.text,
-    createdAt: tweet.created_at,
-    url: `https://x.com/${handle}/status/${tweet.id}`,
-    conversationId: tweet.conversation_id || tweet.id,
-    inReplyTo: tweet.referenced_tweets?.find(reference => reference.type === 'replied_to')?.id || null,
-    media: (tweet.attachments?.media_keys || [])
-        .map(key => mediaByKey.get(key))
-        .filter(Boolean)
-        .map(media => ({
-            url: media.url || media.preview_image_url,
-            alt: media.alt_text || '',
-        }))
-        .filter(media => Boolean(media.url)),
-}));
+do {
+    if (paginationToken) query.set('pagination_token', paginationToken);
+    else query.delete('pagination_token');
+
+    const tweetsResponse = await fetch(`https://api.x.com/2/users/${userId}/tweets?${query}`, { headers });
+    if (!tweetsResponse.ok) throw new Error(`X posts lookup failed: ${tweetsResponse.status}`);
+    const payload = await tweetsResponse.json();
+    const mediaByKey = new Map((payload.includes?.media || []).map(media => [media.media_key, media]));
+
+    latest.push(...(payload.data || []).map(tweet => ({
+        id: tweet.id,
+        text: tweet.text,
+        createdAt: tweet.created_at,
+        url: `https://x.com/${handle}/status/${tweet.id}`,
+        conversationId: tweet.conversation_id || tweet.id,
+        inReplyTo: tweet.referenced_tweets?.find(reference => reference.type === 'replied_to')?.id || null,
+        media: (tweet.attachments?.media_keys || [])
+            .map(key => mediaByKey.get(key))
+            .filter(Boolean)
+            .map(media => ({
+                url: media.url || media.preview_image_url,
+                alt: media.alt_text || '',
+            }))
+            .filter(media => Boolean(media.url)),
+    })));
+
+    paginationToken = payload.meta?.next_token;
+} while (paginationToken);
 
 if (latest.length === 0) {
     console.log('X latest sync complete: no new posts.');
