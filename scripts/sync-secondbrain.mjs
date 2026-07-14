@@ -43,7 +43,7 @@ const clusterLayout = {
 const workOverrides = {
     phib: {
         description: 'A memecoin project explored through tokenomics, transaction mechanics, branding, and launch planning.',
-        year: '2022', group: 'ideas', link: null,
+        year: '2022', group: 'built', link: null,
     },
     'austin-treasure-map': {
         description: 'A gamified map of 90+ hand-picked Austin places built for finding a new local adventure.',
@@ -52,14 +52,6 @@ const workOverrides = {
     brotein: {
         description: 'An iOS nutrition app for scanning menus and evaluating meals for their muscle-building potential.',
         year: '2025', group: 'built', link: null,
-    },
-    'insight-ai': {
-        description: 'A productized AI-visibility audit and lead funnel that became part of the thinking behind Rankett.',
-        year: '2025', group: 'built', link: null,
-    },
-    'irl-lore': {
-        description: 'An AI-assisted journaling concept that turns daily entries into personal lore and monthly retrospectives.',
-        year: '2025', group: 'ideas', link: null,
     },
     outpace: {
         description: 'An Apple Health step-tracking app with a daily iMessage-style leaderboard for friend groups.',
@@ -71,33 +63,27 @@ const workOverrides = {
     },
     rankett: {
         description: 'A white-label AI search optimization platform built for marketing and SEO agencies.',
-        year: '2026', group: 'now', link: 'https://rankett.com',
-    },
-    'snap-map-app': {
-        description: 'An early location-based social app concept inspired by the interaction model of Snap Map.',
-        year: '2019', group: 'ideas', link: null,
+        year: '2026', group: 'built', link: 'https://rankett.com',
     },
     swipr: {
-        description: 'A swipe-based prediction product built around short sessions and accuracy-based outcomes.',
+        description: 'A swipe-based prediction product built around short sessions and accuracy-based outcomes. Built, but not fully released.',
         year: '2026', group: 'built', link: null,
     },
-    'te-amo': {
-        description: 'A Mexican-American tea and art house concept centered on drinks, food, local art, and community.',
-        year: '2023', group: 'ideas', link: null,
-    },
-    'vrtl-bet': {
-        description: 'A friend-focused betting and prediction product concept under the VRTL Pirates umbrella.',
-        year: '2025', group: 'ideas', link: null,
-    },
-    wagerwrld: {
-        description: 'A sports-betting-with-friends app concept that preceded the later Swipr work.',
-        year: '2024', group: 'ideas', link: null,
-    },
     'youtube-tool': {
-        description: 'A hosted Rankett microservice for turning YouTube content into AI-visibility work.',
+        title: 'YouTube Tooling',
+        description: 'A hosted Rankett tool for turning YouTube content into AI-visibility work. Built, but not fully released.',
         year: '2026', group: 'built', link: null,
     },
 };
+
+const excludedWorkIds = new Set([
+    'insight-ai',
+    'irl-lore',
+    'snap-map-app',
+    'te-amo',
+    'vrtl-bet',
+    'wagerwrld',
+]);
 
 const additionalWork = [
     {
@@ -116,13 +102,8 @@ const additionalWork = [
         year: '2026', group: 'now', link: 'https://github.com/YG4PRESIDENT/liftatx',
     },
     {
-        id: 'bigboigig', title: 'BigBoiGig',
-        description: 'A complete technical, content, local SEO, and growth operating system for a home-comfort company.',
-        year: '2026', group: 'built', link: null,
-    },
-    {
         id: 'mlb-kalshi-luck-bot', title: 'MLB Kalshi Luck Bot',
-        description: 'A live-game MLB paper-trading research harness with a luck-adjusted win-probability model.',
+        description: 'A live-game MLB paper-trading research harness with a luck-adjusted win-probability model. Built, but not fully released.',
         year: '2026', group: 'built', link: null,
     },
     {
@@ -131,6 +112,125 @@ const additionalWork = [
         year: '2026', group: 'built', link: 'https://github.com/YG4PRESIDENT/santedesigns.com',
     },
 ];
+
+const ideaWork = [
+    {
+        id: 'bromenu', title: 'BroMenu',
+        description: 'Find the most anabolic menu item for hitting your protein goals.',
+    },
+    {
+        id: 'swipe-prediction-betting', title: 'Swipe Prediction Betting',
+        description: 'A TikTok-style feed of micro-predictions: swipe left or right, with payouts based on prediction accuracy.',
+    },
+    {
+        id: 'clash-royale-betting', title: 'Clash Royale Betting',
+        description: 'A betting experience built around Clash Royale matches.',
+    },
+    {
+        id: 'weed-snack-drive-thru', title: 'Weed + Snack Drive-Thru',
+        description: 'A drive-thru combining cannabis and snacks in one stop.',
+    },
+    {
+        id: 'midnight-ghost-kitchen', title: 'Regional Midnight Ghost Kitchen',
+        description: 'A late-night regional ghost kitchen aimed at tech workers.',
+    },
+    {
+        id: 'horse-saas', title: 'Horse SaaS',
+        description: 'Software for the horse industry, with AI built into the workflow.',
+    },
+    {
+        id: 'horse-marketplace', title: 'Horse Marketplace',
+        description: 'A market for horse rights, breeding and semen, and track tickets—with a possible public-market layer for retail participation.',
+    },
+    {
+        id: 'immigration-turbotax', title: 'TurboTax for Immigration',
+        description: 'A guided platform that makes immigration paperwork and process navigation simpler.',
+    },
+    {
+        id: 'interface-less-hotels', title: 'Interface-Less Hotels',
+        description: 'Remove the human middle layer from hotel check-in and related security workflows.',
+    },
+    {
+        id: 'friend-bets', title: 'Friend Bets',
+        description: 'Generate simple live odds for one-on-one bets with friends, including group bets where participation changes the odds.',
+    },
+    {
+        id: 'wrld-sidequests', title: 'Wrld Sidequests',
+        description: 'Real-world quests created by a central creator or contributed geocache-style by the community, then approved and published.',
+    },
+    {
+        id: 'personal-ai-entity', title: 'Personal AI Entity',
+        description: 'An online AI avatar that acts as a persistent extension of a person.',
+    },
+    {
+        id: 'activity-status-widget', title: 'Activity Status Widget',
+        description: 'Tap once to automatically tell selected people what you are doing and keep yourself accountable.',
+    },
+    {
+        id: 'carbuddy', title: 'CarBUDDY',
+        description: 'A conversational AI companion that curates useful, enjoyable conversations while you drive.',
+    },
+    {
+        id: 'virtual-of-models', title: 'Virtual OF Models',
+        description: 'AI-created virtual models and the tools needed to operate them as online creators.',
+    },
+    {
+        id: 'ai-seo', title: 'AI SEO',
+        description: 'Tools and services for helping brands appear inside AI-generated search and answers.',
+    },
+    {
+        id: 'imessage-diet-set', title: 'iMessage Diet + Set App',
+        description: 'A diet and set-tracking experience operated through iMessage.',
+    },
+    {
+        id: 'werun-in-america', title: 'WeRun in America',
+        description: 'An early product and brand concept.',
+    },
+    {
+        id: 'midshinpants', title: 'MidShinPants.com',
+        description: 'A focused apparel brand built around mid-shin-length pants.',
+    },
+    {
+        id: 'community-app', title: 'Community App',
+        description: 'A product concept centered on making a real community easier to form and sustain.',
+    },
+    {
+        id: 'sushi-train-austin', title: 'Sushi Train',
+        description: 'An Austin restaurant built around conveyor-belt sushi, named “Sushi Train.”',
+    },
+    {
+        id: 'china-us-arbitrage', title: 'China–U.S. Arbitrage',
+        description: 'Find product and market arbitrage opportunities between China and the United States.',
+    },
+    {
+        id: 'livestream-commerce', title: 'Livestream Commerce',
+        description: 'Sell products live through personality-led streaming and real-time audience interaction.',
+    },
+    {
+        id: 'restaurant-qr-infrastructure', title: 'Restaurant QR Infrastructure',
+        description: 'Make QR-based ordering and interaction a standard layer across restaurants.',
+    },
+    {
+        id: 'delivery-food-lockers', title: 'Delivery Food Lockers',
+        description: 'Secure pickup lockers for delivery food in dense and high-traffic areas.',
+    },
+    {
+        id: 'group-buying', title: 'Pinduoduo-Style Group Buying',
+        description: 'Bring social, group-based purchasing mechanics into a new market.',
+    },
+    {
+        id: 'conveyor-hotpot', title: 'Conveyor Hotpot',
+        description: 'A hotpot restaurant organized around a conveyor-service format.',
+    },
+    {
+        id: 'friend-group-steps', title: 'Friend-Group Steps in WeChat',
+        description: 'A shared step-tracking layer embedded directly into a friend group’s chat.',
+    },
+    {
+        id: 'location-status-hotbar', title: 'Location Status Hotbar',
+        description: 'A Find My or Life360 layer that communicates activity through colors and can trigger emergency alerts or police calls.',
+    },
+].map(item => ({ ...item, year: '', group: 'ideas', link: null }));
 
 marked.setOptions({ gfm: true, breaks: true });
 
@@ -427,13 +527,13 @@ await fs.writeFile(
 );
 
 const workItems = records
-    .filter(record => record.id.startsWith('projects/'))
+    .filter(record => record.id.startsWith('projects/') && !excludedWorkIds.has(record.basename))
     .map(record => {
         const override = workOverrides[record.basename];
         const created = String(record.data.started || record.data.created || record.data.updated || '');
         return {
             id: record.basename,
-            title: record.title,
+            title: override?.title || record.title,
             description: override?.description || String(record.data.description || excerptFromMarkdown(record.body)),
             year: override?.year || created.match(/\d{4}/)?.[0] || '',
             group: override?.group || 'built',
@@ -441,6 +541,7 @@ const workItems = records
         };
     })
     .concat(additionalWork)
+    .concat(ideaWork)
     .sort((a, b) => a.title.localeCompare(b.title));
 
 await fs.mkdir(path.dirname(workOutput), { recursive: true });

@@ -14,10 +14,13 @@ if (!bearerToken) {
 const current = JSON.parse(await fs.readFile(outputPath, 'utf8'));
 const handle = process.env.X_USERNAME || current.handle || 'ygs_wrld';
 const headers = { Authorization: `Bearer ${bearerToken}` };
+let userId = process.env.X_USER_ID;
 
-const userResponse = await fetch(`https://api.x.com/2/users/by/username/${encodeURIComponent(handle)}`, { headers });
-if (!userResponse.ok) throw new Error(`X user lookup failed: ${userResponse.status}`);
-const user = (await userResponse.json()).data;
+if (!userId) {
+    const userResponse = await fetch(`https://api.x.com/2/users/by/username/${encodeURIComponent(handle)}`, { headers });
+    if (!userResponse.ok) throw new Error(`X user lookup failed: ${userResponse.status}`);
+    userId = (await userResponse.json()).data.id;
+}
 
 const query = new URLSearchParams({
     max_results: '100',
@@ -27,7 +30,16 @@ const query = new URLSearchParams({
     'media.fields': 'url,preview_image_url,alt_text,type',
 });
 
-const tweetsResponse = await fetch(`https://api.x.com/2/users/${user.id}/tweets?${query}`, { headers });
+const newestSavedId = current.tweets
+    .map(tweet => String(tweet.id))
+    .sort((a, b) => {
+        const left = BigInt(a);
+        const right = BigInt(b);
+        return left === right ? 0 : left > right ? -1 : 1;
+    })[0];
+if (newestSavedId) query.set('since_id', newestSavedId);
+
+const tweetsResponse = await fetch(`https://api.x.com/2/users/${userId}/tweets?${query}`, { headers });
 if (!tweetsResponse.ok) throw new Error(`X posts lookup failed: ${tweetsResponse.status}`);
 const payload = await tweetsResponse.json();
 const mediaByKey = new Map((payload.includes?.media || []).map(media => [media.media_key, media]));
@@ -48,6 +60,11 @@ const latest = (payload.data || []).map(tweet => ({
         }))
         .filter(media => Boolean(media.url)),
 }));
+
+if (latest.length === 0) {
+    console.log('X latest sync complete: no new posts.');
+    process.exit(0);
+}
 
 const merged = new Map(current.tweets.map(tweet => [tweet.id, tweet]));
 for (const tweet of latest) merged.set(tweet.id, tweet);

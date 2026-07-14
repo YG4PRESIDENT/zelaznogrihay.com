@@ -36,7 +36,6 @@ const sections = [
                                         ) : (
                                             <strong>{item.title}</strong>
                                         )}
-                                        <time>{item.year}</time>
                                     </div>
                                     <p>{item.description}</p>
                                 </li>
@@ -125,13 +124,6 @@ const sections = [
 
     .item-heading a:hover {
         color: var(--terminal-green);
-    }
-
-    time {
-        flex: 0 0 auto;
-        color: var(--muted-text);
-        font-size: 0.66rem;
-        font-style: italic;
     }
 
     li p {
