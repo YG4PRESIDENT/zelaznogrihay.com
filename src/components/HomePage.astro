@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import MainLayout from '../layouts/MainLayout.astro';
+import Sidequests from './Sidequests.astro';
 
 const posts = (await getCollection('blog'))
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -31,6 +32,11 @@ const posts = (await getCollection('blog'))
             ))}
         </ul>
         <a class="archive-link" href="/writings">All writings →</a>
+
+        <details class="mobile-quests">
+            <summary>Life Quests &amp; Voyages</summary>
+            <Sidequests compact={true} />
+        </details>
     </section>
 </MainLayout>
 
@@ -98,20 +104,80 @@ const posts = (await getCollection('blog'))
         font-size: 0.8rem;
     }
 
-    @media (max-width: 767px) {
+    .mobile-quests {
+        display: none;
+    }
+
+    @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
         .home-page {
             padding-top: 0;
         }
 
         h1 {
-            font-size: 1.2rem;
+            margin-bottom: 0.35rem;
+            font-size: 1.12rem;
         }
 
         li a {
             align-items: flex-start;
             flex-direction: column;
-            gap: 0.25rem;
-            padding-inline: 0;
+            gap: 0.18rem;
+            padding: 0.72rem 0;
+        }
+
+        li span {
+            font-size: 0.94rem;
+            line-height: 1.35;
+        }
+
+        time {
+            font-size: 0.7rem;
+        }
+
+        .archive-link {
+            min-height: 44px;
+            margin-top: 0.65rem;
+            padding: 0.75rem 0;
+            font-size: 0.76rem;
+        }
+
+        .mobile-quests {
+            display: block;
+            scroll-margin-top: calc(var(--mobile-nav-height) + 0.5rem);
+            margin-top: 1.15rem;
+            border-top: 1px solid rgba(57, 255, 20, 0.22);
+            border-bottom: 1px solid rgba(57, 255, 20, 0.22);
+        }
+
+        .mobile-quests summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 52px;
+            color: var(--accent-color);
+            font-size: 0.86rem;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .mobile-quests summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .mobile-quests summary::after {
+            content: '+';
+            color: var(--terminal-green);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .mobile-quests[open] {
+            padding-bottom: 1rem;
+        }
+
+        .mobile-quests[open] summary::after {
+            content: '−';
         }
     }
 </style>

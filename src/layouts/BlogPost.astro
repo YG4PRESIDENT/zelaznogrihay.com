@@ -110,4 +110,34 @@ const { frontmatter } = Astro.props;
 			font-size: 1.1rem;
 		}
 	}
+
+	@media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
+		.blog-post {
+			padding: 1rem 0;
+			border: 0;
+			border-radius: 0;
+			background: transparent;
+			box-shadow: none;
+		}
+
+		header {
+			margin-bottom: 1.25rem;
+			padding-bottom: 0.75rem;
+		}
+
+		h1 {
+			padding-right: 1.5rem;
+			font-size: 1.45rem;
+			line-height: 1.25;
+		}
+
+		.subtitle {
+			font-size: 1rem;
+		}
+
+		.post-content {
+			font-size: 0.96rem;
+			line-height: 1.65;
+		}
+	}
 </style>

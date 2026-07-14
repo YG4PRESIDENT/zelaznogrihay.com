@@ -24,7 +24,7 @@ const {
     <head>
         <meta charset="UTF-8" />
         <meta name="description" content={description} />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
@@ -40,8 +40,8 @@ const {
                         <img src="/images/full-logo-new.png" alt="Ship Logo" class="logo-image" />
                     </a>
                 </div>
-                <SiteNav />
             </header>
+            <SiteNav />
 
             <div class="content-container">
                 {showSidebar && (
@@ -73,33 +73,33 @@ const {
 
         const updateToggle = () => {
             const collapsed = sidebar.classList.contains('collapsed');
-            const mobile = window.innerWidth < 768;
-            sidebarToggle.innerHTML = mobile
-                ? (collapsed ? '&#9650;' : '&#9660;')
-                : (collapsed ? '&#9654;' : '&#9664;');
+            sidebarToggle.innerHTML = collapsed ? '&#9654;' : '&#9664;';
             sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
         };
 
         const applyStoredState = () => {
-            const mobile = window.innerWidth < 768;
-            const key = mobile ? 'sidebarCollapsedMobile' : 'sidebarCollapsedDesktop';
-            const stored = localStorage.getItem(key);
-            const collapsed = stored === null ? mobile : stored === 'true';
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('collapsed');
+                mainContainer.classList.remove('sidebar-collapsed');
+                document.body.style.overflow = '';
+                return;
+            }
 
-            sidebar.classList.toggle('mobile', mobile);
+            const stored = localStorage.getItem('sidebarCollapsedDesktop');
+            const collapsed = stored === 'true';
+
             sidebar.classList.toggle('collapsed', collapsed);
             mainContainer.classList.toggle('sidebar-collapsed', collapsed);
-            document.body.style.overflow = mobile && !collapsed ? 'hidden' : '';
+            document.body.style.overflow = '';
             updateToggle();
         };
 
         sidebarToggle.addEventListener('click', () => {
-            const mobile = window.innerWidth < 768;
+            if (window.innerWidth < 768) return;
             sidebar.classList.toggle('collapsed');
             const collapsed = sidebar.classList.contains('collapsed');
             mainContainer.classList.toggle('sidebar-collapsed', collapsed);
-            localStorage.setItem(mobile ? 'sidebarCollapsedMobile' : 'sidebarCollapsedDesktop', String(collapsed));
-            document.body.style.overflow = mobile && !collapsed ? 'hidden' : '';
+            localStorage.setItem('sidebarCollapsedDesktop', String(collapsed));
             updateToggle();
         });
 
@@ -121,6 +121,7 @@ const {
         --terminal-green-soft: rgba(57, 255, 20, 0.16);
         --sidebar-width: 250px;
         --sidebar-collapsed-width: 50px;
+        --mobile-nav-height: 46px;
     }
 
     * {
@@ -133,6 +134,8 @@ const {
         background: var(--bg-color);
         color: var(--text-color);
         font-size: 16px;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
     }
 
     body {
@@ -158,7 +161,6 @@ const {
         min-width: 0;
         max-width: 100vw;
         padding: 0.3rem 1rem 0;
-        border-bottom: 1px solid var(--accent-color);
         background: var(--bg-color);
         z-index: 10;
     }
@@ -273,7 +275,7 @@ const {
         min-width: 0;
         min-height: 100%;
         padding: 1.4rem 1.5rem 3rem;
-        overflow-x: hidden;
+        overflow-x: clip;
     }
 
     main.full-width {
@@ -342,13 +344,14 @@ const {
         font-style: italic;
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
         .main-container {
-            padding-top: 0.5rem;
+            min-height: 100dvh;
+            padding-top: 0;
         }
 
         #main-header {
-            padding: 0.2rem 0.5rem 0;
+            padding: 0;
         }
 
         .logo-image {
@@ -357,8 +360,8 @@ const {
         }
 
         .compact-header .logo-image {
-            max-height: 105px;
-            margin-bottom: -7px;
+            max-height: 78px;
+            margin-bottom: -4px;
         }
 
         .content-container {
@@ -367,48 +370,19 @@ const {
         }
 
         .sidebar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: auto;
-            max-height: 70vh;
-            border-right: 0;
-            border-top: 1px solid var(--accent-color);
-            z-index: 30;
-            transform: translateY(0);
-            background: var(--bg-color);
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.55);
-            transition: transform 0.25s ease;
-        }
-
-        .sidebar.mobile.collapsed {
-            width: 100%;
-            transform: translateY(calc(100% - 40px));
-        }
-
-        .sidebar-toggle {
-            top: -20px;
-            right: 20px;
-            width: 42px;
-            height: 42px;
-            border: 2px solid var(--bg-color);
-            background: var(--accent-color);
-            color: var(--bg-color);
-        }
-
-        .sidebar-content {
-            max-height: calc(70vh - 40px);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            display: none;
         }
 
         main {
-            padding: 1.1rem 0.8rem 4rem;
+            padding:
+                1rem
+                max(1rem, env(safe-area-inset-right))
+                max(2rem, env(safe-area-inset-bottom))
+                max(1rem, env(safe-area-inset-left));
         }
 
         main.full-width {
-            padding: 0 0 2.5rem;
+            padding: 0;
         }
 
         .page-title {
@@ -419,8 +393,18 @@ const {
         .simple-row > a,
         .simple-row > .row-content {
             align-items: flex-start;
-            gap: 0.75rem;
-            padding-inline: 0;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.72rem 0;
+        }
+
+        .simple-row > a > span:first-child {
+            font-size: 0.94rem;
+            line-height: 1.35;
+        }
+
+        .row-meta {
+            font-size: 0.7rem;
         }
     }
 

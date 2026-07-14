@@ -361,18 +361,27 @@
         color: var(--terminal-green);
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
         .mind-map-shell {
-            height: calc(100svh - 148px);
-            min-height: 520px;
+            height: calc(100dvh - 120px);
+            min-height: min(420px, calc(100dvh - 120px));
+            overscroll-behavior: contain;
+        }
+
+        .mind-map-canvas {
+            touch-action: none;
         }
 
         .mind-map-panel {
             top: auto;
             left: 0;
             width: 100%;
-            height: min(58vh, 520px);
-            padding: 1.6rem 1rem 2.25rem;
+            height: min(64dvh, 520px);
+            padding:
+                1.4rem
+                max(1rem, env(safe-area-inset-right))
+                max(1.5rem, env(safe-area-inset-bottom))
+                max(1rem, env(safe-area-inset-left));
             border-top: 1px solid rgba(57, 255, 20, 0.55);
             border-left: 0;
             transform: translateY(105%);
@@ -385,6 +394,13 @@
 
         .mind-map-panel h1 {
             font-size: 1.12rem;
+        }
+
+        .panel-close {
+            top: 0.35rem;
+            right: max(0.45rem, env(safe-area-inset-right));
+            width: 44px;
+            height: 44px;
         }
 
         .node-content {

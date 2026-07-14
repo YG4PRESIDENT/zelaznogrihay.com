@@ -17,11 +17,36 @@ const sections = [
     <section class="work-page">
         <h1 class="page-title">Work</h1>
 
+        <div class="work-tabs" role="tablist" aria-label="Work categories">
+            {sections.map((section, index) => {
+                const count = workItems.filter(item => item.group === section.key).length;
+                return (
+                    <button
+                        id={`work-tab-${section.key}`}
+                        type="button"
+                        role="tab"
+                        aria-controls={`work-panel-${section.key}`}
+                        aria-selected={index === 0 ? 'true' : 'false'}
+                        class:list={{ active: index === 0 }}
+                        data-work-tab={section.key}
+                    >
+                        <span>{section.title}</span>
+                        <small>{count}</small>
+                    </button>
+                );
+            })}
+        </div>
+
         <div class="work-grid">
-            {sections.map(section => {
+            {sections.map((section, index) => {
                 const items = workItems.filter(item => item.group === section.key);
                 return (
-                    <section class="work-column">
+                    <section
+                        id={`work-panel-${section.key}`}
+                        class:list={['work-column', { 'is-active': index === 0 }]}
+                        aria-labelledby={`work-tab-${section.key}`}
+                        data-work-panel={section.key}
+                    >
                         <header>
                             <h2>{section.title}</h2>
                             <span>{items.length}</span>
@@ -48,6 +73,25 @@ const sections = [
     </section>
 </MainLayout>
 
+<script>
+    const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-work-tab]')];
+    const panels = [...document.querySelectorAll<HTMLElement>('[data-work-panel]')];
+
+    for (const tab of tabs) {
+        tab.addEventListener('click', () => {
+            const selected = tab.dataset.workTab;
+            for (const item of tabs) {
+                const active = item === tab;
+                item.classList.toggle('active', active);
+                item.setAttribute('aria-selected', String(active));
+            }
+            for (const panel of panels) {
+                panel.classList.toggle('is-active', panel.dataset.workPanel === selected);
+            }
+        });
+    }
+</script>
+
 <style>
     .work-page {
         width: min(100%, 1240px);
@@ -59,6 +103,10 @@ const sections = [
         grid-template-columns: repeat(3, minmax(0, 1fr));
         border-top: 1px solid rgba(57, 255, 20, 0.22);
         border-bottom: 1px solid rgba(57, 255, 20, 0.22);
+    }
+
+    .work-tabs {
+        display: none;
     }
 
     .work-column {
@@ -146,6 +194,84 @@ const sections = [
 
         .work-column + .work-column {
             border-left: 0;
+        }
+    }
+
+    @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
+        .page-title {
+            margin-bottom: 0.7rem;
+        }
+
+        .work-tabs {
+            position: sticky;
+            top: var(--mobile-nav-height);
+            z-index: 25;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-bottom: 0.8rem;
+            background: rgba(10, 10, 10, 0.97);
+            border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+        }
+
+        .work-tabs button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.42rem;
+            min-width: 0;
+            min-height: 46px;
+            padding: 0.45rem 0.3rem;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            color: var(--muted-text);
+            font: 0.78rem/1 'Courier New', monospace;
+            cursor: pointer;
+        }
+
+        .work-tabs button.active {
+            border-bottom-color: var(--terminal-green);
+            color: var(--terminal-green);
+        }
+
+        .work-tabs small {
+            color: inherit;
+            font-size: 0.62rem;
+        }
+
+        .work-grid {
+            display: block;
+            border-top: 0;
+        }
+
+        .work-column {
+            display: none;
+            padding: 0;
+            border-bottom: 0;
+        }
+
+        .work-column.is-active {
+            display: block;
+        }
+
+        .work-column header {
+            display: none;
+        }
+
+        li {
+            padding: 0.78rem 0;
+        }
+
+        .item-heading strong,
+        .item-heading a {
+            font-size: 0.9rem;
+            line-height: 1.32;
+        }
+
+        li p {
+            margin-top: 0.32rem;
+            font-size: 0.78rem;
+            line-height: 1.48;
         }
     }
 </style>
