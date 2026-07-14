@@ -4,12 +4,10 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch:
-  schedule:
-    - cron: '17 14 * * *'
 
 # Allow this job to clone the repo and create a page deployment
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -26,22 +24,6 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Pull latest tweets
-        run: npm run sync:tweets:latest
-        env:
-          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
-          X_USERNAME: ${{ vars.X_USERNAME }}
-          X_USER_ID: ${{ vars.X_USER_ID }}
-      - name: Save newly synced tweets
-        run: |
-          if git diff --quiet -- src/data/tweets.json; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/tweets.json
-          git commit -m "Sync latest tweets"
-          git push
       - name: Build
         run: npm run build
       - name: Upload Pages artifact

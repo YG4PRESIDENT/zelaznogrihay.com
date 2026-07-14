@@ -6,8 +6,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "sync:brain": "node scripts/sync-secondbrain.mjs",
-    "sync:tweets": "node scripts/sync-twitter-archive.mjs",
-    "sync:tweets:latest": "node scripts/sync-twitter-api.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
