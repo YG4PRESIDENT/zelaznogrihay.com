@@ -1,56 +1,37 @@
 ---
-title: 'No Halfsies'
-description: "Orph is almost ready. It's time to trust my instinct, go all in, and take a real swing."
+title: "It's time."
+description: "It's time. Shit is changing again and a new chapter is about to commence."
 pubDate: '2026-07-26T00:00:00-05:00'
 ---
 
-It's time. Shit is changing again, and a new chapter is about to commence.
+It's time. Shit is changing again and a new chapter is about to commence.
 
-I feel like I've been acting like I've got more time.
+I feel like I've been acting like I got more time, I don't
 
-I don't.
+The argument to stay is strong, and the argument to continue with my original plan of leaving is also strong..
 
-The argument to stay is strong. The argument to continue with my original plan of leaving is also strong.
+I think I'm settling on the fact that I just have to trust my instinct, but I honestly feel like I'm larping a bit and carrying this larp energy is going to be a fucking downfall...
 
-I think I'm settling on the fact that I just have to trust my instinct. But honestly, I feel like I'm LARPing a bit—and carrying that energy is going to be my fucking downfall.
+Im moving back truly for 2 reasons:
+1. I miss my family and want to spend a season of quality time with them
+2. I need to take a real fucking swing with true backing… emotional, financial, and in Austin the candle burns dry quickly
 
-I'm moving back for two real reasons:
+Text [Orph](https://textorph.com) is almost ready, and this is the best shot that I have rn… Its compelling and convenient and i believe in it..
 
-1. I miss my family, and I want to spend a season of quality time with them.
-2. I need to take a real fucking swing with true backing—emotional and financial. In Austin, the candle burns dry quickly.
+Running it from day one base will be $800+.. Then like $250 plus monthly, this is excluding the costs for marketing which will be much much more… These are real costs that I just couldn't be able to sustain living alone in Austin and working at Lift..
 
-Text Orph is almost ready, and this is the best shot I have right now. It's compelling. It's convenient. And I believe in it.
+I'm going to have about 4000 to work with to make [Orph](https://textorph.com) successful.
 
-Running it from day one will cost more than $800, then around $250 every month. That doesn't include marketing, which will cost much, much more. Those are real costs that I just couldn't sustain while living alone in Austin and working at Lift.
+But what does success even mean? To me lowk right now it feels like breaking even. It feels like the moment that I made true internet money. It means being able to scale this from anywhere in the wrld.
 
-I'm going to have about $4,000 to make Orph successful.
+I'm going all in, but it doesn't really feel that way. It almost feels like something that I'm just doing and that's just unfair bc its THE thing that I'm doing rn..
 
-But what does success even mean?
+Maybe it's that I subconsciously am preparing myself to fail. I've failed with Amazon FBA, I've failed with a vending machine business, I've failed with Phib coin, I've failed with Brotein, I've failed with Rankett… at a certain point it almost feels like I'm just not cut out for this shit, but something in me won't allow it..
 
-Low-key, right now, it feels like breaking even. It feels like the moment I make real internet money. It means being able to scale this from anywhere in the wrld.
+I can't be preparing for failure, that's doing a disservice to myself and my journey..
 
-I'm going all in, but it doesn't really feel that way. It almost feels like something I'm just doing, and that's unfair—because it's **the** thing I'm doing right now.
+Maybe [Orph](https://textorph.com) does fail, but you would never know if you don't go all in. You need to go all in or just don't go at all. There is no halfsies on this shit..
 
-Maybe it's because I'm subconsciously preparing myself to fail.
+Anyways, I just need to continue reminding myself that the only failure is not trying and defeat only comes with giving up….  We are going to make this real, will my reality
 
-I've failed with Amazon FBA. I've failed with a vending machine business. I've failed with Phib Coin. I've failed with Brotein. I've failed with Rankett.
-
-At a certain point, it almost feels like I'm just not cut out for this shit.
-
-But something in me won't allow that.
-
-I can't prepare for failure. That's doing a disservice to myself and to my journey.
-
-Maybe Orph does fail. But you'll never know what it could become if you don't go all in. You need to go all in—or don't go at all. There is no halfsies on this shit.
-
-Anyways, I just need to keep reminding myself that the only failure is not trying, and defeat only comes with giving up.
-
-We are going to make this real. We are going to will it into reality.
-
-We are going to do this, Yahir.
-
-I know you believe this. The basis for that belief is nothing except the knowledge that you aren't here by accident. Every struggle you have faced has been met with grace and strength.
-
-You are strong.
-
-This will be manifested.
+We are going to do this Yahir. I know you believe this, the basis to believe in this is nothing except that you aren't here by accident. And all of the struggles that you have faced have been met with grace and strength. You are strong and this will be manifested
