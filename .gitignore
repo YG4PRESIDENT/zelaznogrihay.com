@@ -1,5 +1,8 @@
 # build output
 dist/
+
+# Private SecondBrain exports must never ship with the public site
+public/data/mind-map/
 # generated types
 .astro/
 
