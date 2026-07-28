@@ -10,15 +10,36 @@ const travelQuests = [
     { name: 'Trek through Patagonia with Huck', category: 'travel' },
 ];
 
-const lifeQuests = [
-    { name: 'Launch Brotein to market success', category: 'achievement' },
-    { name: 'Found a publicly traded company', category: 'achievement' },
-    { name: 'Contribute to anime creation', category: 'creative' },
-    { name: 'Complete a marathon', category: 'physical' },
-    { name: 'Succeed as a digital nomad', category: 'lifestyle' },
-    { name: 'Travel to 7 wonders of the world (5/7)', category: 'family' },
+interface LifeQuest {
+    name: string;
+    category: string;
+    link?: {
+        text: string;
+        href: string;
+    };
+}
 
-
+const lifeQuests: LifeQuest[] = [
+    {
+        name: 'Launch Orph on the App Store & reach 100 users',
+        category: 'achievement',
+        link: {
+            text: 'Orph',
+            href: 'https://textorph.com',
+        },
+    },
+    { name: 'Found a publicly traded company by 30', category: 'achievement' },
+    { name: 'Contribute to the creation of an anime', category: 'creative' },
+    { name: 'Complete Huntington Beach Marathon — Feb 7, 2027', category: 'physical' },
+    { name: 'Build a location-independent life', category: 'lifestyle' },
+    { name: 'Visit all 7 wonders (5/7)', category: 'travel' },
+    { name: 'Fail spectacularly, over & over & over', category: 'character' },
+    { name: 'Support Emilio through law school—financially & emotionally', category: 'family' },
+    { name: 'Build a college fund for the girls', category: 'family' },
+    { name: 'Radiate love & make friends anywhere', category: 'character' },
+    { name: 'Host my people often, no holds barred', category: 'community' },
+    { name: 'Earn through compelling work I’m proud of', category: 'achievement' },
+    { name: 'Build a family with a woman I adore', category: 'family' },
 ];
 
 interface Props {
@@ -31,11 +52,25 @@ const { compact = false } = Astro.props;
 <div class:list={['sidequests', { compact }]}>
     <h2>Life Quests</h2>
     <div class="quests-container">
-        {lifeQuests.map(quest => (
-            <div class="quest-item life">
-                <span class="quest-name">{quest.name}</span>
-            </div>
-        ))}
+        {lifeQuests.map(quest => {
+            const linkIndex = quest.link ? quest.name.indexOf(quest.link.text) : -1;
+            const beforeLink = linkIndex >= 0 ? quest.name.slice(0, linkIndex) : '';
+            const afterLink = quest.link && linkIndex >= 0
+                ? quest.name.slice(linkIndex + quest.link.text.length)
+                : '';
+
+            return (
+                <div class="quest-item life">
+                    <span class="quest-name">
+                        {quest.link && linkIndex >= 0 ? (
+                            <>
+                                {beforeLink}<a href={quest.link.href}>{quest.link.text}</a>{afterLink}
+                            </>
+                        ) : quest.name}
+                    </span>
+                </div>
+            );
+        })}
     </div>
     
     <h2>Voyages</h2>
