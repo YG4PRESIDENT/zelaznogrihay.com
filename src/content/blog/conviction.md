@@ -9,11 +9,11 @@ need to be willing to go all the fucking way. You need to be able to face ridicu
 
 No fucking larping; you are there for a reason and you need to do anything it takes to see it through. Balance is irrational.
 
-Family and Mission… that’s why I'm moving back to my hometown with my parents.
+Family and Mission… that’s why I&#39;m moving back to my hometown with my parents.
 
 I want to be with my family, and this is going to give me the base to get a big swing on the mission.
 
-I am already preparing for it to not work and fail, and if it fails, we will try again. But what if it doesn't fail, what if it succeeds…
+I am already preparing for it to not work and fail, and if it fails, we will try again. But what if it doesn&#39;t fail, what if it succeeds…
 
 Nothing is failure as long as you put your heart on the line and can go to sleep honestly knowing that.
 
