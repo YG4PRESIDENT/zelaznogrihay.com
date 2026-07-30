@@ -2,9 +2,9 @@
 
 > Format: 2
 > Goal ID: 2026-07-30-publish-conviction-essay-verbatim
-> Status: active
+> Status: done
 > Started: 2026-07-30T08:27:27.681Z
-> Updated: 2026-07-30T08:39:14.517Z
+> Updated: 2026-07-30T08:42:33.783Z
 > Branch: wip/2026-07-30-publish-conviction-essay-verbatim
 > Base: 1f3e93c53784d093ca8fc06c0814f98802842ce4
 > Outcome: A new blog post containing the user's supplied copy verbatim is live on zelaznogrihay.com.
@@ -30,11 +30,11 @@
 
 ### U3 — Publish and confirm production
 
-- Status: in_progress
+- Status: done
 - Acceptance: The scoped commit is pushed to origin/master and the GitHub Pages deployment succeeds with the post reachable publicly.
-- Proof: —
+- Proof: Pushed c354c27 to origin/master; GitHub Pages run 30527566436 completed build and deploy successfully; live custom-domain verification returned HTTP 200 and matched all 8 paragraphs, the exact title, and the Writings link.
 - Blocker: —
-- Completed: —
+- Completed: 2026-07-30T08:42:00.643Z
 
 ## Rebaselines
 
@@ -45,7 +45,8 @@
 - 2026-07-30T08:30:43.924Z | 33% | Add conviction blog post verbatim
 - 2026-07-30T08:31:03.146Z | 33% | Add conviction blog post verbatim
 - 2026-07-30T08:39:14.517Z | 67% | Preserve exact blog punctuation in rendered output
+- 2026-07-30T08:42:33.783Z | 100% | Record conviction blog publication
 
 ## Next
 
-Checkpoint the render-fidelity fix, publish the resulting commit to origin/master, and confirm GitHub Pages production.
+Checkpoint the completed goal record and report the live URL.
