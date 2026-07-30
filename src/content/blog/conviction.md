@@ -1,5 +1,5 @@
 ---
-title: 'If you are going to truly have conviction about something, you need to be willing to go all the fucking way.'
+title: 'conviction'
 description: 'You need to be able to face ridicule and doubt, and not waver in the face of it.'
 pubDate: '2026-07-30T00:00:00-05:00'
 ---
