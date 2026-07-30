@@ -2,9 +2,9 @@
 
 > Format: 2
 > Goal ID: 2026-07-30-restore-public-mind-map
-> Status: active
+> Status: done
 > Started: 2026-07-30T20:24:44.330Z
-> Updated: 2026-07-30T20:31:44.642Z
+> Updated: 2026-07-30T20:34:04.078Z
 > Branch: wip/2026-07-30-restore-public-mind-map
 > Base: a52c8dc3c49ff2dbf03d3eff53b9f091636ec853
 > Outcome: The interactive mind map is restored on zelaznogrihay.com without reverting unrelated portfolio or blog changes.
@@ -30,11 +30,11 @@
 
 ### U3 — Publish and verify the restoration
 
-- Status: in_progress
+- Status: done
 - Acceptance: The restoration commit reaches the deployment branch and the live /mind-map/ and graph endpoints return HTTP 200.
-- Proof: —
+- Proof: Fast-forwarded 9b54f0c to master; GitHub Pages run 30579587205 completed build and deploy successfully; live /mind-map/, graph, compiled JS, and a note payload return HTTP 200; live graph SHA-256 matches the validated build.
 - Blocker: —
-- Completed: —
+- Completed: 2026-07-30T20:33:53.894Z
 
 ## Rebaselines
 
@@ -44,7 +44,8 @@
 
 - 2026-07-30T20:27:48.358Z | 33% | Restore interactive mind map
 - 2026-07-30T20:31:44.642Z | 67% | Record mind map build proof
+- 2026-07-30T20:34:04.078Z | 100% | Record live mind map deployment
 
 ## Next
 
-Push the fast-forward restoration to master, monitor GitHub Pages, and verify both live endpoints return HTTP 200.
+Return the restored live URL and note the preserved unrelated nested website dirtiness.
