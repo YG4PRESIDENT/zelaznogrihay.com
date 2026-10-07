@@ -1,0 +1,29 @@
+{
+  "name": "Yahir Gonzalez",
+  "links": [
+    {
+      "label": "Resume",
+      "href": "/yahir-gonzalez-resume.pdf",
+      "accessibleLabel": "View Yahir Gonzalez’s resume (PDF)",
+      "newTab": true
+    },
+    {
+      "label": "Contact",
+      "href": "mailto:yahirg2021@gmail.com",
+      "accessibleLabel": "Email Yahir Gonzalez",
+      "newTab": false
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/yahir-gonzalez-278130241/",
+      "accessibleLabel": "Yahir Gonzalez on LinkedIn",
+      "newTab": true
+    },
+    {
+      "label": "GitHub",
+      "href": "https://github.com/YG4PRESIDENT",
+      "accessibleLabel": "Yahir Gonzalez on GitHub",
+      "newTab": true
+    }
+  ]
+}

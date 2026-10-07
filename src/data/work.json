@@ -1,11 +1,35 @@
 [
   {
+    "id": "fantasy-central",
+    "title": "Fantasy Central",
+    "description": "An iOS app for following ESPN and Sleeper leagues on one scoreboard.",
+    "contribution": "I built native account connections, widgets, and Live Activities, with refresh logic that preserves the last good scores when requests fail.",
+    "year": "2026",
+    "group": "built",
+    "status": "Published",
+    "order": 10,
+    "link": "https://apps.apple.com/us/app/fantasy-central/id6811317868",
+    "links": [
+      {
+        "label": "App Store",
+        "href": "https://apps.apple.com/us/app/fantasy-central/id6811317868"
+      },
+      {
+        "label": "Screenshot",
+        "href": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/8d/f1/ff/8df1ffe8-0167-8407-ca2b-d41554965034/01-all-leagues.png/600x1300bb.webp"
+      }
+    ]
+  },
+  {
     "id": "phib",
     "title": "$PHIB",
     "description": "A memecoin project explored through tokenomics, transaction mechanics, branding, and launch planning.",
     "year": "2022",
     "group": "built",
-    "link": null
+    "link": null,
+    "status": "Exploration",
+    "order": 110,
+    "links": []
   },
   {
     "id": "activity-status-widget",
@@ -26,10 +50,23 @@
   {
     "id": "austin-treasure-map",
     "title": "Austin Treasure Map",
-    "description": "A gamified map of 90+ hand-picked Austin places built for finding a new local adventure.",
+    "description": "A map for choosing your next Austin adventure, with search, saved visits, neighborhood progress, and quests.",
     "year": "2026",
     "group": "built",
-    "link": "https://yg4president.github.io/austin-treasure-map/"
+    "link": "https://yg4president.github.io/austin-treasure-map/",
+    "status": "Public project",
+    "order": 50,
+    "contribution": "I kept personal progress in the browser and added backup and sharing tools, so the map works without an account.",
+    "links": [
+      {
+        "label": "Explore map",
+        "href": "https://yg4president.github.io/austin-treasure-map/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/YG4PRESIDENT/austin-treasure-map"
+      }
+    ]
   },
   {
     "id": "betio",
@@ -37,7 +74,10 @@
     "description": "An iOS-first simulated sports prediction experience with a native app, API, and operator console.",
     "year": "2026",
     "group": "now",
-    "link": null
+    "link": null,
+    "status": "In progress",
+    "order": 30,
+    "links": []
   },
   {
     "id": "bromenu",
@@ -49,11 +89,24 @@
   },
   {
     "id": "brotein",
-    "title": "Brotein",
-    "description": "An iOS nutrition app for scanning menus and evaluating meals for their muscle-building potential.",
+    "title": "GymBro Health / Brotein",
+    "description": "A published iOS nutrition app for scanning food, menus, and nutrition labels.",
     "year": "2025",
     "group": "built",
-    "link": null
+    "link": "https://apps.apple.com/us/app/gymbro-health-social-macros/id6746165507",
+    "status": "Published",
+    "order": 40,
+    "contribution": "I built the native camera and AI analysis flow, turning images into protein estimates and structured meal feedback. Originally released as Brotein.",
+    "links": [
+      {
+        "label": "App Store",
+        "href": "https://apps.apple.com/us/app/gymbro-health-social-macros/id6746165507"
+      },
+      {
+        "label": "Screenshot",
+        "href": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/b2/ba/2f/b2ba2f0f-7cad-5ca1-0b43-c6d556c7921f/Broteinapp_Scan.png/600x1300bb.webp"
+      }
+    ]
   },
   {
     "id": "carbuddy",
@@ -154,10 +207,27 @@
   {
     "id": "lift-atx",
     "title": "Lift ATX",
-    "description": "A custom member website and local sponsorship system for the Lift ATX gym community.",
+    "description": "A custom gym website bringing memberships, trainers, events, and merch together.",
     "year": "2026",
-    "group": "now",
-    "link": "https://github.com/YG4PRESIDENT/liftatx"
+    "group": "built",
+    "link": "https://yg4president.github.io/liftatx/",
+    "status": "Public prototype",
+    "order": 20,
+    "contribution": "I added a staff editor for drafting and publishing content, while keeping purchases with Arbox, the gym’s existing payment system.",
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://yg4president.github.io/liftatx/"
+      },
+      {
+        "label": "Content editor",
+        "href": "https://yg4president.github.io/liftatx/admin.html"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/YG4PRESIDENT/liftatx"
+      }
+    ]
   },
   {
     "id": "livestream-commerce",
@@ -186,26 +256,52 @@
   {
     "id": "mlb-kalshi-luck-bot",
     "title": "MLB Kalshi Luck Bot",
-    "description": "A live-game MLB paper-trading research harness with a luck-adjusted win-probability model. Built, but not fully released.",
+    "description": "A research harness for testing baseball probability models and simulated trades.",
     "year": "2026",
     "group": "built",
-    "link": null
+    "link": null,
+    "status": "Research",
+    "order": 80,
+    "contribution": "I built an asynchronous event bus and durable JSONL logs so model inputs, decisions, and simulated fills can be traced.",
+    "links": []
   },
   {
     "id": "orph",
     "title": "Orph",
-    "description": "An iMessage-first fitness app for conversational workout, nutrition, and supplement logging.",
+    "description": "Log workouts, meals, and supplements through iMessage.",
     "year": "2026",
     "group": "now",
-    "link": null
+    "link": "https://textorph.com/",
+    "status": "Pre-release",
+    "order": 10,
+    "contribution": "I built structured logging, corrections by reply, and ordered background processing, with a native iPhone app for reviewing history and trends.",
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://textorph.com/"
+      }
+    ]
   },
   {
     "id": "outpace",
     "title": "Outpace",
-    "description": "An Apple Health step-tracking app with a daily iMessage-style leaderboard for friend groups.",
+    "description": "Daily step competitions inside iMessage conversations.",
     "year": "2025",
-    "group": "built",
-    "link": "https://github.com/YG4PRESIDENT/official-outpace-website"
+    "group": "now",
+    "link": "https://yg4president.github.io/official-outpace-website/",
+    "status": "Pre-release",
+    "order": 20,
+    "contribution": "I built HealthKit syncing, shareable leaderboard cards, and Live Activities. Step data syncs before rankings refresh, while shared sessions keep cards connected to conversations.",
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://yg4president.github.io/official-outpace-website/"
+      },
+      {
+        "label": "Website source",
+        "href": "https://github.com/YG4PRESIDENT/official-outpace-website"
+      }
+    ]
   },
   {
     "id": "personal-ai-entity",
@@ -225,19 +321,41 @@
   },
   {
     "id": "baby-tracking-app",
-    "title": "Privacy-Friendly Baby Tracking App (CS 461 capstone)",
-    "description": "A privacy-first baby tracking app designed around local storage, encryption, and opt-in cloud backup.",
+    "title": "BabyTracker / SimpleBaby",
+    "description": "A React Native baby tracker built for our CS 461 capstone.",
     "year": "2024",
     "group": "built",
-    "link": null
+    "link": "https://github.com/adulbrich/SimpleBaby",
+    "status": "Team project",
+    "order": 70,
+    "contribution": "I contributed feeding and pumping workflows, measurement choices, and editable history. The team project is now public as SimpleBaby.",
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/adulbrich/SimpleBaby"
+      },
+      {
+        "label": "My contribution",
+        "href": "https://github.com/adulbrich/SimpleBaby/commit/efe9510612df0928aa208ad19817db2182d82286"
+      }
+    ]
   },
   {
     "id": "rankett",
     "title": "Rankett",
-    "description": "A white-label AI search optimization platform built for marketing and SEO agencies.",
+    "description": "An agency platform connecting content planning, review, and WordPress publishing.",
     "year": "2026",
     "group": "built",
-    "link": "https://rankett.com"
+    "link": "https://rankett.com/",
+    "status": "Built",
+    "order": 30,
+    "contribution": "I built structural checks for generated posts and an approval-to-publishing workflow, with a custom plugin that reports delivery status.",
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://rankett.com/"
+      }
+    ]
   },
   {
     "id": "midnight-ghost-kitchen",
@@ -258,10 +376,23 @@
   {
     "id": "sante-designs",
     "title": "Sante Designs",
-    "description": "A custom fashion and graphic-design brand website built with motion-led interactions.",
+    "description": "A custom fashion and design website with a video entrance and editorial pages.",
     "year": "2026",
     "group": "built",
-    "link": "https://github.com/YG4PRESIDENT/santedesigns.com"
+    "link": "https://yg4president.github.io/santedesigns.com/",
+    "status": "Public prototype",
+    "order": 60,
+    "contribution": "I built coordinated navigation, keyboard focus handling, and reduced-motion support. Product content and checkout configuration are still unfinished.",
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://yg4president.github.io/santedesigns.com/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/YG4PRESIDENT/santedesigns.com"
+      }
+    ]
   },
   {
     "id": "sushi-train-austin",
@@ -282,10 +413,14 @@
   {
     "id": "swipr",
     "title": "Swipr",
-    "description": "A swipe-based prediction product built around short sessions and accuracy-based outcomes. Built, but not fully released.",
+    "description": "A native sports-prediction app with a TypeScript API and operator tools.",
     "year": "2026",
     "group": "built",
-    "link": null
+    "link": null,
+    "status": "Prototype",
+    "order": 90,
+    "contribution": "I built transaction-backed wallet and settlement flows, with idempotency checks to prevent duplicate processing.",
+    "links": []
   },
   {
     "id": "immigration-turbotax",
@@ -330,9 +465,12 @@
   {
     "id": "youtube-tool",
     "title": "YouTube Tooling",
-    "description": "A hosted Rankett tool for turning YouTube content into AI-visibility work. Built, but not fully released.",
+    "description": "A tool for turning YouTube content into material for Rankett’s AI search visibility workflows.",
     "year": "2026",
     "group": "built",
-    "link": null
+    "link": null,
+    "status": "Prototype",
+    "order": 100,
+    "links": []
   }
 ]
