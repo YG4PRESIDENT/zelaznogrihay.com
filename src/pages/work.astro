@@ -63,7 +63,6 @@ const sections = [
                     data-work-tab={section.key}
                 >
                     <span>{section.title}</span>
-                    <small>{section.items.length}</small>
                 </button>
             ))}
         </div>
@@ -78,46 +77,50 @@ const sections = [
                 >
                     <header class="column-heading">
                         <h2 id={`work-heading-${section.key}`}>{section.title}</h2>
-                        <span>{section.items.length}</span>
                     </header>
 
                     <ul class="work-list">
                         {section.items.map(item => (
                             <li id={item.id}>
-                                <h3>{item.title}</h3>
-                                <div class:list={['project-summary', { 'app-summary': item.preview?.kind === 'app' }]}>
-                                    <p class="item-description">{item.description}</p>
-                                    {item.preview && (
-                                        <figure
-                                            class:list={['project-preview', { 'app-preview': item.preview.kind === 'app' }]}
-                                        >
-                                            <img
-                                                src={item.preview.src}
-                                                alt={item.preview.alt}
-                                                width={item.preview.width}
-                                                height={item.preview.height}
-                                                loading="lazy"
-                                                decoding="async"
-                                            />
-                                        </figure>
-                                    )}
-                                    {item.links && item.links.length > 0 && (
-                                        <ul class="evidence-links" aria-label={`${item.title} links`}>
-                                            {item.links.map(link => (
-                                                <li>
-                                                    <a
-                                                        href={link.href}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        aria-label={`${item.title}: ${link.label} (opens in a new tab)`}
-                                                    >
-                                                        {link.label}<span aria-hidden="true">↗</span>
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
+                                <details class="project">
+                                    <summary>
+                                        <h3>{item.title}</h3>
+                                        <svg class="project-chevron" aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M4 2 L8 6 L4 10" />
+                                        </svg>
+                                    </summary>
+                                    <div class="project-summary">
+                                        <p class="item-description">{item.description}</p>
+                                        {item.links && item.links.length > 0 && (
+                                            <ul class="evidence-links" aria-label={`${item.title} links`}>
+                                                {item.links.map(link => (
+                                                    <li>
+                                                        <a
+                                                            href={link.href}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            aria-label={`${item.title}: ${link.label} (opens in a new tab)`}
+                                                        >
+                                                            {link.label}<span aria-hidden="true">↗</span>
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                        {item.preview && (
+                                            <figure class="project-preview">
+                                                <img
+                                                    src={item.preview.src}
+                                                    alt={item.preview.alt}
+                                                    width={item.preview.width}
+                                                    height={item.preview.height}
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                />
+                                            </figure>
+                                        )}
+                                    </div>
+                                </details>
                             </li>
                         ))}
                     </ul>
@@ -174,6 +177,8 @@ const sections = [
         const panel = target?.closest<HTMLElement>('[data-work-panel]');
         if (!panel || !workPage?.contains(panel)) return;
         selectCategory(panel.dataset.workPanel ?? 'built');
+        const project = target?.querySelector('details');
+        if (project) project.open = true;
         requestAnimationFrame(() => target?.scrollIntoView({ block: 'start' }));
     }
 
@@ -283,13 +288,8 @@ const sections = [
         font-size: 1rem;
     }
 
-    .column-heading > span {
-        color: var(--terminal-green);
-        font-size: 0.72rem;
-    }
-
     .work-list > li {
-        padding: 1.05rem 0 0.9rem;
+        padding: 0;
         border-bottom: 1px dotted rgba(212, 175, 55, 0.2);
         scroll-margin-top: 7rem;
     }
@@ -306,16 +306,41 @@ const sections = [
         overflow-wrap: anywhere;
     }
 
-    .project-summary {
-        margin-top: 0.5rem;
+    .project > summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 52px;
+        padding: 0.8rem 0;
+        list-style: none;
+        cursor: pointer;
+        touch-action: manipulation;
     }
 
-    .project-summary.app-summary {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 140px;
-        grid-template-rows: auto 1fr;
-        align-items: start;
-        column-gap: 1.25rem;
+    .project > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .project > summary::marker {
+        content: '';
+    }
+
+    .project-chevron {
+        flex: 0 0 auto;
+        color: var(--accent-color);
+    }
+
+    .project[open] .project-chevron {
+        transform: rotate(90deg);
+    }
+
+    .project > summary:hover h3 {
+        color: var(--terminal-green);
+    }
+
+    .project-summary {
+        padding-bottom: 1rem;
     }
 
     .item-description {
@@ -329,9 +354,9 @@ const sections = [
 
     .project-preview {
         display: block;
-        width: 100%;
-        max-width: 420px;
-        margin: 0.85rem 0 0.2rem;
+        width: min(100%, 260px);
+        aspect-ratio: 3 / 2;
+        margin: 0.6rem 0 0;
         overflow: hidden;
         border: 1px solid rgba(212, 175, 55, 0.25);
         background: var(--panel-color);
@@ -340,16 +365,9 @@ const sections = [
     .project-preview img {
         display: block;
         width: 100%;
-        height: auto;
+        height: 100%;
         object-fit: contain;
-        object-position: top;
-    }
-
-    .project-preview.app-preview {
-        grid-column: 2;
-        grid-row: 1 / span 2;
-        width: 140px;
-        margin-top: 0;
+        object-position: center;
     }
 
     .evidence-links {
@@ -381,6 +399,7 @@ const sections = [
     }
 
     .work-page a:focus-visible,
+    .project > summary:focus-visible,
     .work-tabs button:focus-visible,
     .work-column:focus-visible {
         outline: 2px solid var(--terminal-green);
@@ -404,15 +423,6 @@ const sections = [
     }
 
     @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
-        .project-summary.app-summary {
-            display: block;
-        }
-
-        .project-preview.app-preview {
-            width: 120px;
-            margin: 0.85rem auto 0.2rem;
-        }
-
         .work-header {
             align-items: flex-start;
             flex-direction: column;
@@ -455,10 +465,6 @@ const sections = [
         .work-tabs button.active {
             border-bottom-color: var(--terminal-green);
             color: var(--terminal-green);
-        }
-
-        .work-tabs small {
-            font-size: 0.68rem;
         }
 
         .work-grid {

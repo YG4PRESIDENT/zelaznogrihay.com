@@ -46,15 +46,6 @@ const {
                                 ))}
                             </span>
                         </a>
-                        <button type="button" class="ship-toggle" data-ship-toggle aria-label="Pause ship animation" aria-pressed="false" title="Pause ship animation" hidden>
-                            <svg class="pause-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-                                <rect x="3" y="2" width="3" height="10" rx="0.5" />
-                                <rect x="8" y="2" width="3" height="10" rx="0.5" />
-                            </svg>
-                            <svg class="play-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-                                <path d="M4 2 L12 7 L4 12 Z" />
-                            </svg>
-                        </button>
                     </div>
                 </div>
             </header>
@@ -82,31 +73,8 @@ const {
 
 <script>
     const voyage = document.querySelector<HTMLElement>('[data-ship-voyage]');
-    const shipToggle = document.querySelector<HTMLButtonElement>('[data-ship-toggle]');
-    if (voyage && shipToggle) {
-        function setShipPaused(paused: boolean) {
-            voyage!.toggleAttribute('data-paused', paused);
-            shipToggle!.setAttribute('aria-pressed', String(paused));
-            const label = `${paused ? 'Resume' : 'Pause'} ship animation`;
-            shipToggle!.setAttribute('aria-label', label);
-            shipToggle!.title = label;
-        }
-        try {
-            setShipPaused(localStorage.getItem('ship-motion-paused') === 'true');
-        } catch {
-            setShipPaused(false);
-        }
+    if (voyage) {
         voyage.setAttribute('data-enhanced', '');
-        shipToggle.hidden = false;
-        shipToggle.addEventListener('click', () => {
-            const paused = !voyage.hasAttribute('data-paused');
-            setShipPaused(paused);
-            try {
-                localStorage.setItem('ship-motion-paused', String(paused));
-            } catch {
-                // The motion control still works when browser storage is unavailable.
-            }
-        });
         if ('IntersectionObserver' in window) {
             new IntersectionObserver(([entry]) => {
                 voyage.toggleAttribute('data-away', !entry.isIntersecting);
@@ -210,7 +178,7 @@ const {
         width: 100%;
         min-width: 0;
         max-width: 100vw;
-        padding: 0.3rem 1rem 0;
+        padding: 0.3rem 0 0;
         background: var(--bg-color);
         z-index: 10;
     }
@@ -228,13 +196,12 @@ const {
         width: 100%;
         line-height: 0;
         overflow: hidden;
-        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
     }
 
     .ship-voyage {
         position: relative;
-        width: min(100%, 640px);
-        padding-right: 44px;
+        width: 100%;
+        --sailing-duration: 48s;
     }
 
     .ship-track {
@@ -244,7 +211,16 @@ const {
     }
 
     .ship-voyage[data-enhanced] .ship-track {
-        animation: ship-sailing 28s linear infinite;
+        animation: ship-sailing var(--sailing-duration) linear infinite;
+    }
+
+    .ship-voyage[data-enhanced] .ship-lap {
+        justify-content: flex-start;
+    }
+
+    .ship-voyage[data-enhanced] .logo-image {
+        transform-origin: 50% 70%;
+        animation: ship-rocking 8s ease-in-out infinite;
     }
 
     .ship-lap {
@@ -252,47 +228,19 @@ const {
         justify-content: center;
         flex: 0 0 50%;
         min-width: 0;
+        padding-block: 4px;
     }
 
-    .ship-voyage[data-paused] .ship-track,
     .ship-voyage[data-away] .ship-track,
-    .ship-voyage:hover .ship-track,
-    .ship-voyage:focus-within .ship-track {
+    .ship-voyage[data-away] .logo-image,
+    .ship-voyage:has(.logo-image:hover) .ship-track,
+    .ship-voyage:has(.logo-image:hover) .logo-image,
+    .ship-voyage:focus-within .ship-track,
+    .ship-voyage:focus-within .logo-image {
         animation-play-state: paused;
     }
 
-    .ship-toggle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        display: grid;
-        place-items: center;
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        border: 0;
-        background: transparent;
-        color: var(--muted-text);
-        cursor: pointer;
-        transform: translateY(-50%);
-    }
-
-    .ship-toggle[hidden],
-    .ship-toggle .play-icon,
-    .ship-voyage[data-paused] .pause-icon {
-        display: none;
-    }
-
-    .ship-voyage[data-paused] .play-icon {
-        display: block;
-    }
-
-    .ship-toggle:hover {
-        color: var(--terminal-green);
-    }
-
-    .logo-link:focus-visible,
-    .ship-toggle:focus-visible {
+    .logo-link:focus-visible {
         outline: 2px solid var(--terminal-green);
         outline-offset: -4px;
     }
@@ -300,6 +248,13 @@ const {
     @keyframes ship-sailing {
         from { transform: translateX(0); }
         to { transform: translateX(50%); }
+    }
+
+    @keyframes ship-rocking {
+        0%, 100% { transform: translateY(1px) rotate(-1.2deg); }
+        25% { transform: translateY(-2px) rotate(-0.3deg); }
+        50% { transform: translateY(0) rotate(1.2deg); }
+        75% { transform: translateY(2px) rotate(0.3deg); }
     }
 
     .logo-image {
@@ -464,6 +419,10 @@ const {
     }
 
     @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
+        .ship-voyage {
+            --sailing-duration: 20s;
+        }
+
         .main-container {
             min-height: 100dvh;
             padding-top: 0;
@@ -538,12 +497,13 @@ const {
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .ship-voyage[data-enhanced] .ship-track {
+        .ship-voyage[data-enhanced] .ship-track,
+        .ship-voyage[data-enhanced] .logo-image {
             animation: none;
         }
 
-        .ship-toggle {
-            display: none;
+        .ship-voyage[data-enhanced] .ship-lap {
+            justify-content: center;
         }
     }
 </style>

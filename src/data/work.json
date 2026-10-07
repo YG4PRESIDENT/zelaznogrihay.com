@@ -54,7 +54,14 @@
         "label": "GitHub",
         "href": "https://github.com/YG4PRESIDENT/austin-treasure-map"
       }
-    ]
+    ],
+    "preview": {
+      "src": "/images/work/austin-treasure-map.jpg",
+      "alt": "Austin Treasure Map showing places to explore, map filters, and discovery progress.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "bromenu",
@@ -275,14 +282,7 @@
         "label": "Website source",
         "href": "https://github.com/YG4PRESIDENT/official-outpace-website"
       }
-    ],
-    "preview": {
-      "src": "/images/work/outpace.jpg",
-      "alt": "Outpace website showing its step-competition concept and leaderboard.",
-      "width": 1200,
-      "height": 760,
-      "kind": "website"
-    }
+    ]
   },
   {
     "id": "personal-ai-entity",
@@ -305,7 +305,14 @@
         "label": "View project",
         "href": "https://pi-oclock.yahirg2021.workers.dev"
       }
-    ]
+    ],
+    "preview": {
+      "src": "/images/work/pi-oclock.jpg",
+      "alt": "Pi O’clock photo wheel showing moments photographed at 3:14 p.m.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "group-buying",
@@ -351,7 +358,14 @@
         "label": "Website source",
         "href": "https://github.com/YG4PRESIDENT/Rankett.com-v2"
       }
-    ]
+    ],
+    "preview": {
+      "src": "/images/work/rankett.jpg",
+      "alt": "Rankett website showing its agency search visibility service and implementation layers.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "midnight-ghost-kitchen",
@@ -386,7 +400,14 @@
         "label": "GitHub",
         "href": "https://github.com/YG4PRESIDENT/santedesigns.com"
       }
-    ]
+    ],
+    "preview": {
+      "src": "/images/work/sante-designs.jpg",
+      "alt": "Sante Designs video entrance and editorial navigation.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "sushi-train-austin",
