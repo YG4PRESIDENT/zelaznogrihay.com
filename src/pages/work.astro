@@ -85,16 +85,11 @@ const sections = [
                         {section.items.map(item => (
                             <li id={item.id}>
                                 <h3>{item.title}</h3>
-                                <div class:list={['project-summary', { 'with-preview': Boolean(item.preview) }]}>
+                                <div class:list={['project-summary', { 'app-summary': item.preview?.kind === 'app' }]}>
                                     <p class="item-description">{item.description}</p>
                                     {item.preview && (
-                                        <a
+                                        <figure
                                             class:list={['project-preview', { 'app-preview': item.preview.kind === 'app' }]}
-                                            href={item.preview.src}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            aria-label={`View larger ${item.title} preview (opens in a new tab)`}
-                                            title="View larger preview"
                                         >
                                             <img
                                                 src={item.preview.src}
@@ -104,25 +99,25 @@ const sections = [
                                                 loading="lazy"
                                                 decoding="async"
                                             />
-                                        </a>
+                                        </figure>
+                                    )}
+                                    {item.links && item.links.length > 0 && (
+                                        <ul class="evidence-links" aria-label={`${item.title} links`}>
+                                            {item.links.map(link => (
+                                                <li>
+                                                    <a
+                                                        href={link.href}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        aria-label={`${item.title}: ${link.label} (opens in a new tab)`}
+                                                    >
+                                                        {link.label}<span aria-hidden="true">↗</span>
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
                                     )}
                                 </div>
-                                {item.links && item.links.length > 0 && (
-                                    <ul class="evidence-links" aria-label={`${item.title} links`}>
-                                        {item.links.map(link => (
-                                            <li>
-                                                <a
-                                                    href={link.href}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    aria-label={`${item.title}: ${link.label} (opens in a new tab)`}
-                                                >
-                                                    {link.label}<span aria-hidden="true">↗</span>
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
                             </li>
                         ))}
                     </ul>
@@ -315,11 +310,12 @@ const sections = [
         margin-top: 0.5rem;
     }
 
-    .project-summary.with-preview {
+    .project-summary.app-summary {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 132px;
+        grid-template-columns: minmax(0, 1fr) 140px;
+        grid-template-rows: auto 1fr;
         align-items: start;
-        gap: 1.1rem;
+        column-gap: 1.25rem;
     }
 
     .item-description {
@@ -333,10 +329,12 @@ const sections = [
 
     .project-preview {
         display: block;
+        width: 100%;
+        max-width: 420px;
+        margin: 0.85rem 0 0.2rem;
         overflow: hidden;
         border: 1px solid rgba(212, 175, 55, 0.25);
         background: var(--panel-color);
-        cursor: zoom-in;
     }
 
     .project-preview img {
@@ -347,9 +345,11 @@ const sections = [
         object-position: top;
     }
 
-    .project-preview.app-preview img {
-        height: 176px;
-        object-fit: contain;
+    .project-preview.app-preview {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        width: 140px;
+        margin-top: 0;
     }
 
     .evidence-links {
@@ -404,6 +404,15 @@ const sections = [
     }
 
     @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
+        .project-summary.app-summary {
+            display: block;
+        }
+
+        .project-preview.app-preview {
+            width: 120px;
+            margin: 0.85rem auto 0.2rem;
+        }
+
         .work-header {
             align-items: flex-start;
             flex-direction: column;
@@ -469,17 +478,6 @@ const sections = [
         .evidence-links a {
             min-height: 44px;
             font-size: 0.8rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .project-summary.with-preview {
-            grid-template-columns: minmax(0, 1fr) 96px;
-            gap: 0.8rem;
-        }
-
-        .project-preview.app-preview img {
-            height: 152px;
         }
     }
 

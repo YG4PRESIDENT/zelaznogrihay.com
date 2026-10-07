@@ -22,16 +22,6 @@
     }
   },
   {
-    "id": "phib",
-    "title": "$PHIB",
-    "description": "A memecoin exploration covering tokenomics, transaction mechanics, visual identity, and launch planning.",
-    "year": "2022",
-    "group": "built",
-    "link": null,
-    "order": 110,
-    "links": []
-  },
-  {
     "id": "activity-status-widget",
     "title": "Activity Status Widget",
     "description": "Tap once to automatically tell selected people what you are doing and keep yourself accountable.",
@@ -65,16 +55,6 @@
         "href": "https://github.com/YG4PRESIDENT/austin-treasure-map"
       }
     ]
-  },
-  {
-    "id": "betio",
-    "title": "Betio",
-    "description": "An iOS sports-prediction experience with simulated outcomes, a native app, an API, and an operator console.",
-    "year": "2026",
-    "group": "now",
-    "link": null,
-    "order": 30,
-    "links": []
   },
   {
     "id": "bromenu",
@@ -257,16 +237,6 @@
     "link": null
   },
   {
-    "id": "mlb-kalshi-luck-bot",
-    "title": "MLB Kalshi Luck Bot",
-    "description": "A research harness for baseball probability models and paper trading, with traceable model inputs, decisions, and simulated fills.",
-    "year": "2026",
-    "group": "built",
-    "link": null,
-    "order": 80,
-    "links": []
-  },
-  {
     "id": "orph",
     "title": "Orph",
     "description": "An iMessage health agent for logging workouts, meals, and supplements by text, with reply-based corrections and an iPhone companion for history and trends.",
@@ -361,6 +331,10 @@
       {
         "label": "Website",
         "href": "https://rankett.com/"
+      },
+      {
+        "label": "Website source",
+        "href": "https://github.com/YG4PRESIDENT/Rankett.com-v2"
       }
     ]
   },
@@ -416,16 +390,6 @@
     "link": null
   },
   {
-    "id": "swipr",
-    "title": "Swipr",
-    "description": "A native sports-prediction app with a swipe-based interface, wallet and settlement flows, and tools for operators.",
-    "year": "2026",
-    "group": "built",
-    "link": null,
-    "order": 90,
-    "links": []
-  },
-  {
     "id": "immigration-turbotax",
     "title": "TurboTax for Immigration",
     "description": "A guided platform that makes immigration paperwork and process navigation simpler.",
@@ -464,15 +428,5 @@
     "year": "",
     "group": "ideas",
     "link": null
-  },
-  {
-    "id": "youtube-tool",
-    "title": "YouTube Tooling",
-    "description": "A tool for bringing YouTube content into Rankett’s AI search visibility and content workflows.",
-    "year": "2026",
-    "group": "built",
-    "link": null,
-    "order": 100,
-    "links": []
   }
 ]

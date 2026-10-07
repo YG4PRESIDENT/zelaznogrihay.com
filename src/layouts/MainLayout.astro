@@ -36,9 +36,26 @@ const {
         <div class:list={['main-container', { 'without-sidebar': !showSidebar, 'full-width-page': fullWidth, 'compact-header': compactHeader }]}>
             <header id="main-header">
                 <div class="header-container">
-                    <a href="/" class="logo-link" aria-label="Go home">
-                        <img src="/images/full-logo-new.png" alt="Ship Logo" class="logo-image" />
-                    </a>
+                    <div class="ship-voyage" data-ship-voyage>
+                        <a href="/" class="logo-link" aria-label="Go home">
+                            <span class="ship-track" aria-hidden="true">
+                                {[0, 1].map(() => (
+                                    <span class="ship-lap">
+                                        <img src="/images/full-logo-new.png" alt="" width="728" height="728" class="logo-image" />
+                                    </span>
+                                ))}
+                            </span>
+                        </a>
+                        <button type="button" class="ship-toggle" data-ship-toggle aria-label="Pause ship animation" aria-pressed="false" title="Pause ship animation" hidden>
+                            <svg class="pause-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                                <rect x="3" y="2" width="3" height="10" rx="0.5" />
+                                <rect x="8" y="2" width="3" height="10" rx="0.5" />
+                            </svg>
+                            <svg class="play-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                                <path d="M4 2 L12 7 L4 12 Z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </header>
             <SiteNav />
@@ -64,6 +81,39 @@ const {
 </html>
 
 <script>
+    const voyage = document.querySelector<HTMLElement>('[data-ship-voyage]');
+    const shipToggle = document.querySelector<HTMLButtonElement>('[data-ship-toggle]');
+    if (voyage && shipToggle) {
+        function setShipPaused(paused: boolean) {
+            voyage!.toggleAttribute('data-paused', paused);
+            shipToggle!.setAttribute('aria-pressed', String(paused));
+            const label = `${paused ? 'Resume' : 'Pause'} ship animation`;
+            shipToggle!.setAttribute('aria-label', label);
+            shipToggle!.title = label;
+        }
+        try {
+            setShipPaused(localStorage.getItem('ship-motion-paused') === 'true');
+        } catch {
+            setShipPaused(false);
+        }
+        voyage.setAttribute('data-enhanced', '');
+        shipToggle.hidden = false;
+        shipToggle.addEventListener('click', () => {
+            const paused = !voyage.hasAttribute('data-paused');
+            setShipPaused(paused);
+            try {
+                localStorage.setItem('ship-motion-paused', String(paused));
+            } catch {
+                // The motion control still works when browser storage is unavailable.
+            }
+        });
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(([entry]) => {
+                voyage.toggleAttribute('data-away', !entry.isIntersecting);
+            }).observe(voyage);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const sidebar = document.querySelector<HTMLElement>('.sidebar');
@@ -175,7 +225,81 @@ const {
 
     .logo-link {
         display: block;
+        width: 100%;
         line-height: 0;
+        overflow: hidden;
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
+    .ship-voyage {
+        position: relative;
+        width: min(100%, 640px);
+        padding-right: 44px;
+    }
+
+    .ship-track {
+        display: flex;
+        width: 200%;
+        margin-left: -100%;
+    }
+
+    .ship-voyage[data-enhanced] .ship-track {
+        animation: ship-sailing 28s linear infinite;
+    }
+
+    .ship-lap {
+        display: flex;
+        justify-content: center;
+        flex: 0 0 50%;
+        min-width: 0;
+    }
+
+    .ship-voyage[data-paused] .ship-track,
+    .ship-voyage[data-away] .ship-track,
+    .ship-voyage:hover .ship-track,
+    .ship-voyage:focus-within .ship-track {
+        animation-play-state: paused;
+    }
+
+    .ship-toggle {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--muted-text);
+        cursor: pointer;
+        transform: translateY(-50%);
+    }
+
+    .ship-toggle[hidden],
+    .ship-toggle .play-icon,
+    .ship-voyage[data-paused] .pause-icon {
+        display: none;
+    }
+
+    .ship-voyage[data-paused] .play-icon {
+        display: block;
+    }
+
+    .ship-toggle:hover {
+        color: var(--terminal-green);
+    }
+
+    .logo-link:focus-visible,
+    .ship-toggle:focus-visible {
+        outline: 2px solid var(--terminal-green);
+        outline-offset: -4px;
+    }
+
+    @keyframes ship-sailing {
+        from { transform: translateX(0); }
+        to { transform: translateX(50%); }
     }
 
     .logo-image {
@@ -185,11 +309,6 @@ const {
         height: auto;
         max-height: 245px;
         margin-bottom: -16px;
-        transition: transform 0.25s ease;
-    }
-
-    .logo-image:hover {
-        transform: scale(1.025);
     }
 
     .compact-header {
@@ -415,6 +534,16 @@ const {
 
         .main-container.sidebar-collapsed main:not(.full-width) {
             padding-left: 2rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ship-voyage[data-enhanced] .ship-track {
+            animation: none;
+        }
+
+        .ship-toggle {
+            display: none;
         }
     }
 </style>
