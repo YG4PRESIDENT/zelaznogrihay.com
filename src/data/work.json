@@ -293,6 +293,21 @@
     "link": null
   },
   {
+    "id": "pi-oclock",
+    "title": "Pi O’clock",
+    "description": "Photographs taken at 3:14 p.m., spun through a wheel of moments.",
+    "year": "2026",
+    "group": "built",
+    "order": 80,
+    "link": "https://pi-oclock.yahirg2021.workers.dev",
+    "links": [
+      {
+        "label": "View project",
+        "href": "https://pi-oclock.yahirg2021.workers.dev"
+      }
+    ]
+  },
+  {
     "id": "group-buying",
     "title": "Pinduoduo-Style Group Buying",
     "description": "Bring social, group-based purchasing mechanics into a new market.",
