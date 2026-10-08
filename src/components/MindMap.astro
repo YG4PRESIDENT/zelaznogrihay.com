@@ -304,10 +304,14 @@
     }
 
     .node-content :global(a) {
-        color: var(--accent-color);
+        color: var(--link-color);
         text-decoration: underline;
         text-decoration-color: var(--accent-underline);
         cursor: pointer;
+    }
+
+    .node-content :global(a:hover) {
+        color: var(--accent-hover);
     }
 
     .node-content :global(pre) {

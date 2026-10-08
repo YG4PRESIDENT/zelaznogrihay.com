@@ -148,7 +148,7 @@ const { compact = false } = Astro.props;
         border-bottom: 1px solid var(--border-color);
         padding-bottom: 0.5rem;
         font-size: 1.2rem;
-        color: var(--accent-color);
+        color: var(--text-color);
     }
 
     /* Pirate theme decorative element */
@@ -156,6 +156,7 @@ const { compact = false } = Astro.props;
         content: '☠';
         margin-right: 0.5rem;
         display: inline-block;
+        color: var(--accent-color);
     }
 
     .quests-container {
@@ -196,11 +197,11 @@ const { compact = false } = Astro.props;
     }
 
     .quest-item.travel {
-        border-left: 3px solid var(--accent-color);
+        border-left: 3px solid var(--border-strong);
     }
     
     .quest-item.life {
-        border-left: 3px solid var(--accent-color);
+        border-left: 3px solid var(--border-strong);
     }
 
     /* Mobile styles for small screens */
