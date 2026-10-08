@@ -36,12 +36,12 @@ const {
         <svg width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute; overflow: hidden;">
             <defs>
                 <filter id="ship-ink" color-interpolation-filters="sRGB">
-                    <feFlood style="flood-color: var(--accent-color);" result="ink" />
+                    <feFlood style="flood-color: var(--ship-color);" result="ink" />
                     <feColorMatrix in="SourceGraphic" type="matrix" values="0 1 0 0 0  0 1 0 0 0  0 1 0 0 0  0 0 0 1 0" result="engraving" />
                     <feComponentTransfer in="engraving" result="lifted-engraving">
-                        <feFuncR type="gamma" amplitude="1" exponent="0.55" offset="0" />
-                        <feFuncG type="gamma" amplitude="1" exponent="0.55" offset="0" />
-                        <feFuncB type="gamma" amplitude="1" exponent="0.55" offset="0" />
+                        <feFuncR type="gamma" amplitude="1" exponent="0.42" offset="0" />
+                        <feFuncG type="gamma" amplitude="1" exponent="0.42" offset="0" />
+                        <feFuncB type="gamma" amplitude="1" exponent="0.42" offset="0" />
                     </feComponentTransfer>
                     <feComposite in="ink" in2="lifted-engraving" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
                 </filter>
@@ -138,18 +138,19 @@ const {
 <style is:global>
     :root {
         color-scheme: dark;
-        --bg-color: #121512;
-        --panel-color: #191e19;
-        --text-color: #efece3;
-        --secondary-text: #c4c4b9;
-        --muted-text: #a5a79d;
-        --accent-color: #a8bba2;
-        --accent-hover: #c1cfba;
-        --accent-light: rgba(168, 187, 162, 0.12);
-        --accent-underline: rgba(168, 187, 162, 0.45);
-        --border-color: #353c35;
-        --border-strong: #515c50;
-        --map-edge-color: #2d382c;
+        --bg-color: #0b1010;
+        --panel-color: #121b18;
+        --text-color: #fff3dc;
+        --secondary-text: #dfdfcd;
+        --muted-text: #a7bab1;
+        --accent-color: #62e5a5;
+        --accent-hover: #aaffd2;
+        --ship-color: #78f3aa;
+        --accent-light: rgba(98, 229, 165, 0.1);
+        --accent-underline: rgba(98, 229, 165, 0.55);
+        --border-color: #264438;
+        --border-strong: #397559;
+        --map-edge-color: #264438;
         --sidebar-width: 250px;
         --sidebar-collapsed-width: 50px;
         --mobile-nav-height: 46px;
