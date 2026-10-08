@@ -75,11 +75,6 @@ const {
     const voyage = document.querySelector<HTMLElement>('[data-ship-voyage]');
     if (voyage) {
         voyage.setAttribute('data-enhanced', '');
-        if ('IntersectionObserver' in window) {
-            new IntersectionObserver(([entry]) => {
-                voyage.toggleAttribute('data-away', !entry.isIntersecting);
-            }).observe(voyage);
-        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -229,15 +224,6 @@ const {
         flex: 0 0 50%;
         min-width: 0;
         padding-block: 4px;
-    }
-
-    .ship-voyage[data-away] .ship-track,
-    .ship-voyage[data-away] .logo-image,
-    .ship-voyage:has(.logo-image:hover) .ship-track,
-    .ship-voyage:has(.logo-image:hover) .logo-image,
-    .ship-voyage:focus-within .ship-track,
-    .ship-voyage:focus-within .logo-image {
-        animation-play-state: paused;
     }
 
     .logo-link:focus-visible {
