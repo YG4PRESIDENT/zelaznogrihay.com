@@ -217,7 +217,7 @@ const sections = [
         gap: 0.3rem 1.5rem;
         padding-bottom: 0.6rem;
         margin-bottom: 1.15rem;
-        border-bottom: 1px solid var(--accent-color);
+        border-bottom: 1px solid var(--border-strong);
     }
 
     .page-title {
@@ -248,15 +248,15 @@ const sections = [
         color: var(--accent-color);
         font-size: 0.84rem;
         text-decoration: underline;
-        text-decoration-color: rgba(212, 175, 55, 0.35);
+        text-decoration-color: var(--accent-underline);
         text-underline-offset: 0.25em;
     }
 
     .work-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        border-top: 1px solid rgba(57, 255, 20, 0.22);
-        border-bottom: 1px solid rgba(57, 255, 20, 0.22);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
     }
 
     .work-tabs {
@@ -269,7 +269,7 @@ const sections = [
     }
 
     .work-column + .work-column {
-        border-left: 1px solid rgba(57, 255, 20, 0.16);
+        border-left: 1px solid var(--border-color);
     }
 
     .column-heading {
@@ -279,7 +279,7 @@ const sections = [
         gap: 1rem;
         margin-bottom: 0.3rem;
         padding-bottom: 0.65rem;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.32);
+        border-bottom: 1px solid var(--border-color);
     }
 
     .column-heading h2 {
@@ -290,7 +290,7 @@ const sections = [
 
     .work-list > li {
         padding: 0;
-        border-bottom: 1px dotted rgba(212, 175, 55, 0.2);
+        border-bottom: 1px dotted var(--border-color);
         scroll-margin-top: 7rem;
     }
 
@@ -336,7 +336,7 @@ const sections = [
     }
 
     .project > summary:hover h3 {
-        color: var(--terminal-green);
+        color: var(--accent-hover);
     }
 
     .project-summary {
@@ -346,7 +346,7 @@ const sections = [
     .item-description {
         min-width: 0;
         margin: 0;
-        color: rgba(245, 245, 240, 0.76);
+        color: var(--secondary-text);
         font-size: 0.9rem;
         line-height: 1.6;
         overflow-wrap: anywhere;
@@ -358,7 +358,7 @@ const sections = [
         aspect-ratio: 3 / 2;
         margin: 0.6rem 0 0;
         overflow: hidden;
-        border: 1px solid rgba(212, 175, 55, 0.25);
+        border: 1px solid var(--border-color);
         background: var(--panel-color);
     }
 
@@ -385,7 +385,7 @@ const sections = [
         color: var(--accent-color);
         font-size: 0.78rem;
         text-decoration: underline;
-        text-decoration-color: rgba(212, 175, 55, 0.4);
+        text-decoration-color: var(--accent-underline);
         text-underline-offset: 0.25em;
     }
 
@@ -394,7 +394,7 @@ const sections = [
     }
 
     .work-page a:hover {
-        color: var(--terminal-green);
+        color: var(--accent-hover);
         text-decoration-color: currentColor;
     }
 
@@ -402,7 +402,7 @@ const sections = [
     .project > summary:focus-visible,
     .work-tabs button:focus-visible,
     .work-column:focus-visible {
-        outline: 2px solid var(--terminal-green);
+        outline: 2px solid var(--accent-color);
         outline-offset: 4px;
     }
 
@@ -414,7 +414,7 @@ const sections = [
 
         .work-column {
             padding-inline: 0;
-            border-bottom: 1px solid rgba(57, 255, 20, 0.22);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .work-column + .work-column {
@@ -441,8 +441,8 @@ const sections = [
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             margin-bottom: 0.25rem;
-            background: rgba(10, 10, 10, 0.97);
-            border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .work-tabs button {
@@ -463,8 +463,8 @@ const sections = [
         }
 
         .work-tabs button.active {
-            border-bottom-color: var(--terminal-green);
-            color: var(--terminal-green);
+            border-bottom-color: var(--accent-color);
+            color: var(--accent-color);
         }
 
         .work-grid {

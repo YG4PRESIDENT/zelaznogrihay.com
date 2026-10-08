@@ -33,6 +33,20 @@ const {
         <title>{title}</title>
     </head>
     <body>
+        <svg width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute; overflow: hidden;">
+            <defs>
+                <filter id="ship-ink" color-interpolation-filters="sRGB">
+                    <feFlood style="flood-color: var(--accent-color);" result="ink" />
+                    <feColorMatrix in="SourceGraphic" type="matrix" values="0 1 0 0 0  0 1 0 0 0  0 1 0 0 0  0 0 0 1 0" result="engraving" />
+                    <feComponentTransfer in="engraving" result="lifted-engraving">
+                        <feFuncR type="gamma" amplitude="1" exponent="0.55" offset="0" />
+                        <feFuncG type="gamma" amplitude="1" exponent="0.55" offset="0" />
+                        <feFuncB type="gamma" amplitude="1" exponent="0.55" offset="0" />
+                    </feComponentTransfer>
+                    <feComposite in="ink" in2="lifted-engraving" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
+                </filter>
+            </defs>
+        </svg>
         <div class:list={['main-container', { 'without-sidebar': !showSidebar, 'full-width-page': fullWidth, 'compact-header': compactHeader }]}>
             <header id="main-header">
                 <div class="header-container">
@@ -123,15 +137,19 @@ const {
 
 <style is:global>
     :root {
-        --bg-color: #0a0a0a;
-        --panel-color: #101210;
-        --text-color: #f5f5f0;
-        --muted-text: rgba(245, 245, 240, 0.62);
-        --accent-color: #d4af37;
-        --accent-dark: #8b4513;
-        --accent-light: rgba(212, 175, 55, 0.2);
-        --terminal-green: #39ff14;
-        --terminal-green-soft: rgba(57, 255, 20, 0.16);
+        color-scheme: dark;
+        --bg-color: #121512;
+        --panel-color: #191e19;
+        --text-color: #efece3;
+        --secondary-text: #c4c4b9;
+        --muted-text: #a5a79d;
+        --accent-color: #a8bba2;
+        --accent-hover: #c1cfba;
+        --accent-light: rgba(168, 187, 162, 0.12);
+        --accent-underline: rgba(168, 187, 162, 0.45);
+        --border-color: #353c35;
+        --border-strong: #515c50;
+        --map-edge-color: #2d382c;
         --sidebar-width: 250px;
         --sidebar-collapsed-width: 50px;
         --mobile-nav-height: 46px;
@@ -227,7 +245,7 @@ const {
     }
 
     .logo-link:focus-visible {
-        outline: 2px solid var(--terminal-green);
+        outline: 2px solid var(--accent-color);
         outline-offset: -4px;
     }
 
@@ -250,6 +268,7 @@ const {
         height: auto;
         max-height: 245px;
         margin-bottom: -16px;
+        filter: url(#ship-ink);
     }
 
     .compact-header {
@@ -282,7 +301,7 @@ const {
     .sidebar {
         width: var(--sidebar-width);
         background: var(--bg-color);
-        border-right: 1px solid var(--accent-color);
+        border-right: 1px solid var(--border-color);
         position: relative;
         transition: width 0.25s ease;
     }
@@ -298,7 +317,7 @@ const {
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        border: 1px solid var(--accent-color);
+        border: 1px solid var(--border-strong);
         background: var(--bg-color);
         color: var(--accent-color);
         display: flex;
@@ -306,7 +325,6 @@ const {
         justify-content: center;
         cursor: pointer;
         z-index: 40;
-        box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
         font: inherit;
     }
 
@@ -350,7 +368,7 @@ const {
     }
 
     a:hover {
-        color: var(--text-color);
+        color: var(--accent-hover);
     }
 
     .page-shell {
@@ -362,7 +380,7 @@ const {
     .page-title {
         margin: 0 0 1.4rem;
         padding-bottom: 0.55rem;
-        border-bottom: 1px solid var(--accent-color);
+        border-bottom: 1px solid var(--border-strong);
         color: var(--text-color);
         font-size: 1.5rem;
     }
@@ -374,7 +392,7 @@ const {
     }
 
     .simple-row {
-        border-bottom: 1px dotted rgba(212, 175, 55, 0.24);
+        border-bottom: 1px dotted var(--border-color);
     }
 
     .simple-row:last-child {
@@ -393,7 +411,7 @@ const {
     }
 
     .simple-row > a:hover {
-        background: rgba(212, 175, 55, 0.08);
+        background: var(--accent-light);
         transform: translateX(3px);
     }
 

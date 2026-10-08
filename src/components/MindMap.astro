@@ -32,6 +32,10 @@
         container && loading && panel && closeButton && typeElement && titleElement &&
         contentElement && relatedWrap && relatedElement
     ) {
+        const theme = getComputedStyle(document.documentElement);
+        const accentColor = theme.getPropertyValue('--accent-color').trim();
+        const textColor = theme.getPropertyValue('--text-color').trim();
+        const edgeColor = theme.getPropertyValue('--map-edge-color').trim();
         let renderer;
         let graph;
         let selectedNode = null;
@@ -131,7 +135,7 @@
                         const crossCategory = graph.getNodeAttribute(edge.source, 'category') !==
                             graph.getNodeAttribute(edge.target, 'category');
                         graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
-                            color: '#0b2610',
+                            color: edgeColor,
                             size: 0.14,
                             crossCategory,
                         });
@@ -140,10 +144,10 @@
 
                 renderer = new Sigma(graph, container, {
                     allowInvalidContainer: false,
-                    defaultEdgeColor: '#0b2610',
+                    defaultEdgeColor: edgeColor,
                     defaultNodeColor: '#777d86',
                     edgeColor: 'default',
-                    labelColor: { color: '#f5f5f0' },
+                    labelColor: { color: textColor },
                     labelFont: 'Courier New, Courier, monospace',
                     labelDensity: 0.025,
                     labelGridCellSize: 140,
@@ -156,7 +160,7 @@
                         if (node === selectedNode) {
                             return {
                                 ...data,
-                                color: '#39ff14',
+                                color: accentColor,
                                 size: data.size * 1.8,
                                 forceLabel: true,
                                 highlighted: true,
@@ -172,7 +176,7 @@
                         }
                         const [source, target] = graph.extremities(edge);
                         return source === selectedNode || target === selectedNode
-                            ? { ...data, color: '#39ff14', size: 0.7, zIndex: 1 }
+                            ? { ...data, color: accentColor, size: 0.7, zIndex: 1 }
                             : { ...data, hidden: true };
                     },
                 });
@@ -198,9 +202,7 @@
         height: calc(100svh - 198px);
         min-height: 620px;
         overflow: hidden;
-        background:
-            radial-gradient(circle at 50% 48%, rgba(57, 255, 20, 0.018), transparent 48%),
-            #070907;
+        background: var(--bg-color);
     }
 
     .mind-map-canvas {
@@ -218,7 +220,7 @@
         inset: 0;
         display: grid;
         place-items: center;
-        color: rgba(57, 255, 20, 0.65);
+        color: var(--accent-color);
         font-size: 0.85rem;
         pointer-events: none;
     }
@@ -231,8 +233,8 @@
         width: min(420px, 38vw);
         padding: 2rem 1.5rem 2.5rem;
         overflow-y: auto;
-        background: rgba(10, 12, 10, 0.97);
-        border-left: 1px solid rgba(57, 255, 20, 0.55);
+        background: var(--panel-color);
+        border-left: 1px solid var(--border-strong);
         box-shadow: -12px 0 35px rgba(0, 0, 0, 0.62);
         transform: translateX(105%);
         transition: transform 0.25s ease;
@@ -251,18 +253,18 @@
         height: 30px;
         border: 0;
         background: transparent;
-        color: rgba(245, 245, 240, 0.65);
+        color: var(--muted-text);
         font: 1.6rem/1 'Courier New', monospace;
         cursor: pointer;
     }
 
     .panel-close:hover {
-        color: var(--terminal-green);
+        color: var(--accent-color);
     }
 
     .node-type {
         margin: 0 0 0.45rem;
-        color: var(--terminal-green);
+        color: var(--accent-color);
         font-size: 0.7rem;
         letter-spacing: 0.12em;
         text-transform: uppercase;
@@ -276,7 +278,7 @@
     }
 
     .node-content {
-        color: rgba(245, 245, 240, 0.86);
+        color: var(--secondary-text);
         font-size: 0.86rem;
         line-height: 1.62;
         overflow-wrap: anywhere;
@@ -297,22 +299,22 @@
     .node-content :global(blockquote) {
         margin: 0.9rem 0;
         padding-left: 0.85rem;
-        border-left: 2px solid rgba(57, 255, 20, 0.45);
+        border-left: 2px solid var(--accent-color);
         color: var(--muted-text);
     }
 
     .node-content :global(a) {
-        color: var(--terminal-green);
+        color: var(--accent-color);
         text-decoration: underline;
-        text-decoration-color: rgba(57, 255, 20, 0.35);
+        text-decoration-color: var(--accent-underline);
         cursor: pointer;
     }
 
     .node-content :global(pre) {
         overflow-x: auto;
         padding: 0.75rem;
-        background: #050605;
-        border: 1px solid rgba(57, 255, 20, 0.15);
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
     }
 
     .node-content :global(table) {
@@ -325,13 +327,13 @@
     .node-content :global(th),
     .node-content :global(td) {
         padding: 0.35rem 0.5rem;
-        border: 1px solid rgba(245, 245, 240, 0.15);
+        border: 1px solid var(--border-color);
     }
 
     .related-wrap {
         margin-top: 1.7rem;
         padding-top: 1rem;
-        border-top: 1px solid rgba(57, 255, 20, 0.22);
+        border-top: 1px solid var(--border-color);
     }
 
     .related-wrap h2 {
@@ -348,17 +350,17 @@
 
     .related-link {
         padding: 0.3rem 0.45rem;
-        border: 1px solid rgba(57, 255, 20, 0.22);
+        border: 1px solid var(--border-color);
         border-radius: 3px;
         background: transparent;
-        color: rgba(245, 245, 240, 0.72);
+        color: var(--secondary-text);
         font: 0.7rem/1.3 'Courier New', monospace;
         cursor: pointer;
     }
 
     .related-link:hover {
-        border-color: var(--terminal-green);
-        color: var(--terminal-green);
+        border-color: var(--accent-color);
+        color: var(--accent-color);
     }
 
     @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
@@ -382,7 +384,7 @@
                 max(1rem, env(safe-area-inset-right))
                 max(1.5rem, env(safe-area-inset-bottom))
                 max(1rem, env(safe-area-inset-left));
-            border-top: 1px solid rgba(57, 255, 20, 0.55);
+            border-top: 1px solid var(--border-strong);
             border-left: 0;
             transform: translateY(105%);
             box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.68);

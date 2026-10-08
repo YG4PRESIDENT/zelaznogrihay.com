@@ -145,7 +145,7 @@ const { compact = false } = Astro.props;
         text-align: center;
         margin-top: 0;
         margin-bottom: 1.5rem;
-        border-bottom: 1px solid var(--accent-color);
+        border-bottom: 1px solid var(--border-color);
         padding-bottom: 0.5rem;
         font-size: 1.2rem;
         color: var(--accent-color);
@@ -171,16 +171,16 @@ const { compact = false } = Astro.props;
         align-items: center;
         font-size: 0.9rem;
         padding: 0.5rem;
-        border: 1px solid rgba(212, 175, 55, 0.2);
+        border: 1px solid var(--border-color);
         border-radius: 4px;
         transition: all 0.2s ease;
-        background-color: rgba(26, 60, 94, 0.1);
+        background-color: var(--panel-color);
     }
     
     .quest-item:hover {
         border-color: var(--accent-color);
         transform: translateX(3px);
-        background-color: rgba(26, 60, 94, 0.2);
+        background-color: var(--accent-light);
     }
 
     .quest-name {
@@ -189,12 +189,18 @@ const { compact = false } = Astro.props;
         font-weight: 500;
     }
 
+    .quest-name a {
+        text-decoration: underline;
+        text-decoration-color: var(--accent-underline);
+        text-underline-offset: 0.2em;
+    }
+
     .quest-item.travel {
-        border-left: 3px solid var(--accent-color); /* Using pirate gold accent color */
+        border-left: 3px solid var(--accent-color);
     }
     
     .quest-item.life {
-        border-left: 3px solid var(--accent-color); /* Using pirate gold accent color */
+        border-left: 3px solid var(--accent-color);
     }
 
     /* Mobile styles for small screens */
