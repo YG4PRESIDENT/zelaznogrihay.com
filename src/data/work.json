@@ -268,21 +268,24 @@
   {
     "id": "outpace",
     "title": "Outpace",
-    "description": "Daily step competitions inside iMessage, with shared leaderboards, HealthKit syncing, and Live Activities that keep your rank visible throughout the day.",
+    "description": "Daily step competitions inside iMessage, with shared leaderboards and friendly wagers over who hits their step goal first. Inspired by WeRun in WeChat, it makes walking with friends a daily habit.",
     "year": "2025",
     "group": "now",
-    "link": "https://yg4president.github.io/official-outpace-website/",
+    "link": "https://outpaceapp.com/",
     "order": 20,
     "links": [
       {
         "label": "Website",
-        "href": "https://yg4president.github.io/official-outpace-website/"
-      },
-      {
-        "label": "Website source",
-        "href": "https://github.com/YG4PRESIDENT/official-outpace-website"
+        "href": "https://outpaceapp.com/"
       }
-    ]
+    ],
+    "preview": {
+      "src": "/images/work/outpace-social.png",
+      "alt": "Outpace's blue website preview with its waving character and the line ‘A little rivalry. A lot more steps.’",
+      "width": 1200,
+      "height": 630,
+      "kind": "website"
+    }
   },
   {
     "id": "personal-ai-entity",
@@ -298,7 +301,7 @@
     "description": "Photographs taken at 3:14 p.m., spun through a wheel of moments.",
     "year": "2026",
     "group": "built",
-    "order": 80,
+    "order": 0,
     "link": "https://pi-oclock.yahirg2021.workers.dev",
     "links": [
       {
