@@ -1,0 +1,21 @@
+[
+  {
+    "id": "india-to-southeast-asia",
+    "name": "India, Nepal & Southeast Asia",
+    "stops": [
+      "chennai",
+      "hyderabad",
+      "varanasi",
+      "delhi",
+      "kathmandu",
+      "pokhara",
+      "chiang-mai",
+      "chiang-rai",
+      "southern-laos",
+      "vietnam",
+      "malaysia",
+      "singapore"
+    ],
+    "approximateLegs": [5, 7, 8, 9, 10]
+  }
+]

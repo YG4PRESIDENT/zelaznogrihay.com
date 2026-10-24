@@ -17,6 +17,7 @@ export function createDestinationSchema<T extends z.ZodType>(image: T) {
         experience: z.enum(['visited', 'passed-through', 'lived']).optional(),
         states: z.array(z.object({ code: z.string().refine(code => Object.hasOwn(US_STATES, code), 'Use a US state abbreviation.'), stop: coordinates.optional(), stopLabel: z.string().optional() })).default([]),
         summary: z.string().optional(),
+        companions: z.string().trim().min(1).optional(),
         order: z.number().default(100),
         visits: z.array(z.object({
             id: slug, title: z.string().optional(), date: travelDate.optional(),

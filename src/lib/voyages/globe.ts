@@ -1,6 +1,6 @@
 import { geoContains, geoDistance, geoGraticule10, geoPath, type GeoProjection } from 'd3-geo';
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
-import { clusterPoints, hasBeen, type Country, type Destination, type Coordinates } from './model.ts';
+import { clusterPoints, hasBeen, type Country, type Destination, type Coordinates, type TravelRoute } from './model.ts';
 import { ATLAS_COLORS, countryFill, globePoint, globeProjection, shortestLongitude, wrapLongitude } from './rendering.ts';
 
 type CountryFeature = Feature<Polygon | MultiPolygon, Country>;
@@ -9,18 +9,17 @@ type Marker = { id: string; destination: Destination; position: Coordinates; ele
 interface GlobeOptions {
     container: HTMLElement;
     destinations: Destination[];
+    routes?: TravelRoute[];
     onSelect: (id: string) => void;
     onCountry: (code: string) => void;
     onCluster: (ids: string[]) => void;
     onCoordinates: (coordinates: Coordinates) => void;
-    onMotionChange?: (spinning: boolean) => void;
 }
 export interface AtlasGlobe {
     select: (id: string | null) => void;
     focus: (position: Coordinates) => void;
     show: (ids: string[]) => void;
     zoom: (direction: number) => void;
-    toggleMotion: () => boolean;
     reset: () => void;
     resize: (detailOpen?: boolean) => void;
     destroy: () => void;
@@ -30,6 +29,8 @@ const cameraIcon = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" s
 /** A spherical Canvas atlas: no WebGL startup, polygon meshes, or depth fighting. */
 export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     const { container, destinations } = options;
+    const routes = options.routes || [];
+    const visitedPlaces = destinations.filter(destination => destination.kind === 'place' && hasBeen(destination) && destination.coordinates);
     const abort = new AbortController();
     const { signal } = abort;
     const canvas = document.createElement('canvas');
@@ -53,13 +54,13 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     let statesLoading = false;
     let disposed = false;
     let inView = true;
-    let spinning = !reduceMotion.matches;
+    let openingRemaining = reduceMotion.matches ? 0 : 3.5;
     let frame = 0;
     let lastTime = 0;
     let lastPaint = 0;
     let width = 0, height = 0;
     let projection: GeoProjection;
-    const camera = { lat: 20, lng: 15, zoom: 1 };
+    const camera = { lat: 22, lng: 80, zoom: 1 };
     const velocity = { lat: 0, lng: 0, zoom: 0 };
     let target: typeof camera | null = null;
     let dragging: { id: number; x: number; y: number; startX: number; startY: number; time: number; moved: boolean } | null = null;
@@ -68,17 +69,12 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     container.append(canvas, tooltip);
 
     function schedule() { if (!frame && !disposed && inView && !document.hidden) frame = requestAnimationFrame(animate); }
-    function motion(value: boolean) {
-        spinning = value && !reduceMotion.matches;
-        options.onMotionChange?.(spinning);
-        schedule();
-    }
     function stop() {
         target = null; velocity.lat = velocity.lng = velocity.zoom = 0;
-        motion(false); tooltip.hidden = true;
+        openingRemaining = 0; tooltip.hidden = true; schedule();
     }
     function go(position: Coordinates, zoom = 1.18) {
-        motion(false);
+        openingRemaining = 0;
         const next = { lat: Math.max(-80, Math.min(80, position.lat)), lng: shortestLongitude(camera.lng, position.lng), zoom };
         if (reduceMotion.matches) { Object.assign(camera, next); target = null; draw(); }
         else { target = next; schedule(); }
@@ -137,13 +133,33 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         const shade = ctx.createRadialGradient(cx - radius * .35, cy - radius * .4, radius * .1, cx, cy, radius);
         shade.addColorStop(0, '#ffffff06'); shade.addColorStop(.65, '#030c0600'); shade.addColorStop(1, '#030c0640');
         ctx.fillStyle = shade; ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+        // Fine great-circle links show the recorded sequence. Broad or omitted
+        // stops use dashes rather than implying an exact road, flight, or crossing.
+        for (const route of routes) {
+            const active = route.stops.some(stop => stop.destinationId === selected || destinations.find(destination => destination.id === stop.destinationId)?.countryCodes.some(code => destination?.countryCodes.includes(code)));
+            ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.lineWidth = active ? 1.2 : .85;
+            ctx.strokeStyle = active ? '#d2edb6c4' : '#d2edb68c';
+            for (let index = 0; index < route.stops.length - 1; index++) {
+                const from = route.stops[index].position, to = route.stops[index + 1].position;
+                ctx.setLineDash(route.approximateLegs.includes(index) ? [2.5, 3.5] : []);
+                ctx.beginPath(); path({ type: 'LineString', coordinates: [[from.lng, from.lat], [to.lng, to.lat]] }); ctx.stroke();
+            }
+            ctx.restore();
+        }
+        for (const place of visitedPlaces) {
+            const position = project(place.coordinates!);
+            if (!position || !visible.has(place.id)) continue;
+            ctx.beginPath(); ctx.arc(position[0], position[1], place.id === selected ? 2.8 : 1.8, 0, Math.PI * 2);
+            ctx.fillStyle = '#d2edb6'; ctx.fill();
+        }
         ctx.restore();
         layoutMarkers();
         container.dataset.ready = 'true';
     }
     function animate(time: number) {
         frame = 0;
-        const dt = Math.min((time - (lastTime || time - 16)) / 1000, .032);
+        const elapsed = Math.max(0, (time - (lastTime || time - 16)) / 1000);
+        const dt = Math.min(elapsed, .032);
         lastTime = time;
         let moving = false;
         if (target) {
@@ -159,12 +175,15 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         } else if (!dragging && (Math.abs(velocity.lng) + Math.abs(velocity.lat) > .05)) {
             camera.lng += velocity.lng * dt; camera.lat = Math.max(-80, Math.min(80, camera.lat + velocity.lat * dt));
             velocity.lng *= Math.exp(-5 * dt); velocity.lat *= Math.exp(-5 * dt); moving = true;
-        } else if (spinning && !dragging) { camera.lng += dt * 2.3; moving = true; }
+        } else if (openingRemaining > 0 && !dragging) {
+            const step = Math.min(elapsed, openingRemaining); camera.lng += step * 2.3; openingRemaining -= step; moving = true;
+        }
         camera.lng = wrapLongitude(camera.lng);
         if (target) target.lng = shortestLongitude(camera.lng, target.lng);
-        // Idle rotation paints at 30fps; direct manipulation and flights use display cadence.
-        if (!spinning || dragging || target || time - lastPaint > 30) { draw(); lastPaint = time; }
-        if (moving || spinning || target) schedule(); else lastTime = 0;
+        // The short opening turn paints at 30fps, then stops. Flights and drag
+        // keep display cadence; there is no indefinite motion needing a control.
+        if (!openingRemaining || dragging || target || time - lastPaint > 30) { draw(); lastPaint = time; }
+        if (moving || openingRemaining > 0 || target) schedule(); else lastTime = 0;
     }
     function project(position: Coordinates): [number, number] | null {
         if (geoDistance([camera.lng, camera.lat], [position.lng, position.lat]) >= Math.PI / 2 - .02) return null;
@@ -173,8 +192,9 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     function layoutMarkers() {
         const placed: { id: string; x: number; y: number; marker: Marker }[] = [];
         for (const marker of markers) {
-            const selectedCountry = marker.destination.kind !== 'country' || !hasBeen(marker.destination) || marker.destination.id === selected || marker.airport;
-            const point = visible.has(marker.destination.id) && selectedCountry ? project(marker.position) : null;
+            const selectedCountry = marker.destination.kind !== 'country' || marker.destination.id === selected || marker.airport;
+            const quietPlace = hasBeen(marker.destination) && !marker.destination.photos.length && (marker.destination.kind === 'place' || marker.destination.kind === 'region') && marker.destination.id !== selected;
+            const point = visible.has(marker.destination.id) && selectedCountry && !quietPlace ? project(marker.position) : null;
             marker.element.hidden = !point;
             if (!point) continue;
             marker.element.style.transform = `translate(${point[0]}px,${point[1]}px)`;
@@ -193,6 +213,7 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     function addMarker(destination: Destination, position: Coordinates, airport?: string) {
         const element = document.createElement('div');
         element.className = `voyage-marker is-${airport ? 'airport' : destination.kind}${hasBeen(destination) ? ' is-been' : ''}`;
+        element.classList.toggle('has-photos', destination.photos.length > 0);
         const button = document.createElement('button'); button.type = 'button';
         const name = airport || destination.name;
         button.setAttribute('aria-label', airport ? `${name} — ${destination.name}` : `Show ${name}`);
@@ -230,6 +251,16 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     const intersection = new IntersectionObserver(entries => { inView = entries[0].isIntersecting; lastTime = 0; if (inView) schedule(); else { cancelAnimationFrame(frame); frame = 0; } });
     intersection.observe(container);
     const point = (event: {clientX: number; clientY: number}): [number, number] => { const box = canvas.getBoundingClientRect(); return [event.clientX - box.left, event.clientY - box.top]; };
+    function placeAt(point: [number, number], radius = 9) {
+        let nearest: Destination | null = null, distance = radius;
+        for (const place of visitedPlaces) {
+            const screen = visible.has(place.id) ? project(place.coordinates!) : null;
+            if (!screen) continue;
+            const delta = Math.hypot(screen[0] - point[0], screen[1] - point[1]);
+            if (delta < distance) { nearest = place; distance = delta; }
+        }
+        return nearest;
+    }
     function featureAt(point: [number, number]) {
         const coordinates = globePoint(projection, point);
         if (!coordinates) return null;
@@ -255,9 +286,9 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
             Object.assign(dragging, { x: event.clientX, y: event.clientY, time: event.timeStamp }); draw();
             return;
         }
-        const hit = featureAt(point(event));
-        tooltip.hidden = !hit;
-        if (hit) { tooltip.textContent = hit.feature.properties.name; const [x, y] = point(event); tooltip.style.left = `${Math.min(width - tooltip.offsetWidth - 10, x + 14)}px`; tooltip.style.top = `${Math.max(8, y - 32)}px`; }
+        const place = placeAt(point(event)), hit = featureAt(point(event));
+        tooltip.hidden = !place && !hit;
+        if (place || hit) { tooltip.textContent = place?.name || hit!.feature.properties.name; const [x, y] = point(event); tooltip.style.left = `${Math.min(width - tooltip.offsetWidth - 10, x + 14)}px`; tooltip.style.top = `${Math.max(8, y - 32)}px`; }
     }, { signal });
     function endDrag(event: PointerEvent) {
         if (dragging?.id !== event.pointerId) return;
@@ -267,8 +298,9 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         if (!fresh || reduceMotion.matches || event.type === 'pointercancel') velocity.lat = velocity.lng = 0;
         if (!moved && event.type === 'pointerup') {
             velocity.lat = velocity.lng = 0;
-            const hit = featureAt(point(event));
-            if (hit?.state) go(hit.feature.properties.center, 1.75);
+            const place = placeAt(point(event), event.pointerType === 'touch' ? 22 : 9), hit = featureAt(point(event));
+            if (place) options.onSelect(place.id);
+            else if (hit?.state) go(hit.feature.properties.center, 1.75);
             else if (hit && countryIds.has(hit.feature.properties.code)) options.onCountry(hit.feature.properties.code);
         }
         schedule();
@@ -283,24 +315,23 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         const rotations: Record<string, [number, number]> = { ArrowLeft: [12, 0], ArrowRight: [-12, 0], ArrowUp: [0, 10], ArrowDown: [0, -10] };
         if (rotations[event.key]) { event.preventDefault(); stop(); camera.lng += rotations[event.key][0]; camera.lat = Math.max(-80, Math.min(80, camera.lat + rotations[event.key][1])); draw(); }
         else if (event.key === '+' || event.key === '=' || event.key === '-') { event.preventDefault(); stop(); camera.zoom = Math.max(.75, Math.min(2.5, camera.zoom * (event.key === '-' ? .82 : 1.22))); draw(); }
-        else if (event.key === ' ') { event.preventDefault(); motion(!spinning); }
+        else if (event.key === ' ') { event.preventDefault(); stop(); }
     }, { signal });
     document.addEventListener('visibilitychange', () => { lastTime = 0; if (!document.hidden) schedule(); else { cancelAnimationFrame(frame); frame = 0; } }, { signal });
     reduceMotion.addEventListener('change', () => { if (reduceMotion.matches) { stop(); draw(); } }, { signal });
-    resize(); options.onMotionChange?.(spinning); schedule();
+    resize(); schedule();
     return {
         select(id) {
             selected = id;
             const destination = destinations.find(destination => destination.id === id);
             if (destination?.focus) go(destination.focus, destination.kind === 'place' ? 1.65 : 1.12);
-            else { motion(false); schedule(); }
+            else { openingRemaining = 0; schedule(); }
             if (activeUS()) void loadStates();
         },
         focus(position) { go(position, 1.75); },
         show(ids) { visible = new Set(ids); schedule(); },
         zoom(direction) { go(camera, Math.max(.75, Math.min(2.5, (target?.zoom || camera.zoom) * (direction > 0 ? 1.22 : .82)))); },
-        toggleMotion() { target = null; velocity.lat = velocity.lng = velocity.zoom = 0; motion(!spinning); return spinning; },
-        reset() { selected = null; go({ lat: 20, lng: 15 }, 1); },
+        reset() { selected = null; go({ lat: 22, lng: 80 }, 1); },
         resize,
         destroy() {
             if (disposed) return;

@@ -16,8 +16,8 @@ export const wrapLongitude = (longitude: number) => ((longitude + 180) % 360 + 3
 export const shortestLongitude = (from: number, to: number) => from + wrapLongitude(to - from);
 
 export function globeProjection(width: number, height: number, longitude: number, latitude: number, zoom = 1): GeoProjection {
-    const radius = Math.min(width * .40, height * .39, 275) * zoom;
-    return geoOrthographic().translate([width / 2, height * .46]).scale(radius)
+    const radius = Math.min(width * .43, height * .44, 275) * zoom;
+    return geoOrthographic().translate([width / 2, height / 2]).scale(radius)
         .rotate([-longitude, -latitude, 0]).clipAngle(90).precision(.4);
 }
 

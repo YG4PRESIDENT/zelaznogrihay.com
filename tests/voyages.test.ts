@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import matter from 'gray-matter';
 import { z } from 'astro/zod';
 import { createDestinationSchema } from '../src/lib/voyages/schema.ts';
-import { clusterPoints, destinationUrl, formatTravelDate, getCountryStatus, getStats, getTimeline, isTravelDate, matchesFilter, matchesSearch, type Destination } from '../src/lib/voyages/model.ts';
+import { clusterPoints, destinationUrl, formatTravelDate, getCountryStatus, getStats, getTimeline, isTravelDate, resolveRoutes, matchesFilter, matchesSearch, type Destination } from '../src/lib/voyages/model.ts';
 
 const schema = createDestinationSchema(z.string());
 const destination = (overrides: Partial<Destination> = {}): Destination => ({
@@ -116,7 +116,7 @@ test('published wishes migrate without adding visited places, photos, or dates',
         assert.equal(data.coordinates, undefined);
         for (const plan of data.plans) assert.equal(plan.date, undefined);
     }
-    assert.equal(wishes, 8);
+    assert.equal(wishes, 9);
 });
 
 test('travel history preserves the supplied stop and residency classifications', async () => {
@@ -162,11 +162,42 @@ test('globe projection stays compact, picks the visible hemisphere, and crosses 
     for(const [width,height] of [[1090,797],[390,354]]){
         const projection=globeProjection(width,height,15,20);
         const point=projection([15,20])!;
-        assert.ok(projection.scale()*2<height*.8);
+        assert.ok(projection.scale()*2<height*.9);
         const coordinates=globePoint(projection,point)!;
         assert.ok(Math.abs(coordinates[0]-15)<.0001 && Math.abs(coordinates[1]-20)<.0001);
         assert.equal(globePoint(projection,[point[0]+projection.scale()+2,point[1]]),null);
     }
     assert.equal(shortestLongitude(179,-179),181);
     assert.equal(shortestLongitude(-179,179),-181);
+});
+
+
+test('family plans and recorded Asian places retain the supplied history without invented dates', async () => {
+    const base = new URL('../src/content/voyages/', import.meta.url);
+    const countries = JSON.parse(await readFile(new URL('../src/data/voyages-countries.json', import.meta.url), 'utf8'));
+    const entries = await Promise.all((await readdir(base)).map(async id => {
+        const data = schema.parse(matter(await readFile(new URL(`${id}/index.md`, base), 'utf8')).data);
+        return { ...data, id, html: '', focus: data.coordinates || data.focus || countries.find(country => data.countryCodes.includes(country.code))?.center };
+    }));
+    assert.deepEqual(getStats(entries), { countries: 18, places: 12, wishes: 10 });
+    assert.match(entries.find(entry => entry.id === 'japan')!.companions!, /mom, brother & sister/);
+    assert.match(entries.find(entry => entry.id === 'turkey')!.companions!, /dad & brother/);
+    assert.equal(entries.find(entry => entry.id === 'brazil')!.companions, 'With the boys');
+    assert.deepEqual(entries.find(entry => entry.id === 'central-asia')!.countryCodes, ['KZ','UZ','TJ','KG']);
+    for (const entry of entries.filter(entry => entry.kind === 'place' || ['fujian','southern-laos'].includes(entry.id))) {
+        assert.equal(entry.visited, true); assert.equal(entry.visits.length, 0); assert.equal(entry.photos.length, 0);
+    }
+    const definitions = JSON.parse(await readFile(new URL('../src/data/voyages-routes.json', import.meta.url), 'utf8'));
+    const routes = resolveRoutes(definitions, entries);
+    assert.equal(routes.length, 1);
+    assert.deepEqual(routes[0].stops.map(stop => stop.destinationId), ['chennai','hyderabad','varanasi','delhi','kathmandu','pokhara','chiang-mai','chiang-rai','southern-laos','vietnam','malaysia','singapore']);
+    assert.deepEqual(routes[0].approximateLegs, [5,7,8,9,10]);
+    assert.ok(!routes[0].stops.some(stop => ['shanghai','chengdu','beijing','xian'].includes(stop.destinationId)));
+});
+
+test('routes reject unrecorded stops and invalid segment references', () => {
+    const entries = [destination({ id:'known', visited:true }), destination({ id:'future' })];
+    assert.throws(() => resolveRoutes([{id:'route',name:'Route',stops:['known','missing']}], entries), /Unrecorded route stop/);
+    assert.throws(() => resolveRoutes([{id:'route',name:'Route',stops:['known','future']}], entries), /Unrecorded route stop/);
+    assert.throws(() => resolveRoutes([{id:'route',name:'Route',stops:['known','known'],approximateLegs:[1]}], entries), /Invalid route leg/);
 });

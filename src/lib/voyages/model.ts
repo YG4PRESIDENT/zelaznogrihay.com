@@ -46,6 +46,7 @@ export interface Destination {
     visited: boolean;
     experience?: TravelExperience;
     states?: StateVisit[];
+    companions?: string;
     summary?: string;
     order: number;
     visits: Visit[];
@@ -59,6 +60,38 @@ export interface Country {
     name: string;
     continent: string;
     center: Coordinates;
+}
+
+export interface RouteDefinition {
+    id: string;
+    name: string;
+    stops: string[];
+    approximateLegs?: number[];
+}
+
+export interface TravelRoute {
+    id: string;
+    name: string;
+    stops: { destinationId: string; position: Coordinates }[];
+    approximateLegs: number[];
+}
+
+/** Route order comes only from recorded itineraries, never from country or city order. */
+export function resolveRoutes(definitions: RouteDefinition[], destinations: Destination[]): TravelRoute[] {
+    const ids = new Set<string>();
+    return definitions.map(route => {
+        if (ids.has(route.id) || route.stops.length < 2) throw new Error(`Invalid travel route: ${route.id}`);
+        ids.add(route.id);
+        const approximateLegs = route.approximateLegs || [];
+        if (approximateLegs.some(index => !Number.isInteger(index) || index < 0 || index >= route.stops.length - 1)) throw new Error(`Invalid route leg: ${route.id}`);
+        const stops = route.stops.map(id => {
+            const destination = destinations.find(destination => destination.id === id);
+            const position = destination?.coordinates || destination?.focus;
+            if (!destination || !hasBeen(destination) || !position) throw new Error(`Unrecorded route stop: ${id}`);
+            return { destinationId: id, position };
+        });
+        return { id: route.id, name: route.name, stops, approximateLegs };
+    });
 }
 
 export const hasBeen = (destination: Destination) => destination.visited || destination.visits.length > 0;

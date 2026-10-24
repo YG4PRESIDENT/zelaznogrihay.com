@@ -40,7 +40,7 @@ async function setup(options: { width?: number; url?: string; entries?: Destinat
         if (options.failGlobe) throw new Error('Deliberately unavailable WebGL');
         return { createGlobe: async callbacks => {
             state.callbacks = callbacks;
-            return { select(id) { state.selected = id; }, show(ids) { state.shown = ids; }, focus(position) { state.focused = position; }, zoom() {}, toggleMotion() { return false; }, reset() {}, resize() {}, destroy() { state.destroyed = true; } };
+            return { select(id) { state.selected = id; }, show(ids) { state.shown = ids; }, focus(position) { state.focused = position; }, zoom() {}, reset() {}, resize() {}, destroy() { state.destroyed = true; } };
         } };
     });
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -64,13 +64,17 @@ async function setup(options: { width?: number; url?: string; entries?: Destinat
 
 test('production page is a single list with the supplied history and no extra chrome', () => {
     const dom = new JSDOM(html); const document = dom.window.document;
-    assert.equal(document.querySelector('.voyages-heading h1')!.textContent,'Voyages');
+    assert.equal(document.querySelector('.voyages-heading'),null);
+    assert.equal(document.getElementById('voyages-current'),null);
+    assert.equal(document.getElementById('voyages-motion'),null);
+    assert.equal(document.querySelectorAll('.voyages-map-tools button').length,2);
+    assert.doesNotMatch(document.querySelector('.voyages-results')!.textContent!,/Passed through|Lived here/);
     assert.doesNotMatch(html,/A personal atlas|voyages-compass|data-filter=|data-view=|voyages-detail-panel|voyages-sheet-toggle/);
     assert.match(document.querySelector('.voyages-list-section h2')!.textContent!,/Where I've been\s*18 countries/);
     assert.equal(document.querySelector('aside.voyages-explorer'),null);
     assert.equal(document.getElementById('voyages-stage')!.nextElementSibling!.id,'voyages-explorer');
     const data=JSON.parse(document.getElementById('voyages-data')!.textContent!);
-    assert.equal(data.destinations.filter(d=>d.visited).length,18);
+    assert.equal(data.destinations.filter(d=>d.visited&&d.kind==='country').length,18);
     assert.equal(data.destinations.filter(d=>d.experience==='passed-through').length,3);
     assert.equal(data.destinations.find(d=>d.id==='china').experience,'lived');
     assert.equal(data.destinations.find(d=>d.id==='united-states').states.length,19);
@@ -94,7 +98,6 @@ test('journals expand in place, keep other entries visible, and update the globe
     const env=await setup();try{
         env.click('[data-destination="test-harbor"] summary');
         assert.equal(env.state.selected,'test-harbor');assert.equal(env.window.location.search,'?destination=test-harbor');
-        assert.equal(env.document.getElementById('voyages-current')!.textContent,'Test harbor');
         assert.equal((env.document.querySelector('[data-destination="test-harbor"]') as HTMLDetailsElement).open,true);
         assert.match(env.document.querySelector('[data-destination="test-harbor"]')!.textContent!,/A memory from this test trip/);
         env.click('[data-destination="test-wish"] summary');
@@ -103,7 +106,6 @@ test('journals expand in place, keep other entries visible, and update the globe
         env.click('[data-destination="test-wish"] summary');assert.equal(env.window.location.search,'');
         env.state.callbacks.onCountry('JP');
         assert.equal(env.state.selected,'test-harbor');
-        assert.equal(env.document.getElementById('voyages-current')!.textContent,'Test harbor');
         assert.equal(env.state.scrolls,0,'Selecting the globe should keep the current map view in place');
     }finally{env.dispose();}
 });

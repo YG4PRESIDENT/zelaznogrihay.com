@@ -13,6 +13,7 @@ One destination entry drives the globe, country highlights, gallery, and destina
 name: Japan
 kind: country
 countryCodes: [JP]
+companions: With my family
 plans:
   - title: Cherry blossoms in Japan with wife
     timeframe: Someday in spring
@@ -70,6 +71,8 @@ Visited `region` and `place` entries with a matching country code appear inside 
 
 The US row contains the recorded states. Selecting it reveals state boundaries; selecting a state name frames that region. Airport stops stay as small dots. The map key uses dark green for visited countries, pale green for future countries, and muted sage for countries not yet visited. A country with both past visits and future plans keeps its visited color. The index sits directly beneath the centered globe; country selection keeps the current view in place rather than scrolling the page away from the map.
 
+Future trips show the destination name and optional `companions` line. Full goals and context stay in the expanded entry. Experience classifications remain in the source history without visible badges. The US state count and recorded place counts remain visible.
+
 Country counts deduplicate countries across all visited entries. Antarctica is a region and does not increase the visited-country count. Undated visits and plans stay undated.
 
 ## Check and publish
@@ -81,3 +84,13 @@ Run `npm test`, `npm run check:voyages`, and `npm run build`. Use `npm run dev` 
 Country outlines are the public-domain Natural Earth 1:50m Admin 0 country data, downloaded from [the Natural Earth repository](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_0_countries.geojson). A build-time Mapshaper pass retains 7% of removable vertices, shared boundaries, and every country, including small countries. US states use the same source's Admin 1 outlines, simplified to 12%. Coordinates are rounded to 0.001 degrees and spherical winding is normalized for D3.
 
 Regenerate outlines and browsing indexes with `npm run sync:geography`; for offline use, pass country and state GeoJSON files as the first and second arguments to `node scripts/sync-voyages-geography.mjs`. Geography is served locally; visitors never fetch it from a third party. Country geometry loads with the lightweight globe; state geometry is a separate request on US selection.
+
+Named-city coordinates are city-level reference points from [Natural Earth populated places](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_populated_places_simple.geojson). Fujian uses a broad region focus from [Natural Earth Admin 1](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_1_states_provinces.geojson). Southern Laos has a broad visual focus, not an inferred city or border crossing.
+
+## Recorded routes
+
+`src/data/voyages-routes.json` contains only itineraries whose order is known. Each record has an `id`, `name`, ordered destination IDs in `stops`, and optional zero-based `approximateLegs`. Leg `0` connects stops `0` and `1`. A dashed leg connects broad areas or crosses omitted stops; these are schematic geographic links rather than exact transport paths.
+
+The recorded route connects Chennai, Hyderabad, Varanasi, Delhi, Kathmandu, Pokhara, Chiang Mai, Chiang Rai, Southern Laos, Vietnam, Malaysia, and Singapore. The Thailand arrival, border crossing, and onward country-level links remain approximate. Shanghai, Chengdu, Beijing, Xi'an, and Fujian are recorded places without an invented China route. No dates, hotels, extra cities, or transport modes are inferred.
+
+Build-time validation rejects unknown or unvisited route stops and invalid leg indexes. Adding places never automatically joins them into a route or changes their order.

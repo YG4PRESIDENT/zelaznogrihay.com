@@ -1,4 +1,4 @@
-import { formatTravelDate, type Coordinates, type Destination } from './model.ts';
+import { formatTravelDate, type Coordinates, type Destination, type TravelRoute } from './model.ts';
 import type { AtlasGlobe } from './globe.ts';
 
 export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe.ts'), 'createGlobe'>> = () => import('./globe.ts')) {
@@ -6,7 +6,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
     if (!root || root.dataset.initialized) return;
     const payload = document.getElementById('voyages-data')?.textContent;
     if (!payload) return;
-    let data: {destinations: Destination[]};
+    let data: {destinations: Destination[]; routes?: TravelRoute[]};
     try { data = JSON.parse(payload); } catch { return; }
     root.dataset.initialized = 'true';
     const {destinations} = data;
@@ -16,7 +16,6 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
     const live = find('voyages-live');
     const canvas = find('voyages-canvas');
     const status = find('voyages-map-status');
-    const current = find('voyages-current');
     const loadStarted = performance.now();
     let selected: string | null = null;
     let globe: AtlasGlobe | null = null;
@@ -38,7 +37,6 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
         entry.open = true;
         for (const row of entries) row.classList.toggle('is-selected', row.dataset.destination === id);
         globe?.select(id);
-        current.textContent = [destination.name, destination.states?.length ? `${destination.states.length} states` : ''].filter(Boolean).join(' · ');
         if (options.history) updateUrl(id);
         live.textContent = destination.name;
     }
@@ -48,7 +46,6 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
         else {
             if (selected) for (const entry of entries) if (entry.dataset.destination === selected) entry.open = false;
             selected = null; globe?.select(null);
-            current.textContent = 'Drag to wander';
             for (const entry of entries) entry.classList.remove('is-selected');
         }
     }
@@ -60,15 +57,14 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
             event.preventDefault();
             if (entry.open) {
                 entry.open = false;
-                if (selected === entry.dataset.destination) { selected = null; entry.classList.remove('is-selected'); globe?.select(null); current.textContent = 'Drag to wander'; updateUrl(null); }
+                if (selected === entry.dataset.destination) { selected = null; entry.classList.remove('is-selected'); globe?.select(null); updateUrl(null); }
             } else select(entry.dataset.destination, {history: true});
             return;
         }
         const stop = target?.closest<HTMLElement>('[data-region-focus], [data-state-stop]');
-        if (stop) { globe?.focus({lat:Number(stop.dataset.lat),lng:Number(stop.dataset.lng)}); current.textContent=stop.textContent?.trim() || current.textContent; return; }
+        if (stop) { globe?.focus({lat:Number(stop.dataset.lat),lng:Number(stop.dataset.lng)}); return; }
         const mapButton = target?.closest<HTMLElement>('[data-map-action]');
-        if (mapButton?.dataset.mapAction === 'motion') globe?.toggleMotion();
-        else if (mapButton) globe?.zoom(mapButton.dataset.mapAction === 'in' ? 1 : -1);
+        if (mapButton) globe?.zoom(mapButton.dataset.mapAction === 'in' ? 1 : -1);
         const photoButton = target?.closest<HTMLElement>('[data-photo]');
         const photoEntry = photoButton?.closest<HTMLElement>('[data-destination]');
         if (photoButton && photoEntry?.dataset.destination) openGallery(photoEntry.dataset.destination, Number(photoButton.dataset.photo));
@@ -117,11 +113,9 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
     void (async () => {
         try {
             const {createGlobe}=await loadGlobe();if(disposed)return;
-            const instance=await createGlobe({container:canvas,destinations,onSelect:id=>select(id,{history:true}),onCountry:code=>{
+            const instance=await createGlobe({container:canvas,destinations,routes:data.routes || [],onSelect:id=>select(id,{history:true}),onCountry:code=>{
                 const destination=destinations.find(destination=>destination.countryCodes.includes(code));if(destination)select(destination.id,{history:true});
-            },onCluster:ids=>{if(ids[0])select(ids[0],{history:true});},onCoordinates:()=>{},onMotionChange:spinning=>{
-                const button=find<HTMLButtonElement>('voyages-motion');button.hidden=false;button.textContent=spinning?'Pause rotation':'Rotate globe';button.setAttribute('aria-pressed',String(spinning));
-            }});
+            },onCluster:ids=>{if(ids[0])select(ids[0],{history:true});},onCoordinates:()=>{}});
             if(disposed){instance.destroy();return;}
             globe=instance;status.hidden=true;find('voyages-map-tools').hidden=false;canvas.dataset.loadMs=String(Math.round(performance.now()-loadStarted));if(selected)globe.select(selected);
         } catch(error) {
