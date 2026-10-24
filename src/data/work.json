@@ -1,11 +1,25 @@
 [
   {
-    "id": "phib",
-    "title": "$PHIB",
-    "description": "A memecoin project explored through tokenomics, transaction mechanics, branding, and launch planning.",
-    "year": "2022",
+    "id": "fantasy-central",
+    "title": "Fantasy Central",
+    "description": "ESPN and Sleeper fantasy football leagues on one live scoreboard, with player-level matchups, Home Screen widgets, and Live Activities.",
+    "year": "2026",
     "group": "built",
-    "link": null
+    "order": 10,
+    "link": "https://apps.apple.com/us/app/fantasy-central/id6811317868",
+    "links": [
+      {
+        "label": "App Store",
+        "href": "https://apps.apple.com/us/app/fantasy-central/id6811317868"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/fantasy-central.webp",
+      "alt": "Fantasy Central App Store screenshot showing ESPN and Sleeper leagues together.",
+      "width": 600,
+      "height": 1300,
+      "kind": "app"
+    }
   },
   {
     "id": "activity-status-widget",
@@ -26,18 +40,28 @@
   {
     "id": "austin-treasure-map",
     "title": "Austin Treasure Map",
-    "description": "A gamified map of 90+ hand-picked Austin places built for finding a new local adventure.",
+    "description": "A gamified map of Austin places, with search, saved visits, neighborhood progress, and quests. Personal progress stays in your browser.",
     "year": "2026",
     "group": "built",
-    "link": "https://yg4president.github.io/austin-treasure-map/"
-  },
-  {
-    "id": "betio",
-    "title": "Betio",
-    "description": "An iOS-first simulated sports prediction experience with a native app, API, and operator console.",
-    "year": "2026",
-    "group": "now",
-    "link": null
+    "link": "https://yg4president.github.io/austin-treasure-map/",
+    "order": 50,
+    "links": [
+      {
+        "label": "Explore map",
+        "href": "https://yg4president.github.io/austin-treasure-map/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/YG4PRESIDENT/austin-treasure-map"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/austin-treasure-map.jpg",
+      "alt": "Austin Treasure Map showing places to explore, map filters, and discovery progress.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "bromenu",
@@ -49,11 +73,25 @@
   },
   {
     "id": "brotein",
-    "title": "Brotein",
-    "description": "An iOS nutrition app for scanning menus and evaluating meals for their muscle-building potential.",
+    "title": "GymBro Health / Brotein",
+    "description": "Scan food, menus, and nutrition labels for protein estimates and meal feedback powered by AI. Originally launched as Brotein.",
     "year": "2025",
     "group": "built",
-    "link": null
+    "link": "https://apps.apple.com/us/app/gymbro-health-social-macros/id6746165507",
+    "order": 40,
+    "links": [
+      {
+        "label": "App Store",
+        "href": "https://apps.apple.com/us/app/gymbro-health-social-macros/id6746165507"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/gymbro.webp",
+      "alt": "GymBro Health, originally Brotein, App Store screenshot showing nutrition scanning.",
+      "width": 600,
+      "height": 1300,
+      "kind": "app"
+    }
   },
   {
     "id": "carbuddy",
@@ -154,10 +192,32 @@
   {
     "id": "lift-atx",
     "title": "Lift ATX",
-    "description": "A custom member website and local sponsorship system for the Lift ATX gym community.",
+    "description": "A custom gym website for memberships, trainers, events, and merch, with a staff editor for drafting and publishing updates.",
     "year": "2026",
-    "group": "now",
-    "link": "https://github.com/YG4PRESIDENT/liftatx"
+    "group": "built",
+    "link": "https://yg4president.github.io/liftatx/",
+    "order": 20,
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://yg4president.github.io/liftatx/"
+      },
+      {
+        "label": "Content editor",
+        "href": "https://yg4president.github.io/liftatx/admin.html"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/YG4PRESIDENT/liftatx"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/lift-atx.jpg",
+      "alt": "Lift ATX website showing the gym’s identity and navigation.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "livestream-commerce",
@@ -184,28 +244,48 @@
     "link": null
   },
   {
-    "id": "mlb-kalshi-luck-bot",
-    "title": "MLB Kalshi Luck Bot",
-    "description": "A live-game MLB paper-trading research harness with a luck-adjusted win-probability model. Built, but not fully released.",
-    "year": "2026",
-    "group": "built",
-    "link": null
-  },
-  {
     "id": "orph",
     "title": "Orph",
-    "description": "An iMessage-first fitness app for conversational workout, nutrition, and supplement logging.",
+    "description": "An iMessage health agent for logging workouts, meals, and supplements by text, with reply-based corrections and an iPhone companion for history and trends.",
     "year": "2026",
     "group": "now",
-    "link": null
+    "link": "https://textorph.com/",
+    "order": 10,
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://textorph.com/"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/orph.jpg",
+      "alt": "Orph website showing an example workout and meal conversation in iMessage.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "outpace",
     "title": "Outpace",
-    "description": "An Apple Health step-tracking app with a daily iMessage-style leaderboard for friend groups.",
+    "description": "Daily step competitions inside iMessage, with shared leaderboards and friendly wagers over who hits their step goal first. Inspired by WeRun in WeChat, it makes walking with friends a daily habit.",
     "year": "2025",
-    "group": "built",
-    "link": "https://github.com/YG4PRESIDENT/official-outpace-website"
+    "group": "now",
+    "link": "https://outpaceapp.com/",
+    "order": 20,
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://outpaceapp.com/"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/outpace-social.png",
+      "alt": "Outpace's blue website preview with its waving character and the line ‘A little rivalry. A lot more steps.’",
+      "width": 1200,
+      "height": 630,
+      "kind": "website"
+    }
   },
   {
     "id": "personal-ai-entity",
@@ -214,6 +294,28 @@
     "year": "",
     "group": "ideas",
     "link": null
+  },
+  {
+    "id": "pi-oclock",
+    "title": "Pi O’clock",
+    "description": "Photographs taken at 3:14 p.m., spun through a wheel of moments.",
+    "year": "2026",
+    "group": "built",
+    "order": 0,
+    "link": "https://pi-oclock.yahirg2021.workers.dev",
+    "links": [
+      {
+        "label": "View project",
+        "href": "https://pi-oclock.yahirg2021.workers.dev"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/pi-oclock.jpg",
+      "alt": "Pi O’clock photo wheel showing moments photographed at 3:14 p.m.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "group-buying",
@@ -225,19 +327,48 @@
   },
   {
     "id": "baby-tracking-app",
-    "title": "Privacy-Friendly Baby Tracking App (CS 461 capstone)",
-    "description": "A privacy-first baby tracking app designed around local storage, encryption, and opt-in cloud backup.",
+    "title": "BabyTracker / SimpleBaby",
+    "description": "A team capstone project for tracking feeding and pumping, with editable history and flexible measurements. Developed in React Native.",
     "year": "2024",
     "group": "built",
-    "link": null
+    "link": "https://github.com/adulbrich/SimpleBaby",
+    "order": 70,
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/adulbrich/SimpleBaby"
+      },
+      {
+        "label": "My contribution",
+        "href": "https://github.com/adulbrich/SimpleBaby/commit/efe9510612df0928aa208ad19817db2182d82286"
+      }
+    ]
   },
   {
     "id": "rankett",
     "title": "Rankett",
-    "description": "A white-label AI search optimization platform built for marketing and SEO agencies.",
+    "description": "An AI search visibility platform for agencies, bringing buyer-intent research, content review, branded reporting, delivery tracking, and WordPress publishing into one workflow.",
     "year": "2026",
     "group": "built",
-    "link": "https://rankett.com"
+    "link": "https://rankett.com/",
+    "order": 30,
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://rankett.com/"
+      },
+      {
+        "label": "Website source",
+        "href": "https://github.com/YG4PRESIDENT/Rankett.com-v2"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/rankett.jpg",
+      "alt": "Rankett website showing its agency search visibility service and implementation layers.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "midnight-ghost-kitchen",
@@ -258,10 +389,28 @@
   {
     "id": "sante-designs",
     "title": "Sante Designs",
-    "description": "A custom fashion and graphic-design brand website built with motion-led interactions.",
+    "description": "A fashion and design website combining a video entrance, editorial pages, and coordinated navigation.",
     "year": "2026",
     "group": "built",
-    "link": "https://github.com/YG4PRESIDENT/santedesigns.com"
+    "link": "https://yg4president.github.io/santedesigns.com/",
+    "order": 60,
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://yg4president.github.io/santedesigns.com/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/YG4PRESIDENT/santedesigns.com"
+      }
+    ],
+    "preview": {
+      "src": "/images/work/sante-designs.jpg",
+      "alt": "Sante Designs video entrance and editorial navigation.",
+      "width": 1200,
+      "height": 760,
+      "kind": "website"
+    }
   },
   {
     "id": "sushi-train-austin",
@@ -277,14 +426,6 @@
     "description": "A TikTok-style feed of micro-predictions: swipe left or right, with payouts based on prediction accuracy.",
     "year": "",
     "group": "ideas",
-    "link": null
-  },
-  {
-    "id": "swipr",
-    "title": "Swipr",
-    "description": "A swipe-based prediction product built around short sessions and accuracy-based outcomes. Built, but not fully released.",
-    "year": "2026",
-    "group": "built",
     "link": null
   },
   {
@@ -325,14 +466,6 @@
     "description": "Real-world quests created by a central creator or contributed geocache-style by the community, then approved and published.",
     "year": "",
     "group": "ideas",
-    "link": null
-  },
-  {
-    "id": "youtube-tool",
-    "title": "YouTube Tooling",
-    "description": "A hosted Rankett tool for turning YouTube content into AI-visibility work. Built, but not fully released.",
-    "year": "2026",
-    "group": "built",
     "link": null
   }
 ]

@@ -54,8 +54,8 @@ const workOverrides = {
         year: '2025', group: 'built', link: null,
     },
     outpace: {
-        description: 'An Apple Health step-tracking app with a daily iMessage-style leaderboard for friend groups.',
-        year: '2025', group: 'built', link: 'https://github.com/YG4PRESIDENT/official-outpace-website',
+        description: 'Daily step competitions inside iMessage, with shared leaderboards and friendly wagers over who hits their step goal first. Inspired by WeRun in WeChat, it makes walking with friends a daily habit.',
+        year: '2025', group: 'built', link: 'https://outpaceapp.com/',
     },
     'baby-tracking-app': {
         description: 'A privacy-first baby tracking app designed around local storage, encryption, and opt-in cloud backup.',

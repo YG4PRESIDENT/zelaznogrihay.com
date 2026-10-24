@@ -1,94 +1,206 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
-import workItems from '../data/work.json';
+import projectData from '../data/work.json';
+import profile from '../data/work-profile.json';
 
+interface WorkItem {
+    id: string;
+    title: string;
+    description: string;
+    group: string;
+    order?: number;
+    link: string | null;
+    links?: { label: string; href: string }[];
+    preview?: { src: string; alt: string; width: number; height: number; kind: string };
+}
+
+const workItems: WorkItem[] = projectData;
 const sections = [
     { key: 'built', title: 'Built' },
     { key: 'now', title: 'Now' },
-];
+].map(section => ({
+    ...section,
+    items: workItems
+        .filter(item => item.group === section.key)
+        .sort((a, b) => (a.order ?? 999) - (b.order ?? 999)),
+}));
 ---
 
 <MainLayout
-    title="Work | zelaznogrihay.com"
-    description="Things Yahir Gonzalez has built and is working on now."
+    title="Work | Yahir Gonzalez"
+    description="Software, websites, and product systems by Yahir Gonzalez. Explore projects, screenshots, and source links."
     showSidebar={false}
 >
     <section class="work-page">
-        <h1 class="page-title">Work</h1>
+        <header class="work-header">
+            <h1 class="page-title">Work</h1>
+            <nav aria-label="Resume and contact">
+                <ul class="profile-links">
+                    {profile.links.map(link => (
+                        <li>
+                            <a
+                                href={link.href}
+                                aria-label={link.accessibleLabel}
+                                target={link.newTab ? '_blank' : undefined}
+                                rel={link.newTab ? 'noopener noreferrer' : undefined}
+                            >{link.label}{link.newTab && <span aria-hidden="true">↗</span>}</a>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        </header>
 
         <div class="work-tabs" role="tablist" aria-label="Work categories">
-            {sections.map((section, index) => {
-                const count = workItems.filter(item => item.group === section.key).length;
-                return (
-                    <button
-                        id={`work-tab-${section.key}`}
-                        type="button"
-                        role="tab"
-                        aria-controls={`work-panel-${section.key}`}
-                        aria-selected={index === 0 ? 'true' : 'false'}
-                        class:list={{ active: index === 0 }}
-                        data-work-tab={section.key}
-                    >
-                        <span>{section.title}</span>
-                        <small>{count}</small>
-                    </button>
-                );
-            })}
+            {sections.map((section, index) => (
+                <button
+                    id={`work-tab-${section.key}`}
+                    type="button"
+                    role="tab"
+                    aria-controls={`work-panel-${section.key}`}
+                    aria-selected={index === 0 ? 'true' : 'false'}
+                    tabindex={index === 0 ? 0 : -1}
+                    class:list={{ active: index === 0 }}
+                    data-work-tab={section.key}
+                >
+                    <span>{section.title}</span>
+                </button>
+            ))}
         </div>
 
         <div class="work-grid">
-            {sections.map((section, index) => {
-                const items = workItems.filter(item => item.group === section.key);
-                return (
-                    <section
-                        id={`work-panel-${section.key}`}
-                        class:list={['work-column', { 'is-active': index === 0 }]}
-                        aria-labelledby={`work-tab-${section.key}`}
-                        data-work-panel={section.key}
-                    >
-                        <header>
-                            <h2>{section.title}</h2>
-                            <span>{items.length}</span>
-                        </header>
+            {sections.map((section, index) => (
+                <section
+                    id={`work-panel-${section.key}`}
+                    class:list={['work-column', { 'is-active': index === 0 }]}
+                    aria-labelledby={`work-heading-${section.key}`}
+                    data-work-panel={section.key}
+                >
+                    <header class="column-heading">
+                        <h2 id={`work-heading-${section.key}`}>{section.title}</h2>
+                    </header>
 
-                        <ul>
-                            {items.map(item => (
-                                <li>
-                                    <div class="item-heading">
-                                        {item.link ? (
-                                            <a href={item.link} target="_blank" rel="noreferrer">{item.title}</a>
-                                        ) : (
-                                            <strong>{item.title}</strong>
+                    <ul class="work-list">
+                        {section.items.map(item => (
+                            <li id={item.id}>
+                                <details class="project">
+                                    <summary>
+                                        <h3>{item.title}</h3>
+                                        <svg class="project-chevron" aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M4 2 L8 6 L4 10" />
+                                        </svg>
+                                    </summary>
+                                    <div class="project-summary">
+                                        <p class="item-description">{item.description}</p>
+                                        {item.links && item.links.length > 0 && (
+                                            <ul class="evidence-links" aria-label={`${item.title} links`}>
+                                                {item.links.map(link => (
+                                                    <li>
+                                                        <a
+                                                            href={link.href}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            aria-label={`${item.title}: ${link.label} (opens in a new tab)`}
+                                                        >
+                                                            {link.label}<span aria-hidden="true">↗</span>
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                        {item.preview && (
+                                            <figure class="project-preview">
+                                                <img
+                                                    src={item.preview.src}
+                                                    alt={item.preview.alt}
+                                                    width={item.preview.width}
+                                                    height={item.preview.height}
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                />
+                                            </figure>
                                         )}
                                     </div>
-                                    <p>{item.description}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                );
-            })}
+                                </details>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            ))}
         </div>
     </section>
 </MainLayout>
 
 <script>
+    const workPage = document.querySelector<HTMLElement>('.work-page');
     const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-work-tab]')];
     const panels = [...document.querySelectorAll<HTMLElement>('[data-work-panel]')];
+    const mobile = window.matchMedia('(max-width: 767px), (max-height: 520px) and (max-width: 950px)');
+    let selected = 'built';
 
-    for (const tab of tabs) {
-        tab.addEventListener('click', () => {
-            const selected = tab.dataset.workTab;
-            for (const item of tabs) {
-                const active = item === tab;
-                item.classList.toggle('active', active);
-                item.setAttribute('aria-selected', String(active));
+    function selectCategory(key: string, moveFocus = false) {
+        if (!tabs.some(tab => tab.dataset.workTab === key)) return;
+        selected = key;
+        for (const tab of tabs) {
+            const active = tab.dataset.workTab === key;
+            tab.classList.toggle('active', active);
+            tab.setAttribute('aria-selected', String(active));
+            tab.tabIndex = active ? 0 : -1;
+            if (active && moveFocus) tab.focus();
+        }
+        for (const panel of panels) {
+            const active = panel.dataset.workPanel === key;
+            panel.classList.toggle('is-active', active);
+            panel.hidden = mobile.matches && !active;
+            panel.setAttribute(
+                'aria-labelledby',
+                `work-${mobile.matches ? 'tab' : 'heading'}-${panel.dataset.workPanel}`,
+            );
+            if (mobile.matches) {
+                panel.setAttribute('role', 'tabpanel');
+                panel.tabIndex = 0;
+            } else {
+                panel.removeAttribute('role');
+                panel.removeAttribute('tabindex');
             }
-            for (const panel of panels) {
-                panel.classList.toggle('is-active', panel.dataset.workPanel === selected);
-            }
+        }
+    }
+
+    function followProjectLink() {
+        let id: string;
+        try {
+            id = decodeURIComponent(window.location.hash.slice(1));
+        } catch {
+            return;
+        }
+        if (!id) return;
+        const target = document.getElementById(id);
+        const panel = target?.closest<HTMLElement>('[data-work-panel]');
+        if (!panel || !workPage?.contains(panel)) return;
+        selectCategory(panel.dataset.workPanel ?? 'built');
+        const project = target?.querySelector('details');
+        if (project) project.open = true;
+        requestAnimationFrame(() => target?.scrollIntoView({ block: 'start' }));
+    }
+
+    for (const [index, tab] of tabs.entries()) {
+        tab.addEventListener('click', () => selectCategory(tab.dataset.workTab ?? 'built'));
+        tab.addEventListener('keydown', event => {
+            let next: number;
+            if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+            else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+            else if (event.key === 'Home') next = 0;
+            else if (event.key === 'End') next = tabs.length - 1;
+            else return;
+            event.preventDefault();
+            selectCategory(tabs[next].dataset.workTab ?? 'built', true);
         });
     }
+
+    mobile.addEventListener('change', () => selectCategory(selected));
+    window.addEventListener('hashchange', followProjectLink);
+    workPage?.setAttribute('data-enhanced', '');
+    selectCategory(selected);
+    followProjectLink();
 </script>
 
 <style>
@@ -97,11 +209,54 @@ const sections = [
         margin: 0 auto;
     }
 
+    .work-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.3rem 1.5rem;
+        padding-bottom: 0.6rem;
+        margin-bottom: 1.15rem;
+        border-bottom: 1px solid var(--border-strong);
+    }
+
+    .page-title {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    .profile-links,
+    .work-list,
+    .evidence-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .profile-links {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 1.15rem;
+    }
+
+    .profile-links a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        gap: 0.3rem;
+        color: var(--link-color);
+        font-size: 0.84rem;
+        text-decoration: underline;
+        text-decoration-color: var(--accent-underline);
+        text-underline-offset: 0.25em;
+    }
+
     .work-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        border-top: 1px solid rgba(57, 255, 20, 0.22);
-        border-bottom: 1px solid rgba(57, 255, 20, 0.22);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
     }
 
     .work-tabs {
@@ -110,74 +265,147 @@ const sections = [
 
     .work-column {
         min-width: 0;
-        padding: 1.15rem 1.35rem 1.4rem;
+        padding: 1.1rem 1.35rem 1.4rem;
     }
 
     .work-column + .work-column {
-        border-left: 1px solid rgba(57, 255, 20, 0.16);
+        border-left: 1px solid var(--border-color);
     }
 
-    .work-column header {
+    .column-heading {
         display: flex;
         align-items: baseline;
         justify-content: space-between;
         gap: 1rem;
-        margin-bottom: 0.85rem;
+        margin-bottom: 0.3rem;
         padding-bottom: 0.65rem;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.32);
+        border-bottom: 1px solid var(--border-color);
     }
 
-    .work-column h2 {
+    .column-heading h2 {
         margin: 0;
-        color: var(--text-color);
-        font-size: 1rem;
+        color: var(--accent-color);
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1.2;
     }
 
-    .work-column header span {
-        color: var(--terminal-green);
-        font-size: 0.68rem;
-    }
-
-    ul {
-        list-style: none;
-        margin: 0;
+    .work-list > li {
         padding: 0;
+        border-bottom: 1px dotted var(--border-color);
+        scroll-margin-top: 7rem;
     }
 
-    li {
-        padding: 0.85rem 0;
-        border-bottom: 1px dotted rgba(212, 175, 55, 0.2);
-    }
-
-    li:last-child {
+    .work-list > li:last-child {
         border-bottom: 0;
     }
 
-    .item-heading {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 0.8rem;
-    }
-
-    .item-heading strong,
-    .item-heading a {
-        min-width: 0;
+    .work-list h3 {
+        margin: 0;
         color: var(--text-color);
-        font-size: 0.84rem;
-        font-weight: 700;
-        line-height: 1.35;
+        font-size: 0.98rem;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
     }
 
-    .item-heading a:hover {
-        color: var(--terminal-green);
+    .project > summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 52px;
+        padding: 0.8rem 0;
+        list-style: none;
+        cursor: pointer;
+        touch-action: manipulation;
     }
 
-    li p {
-        margin: 0.42rem 0 0;
-        color: var(--muted-text);
-        font-size: 0.75rem;
-        line-height: 1.55;
+    .project > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .project > summary::marker {
+        content: '';
+    }
+
+    .project-chevron {
+        flex: 0 0 auto;
+        color: var(--accent-color);
+    }
+
+    .project[open] .project-chevron {
+        transform: rotate(90deg);
+    }
+
+    .project > summary:hover h3 {
+        color: var(--accent-hover);
+    }
+
+    .project-summary {
+        padding-bottom: 1rem;
+    }
+
+    .item-description {
+        min-width: 0;
+        margin: 0;
+        color: var(--secondary-text);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .project-preview {
+        display: block;
+        width: min(100%, 260px);
+        aspect-ratio: 3 / 2;
+        margin: 0.6rem 0 0;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background: var(--panel-color);
+    }
+
+    .project-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+
+    .evidence-links {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 1rem;
+        margin-top: 0.45rem;
+    }
+
+    .evidence-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        min-height: 36px;
+        color: var(--link-color);
+        font-size: 0.78rem;
+        text-decoration: underline;
+        text-decoration-color: var(--accent-underline);
+        text-underline-offset: 0.25em;
+    }
+
+    .work-page a {
+        transition: color 160ms ease, text-decoration-color 160ms ease;
+    }
+
+    .work-page a:hover {
+        color: var(--accent-hover);
+        text-decoration-color: currentColor;
+    }
+
+    .work-page a:focus-visible,
+    .project > summary:focus-visible,
+    .work-tabs button:focus-visible,
+    .work-column:focus-visible {
+        outline: 2px solid var(--accent-color);
+        outline-offset: 4px;
     }
 
     @media (max-width: 900px) {
@@ -188,7 +416,7 @@ const sections = [
 
         .work-column {
             padding-inline: 0;
-            border-bottom: 1px solid rgba(57, 255, 20, 0.22);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .work-column + .work-column {
@@ -197,19 +425,26 @@ const sections = [
     }
 
     @media (max-width: 767px), (max-height: 520px) and (max-width: 950px) {
-        .page-title {
-            margin-bottom: 0.7rem;
+        .work-header {
+            align-items: flex-start;
+            flex-direction: column;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.45rem;
         }
 
-        .work-tabs {
+        .profile-links {
+            column-gap: 1rem;
+        }
+
+        .work-page[data-enhanced] .work-tabs {
             position: sticky;
             top: var(--mobile-nav-height);
             z-index: 25;
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            margin-bottom: 0.8rem;
-            background: rgba(10, 10, 10, 0.97);
-            border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+            margin-bottom: 0.25rem;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .work-tabs button {
@@ -218,24 +453,20 @@ const sections = [
             justify-content: center;
             gap: 0.42rem;
             min-width: 0;
-            min-height: 46px;
+            min-height: 50px;
             padding: 0.45rem 0.3rem;
             border: 0;
             border-bottom: 2px solid transparent;
             background: transparent;
             color: var(--muted-text);
-            font: 0.78rem/1 'Courier New', monospace;
+            font: 700 1.1rem/1.2 'Courier New', monospace;
             cursor: pointer;
+            touch-action: manipulation;
         }
 
         .work-tabs button.active {
-            border-bottom-color: var(--terminal-green);
-            color: var(--terminal-green);
-        }
-
-        .work-tabs small {
-            color: inherit;
-            font-size: 0.62rem;
+            border-bottom-color: var(--accent-color);
+            color: var(--accent-color);
         }
 
         .work-grid {
@@ -244,33 +475,23 @@ const sections = [
         }
 
         .work-column {
-            display: none;
             padding: 0;
             border-bottom: 0;
         }
 
-        .work-column.is-active {
-            display: block;
-        }
-
-        .work-column header {
+        .work-page[data-enhanced] .column-heading {
             display: none;
         }
 
-        li {
-            padding: 0.78rem 0;
+        .evidence-links a {
+            min-height: 44px;
+            font-size: 0.8rem;
         }
+    }
 
-        .item-heading strong,
-        .item-heading a {
-            font-size: 0.9rem;
-            line-height: 1.32;
-        }
-
-        li p {
-            margin-top: 0.32rem;
-            font-size: 0.78rem;
-            line-height: 1.48;
+    @media (prefers-reduced-motion: reduce) {
+        .work-page a {
+            transition: none;
         }
     }
 </style>

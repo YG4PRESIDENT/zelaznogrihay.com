@@ -26,16 +26,16 @@ const { frontmatter } = Astro.props;
 		max-width: 100%;
 		box-sizing: border-box;
 		margin: 0 auto;
-		background-color: rgba(26, 60, 94, 0.1);
+		background-color: var(--panel-color);
 		padding: 1.5rem;
 		border-radius: 8px;
-		border: 1px solid rgba(212, 175, 55, 0.2);
+		border: 1px solid var(--border-color);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 	}
 
 	header {
 		margin-bottom: 2rem;
-		border-bottom: 1px solid var(--accent-color);
+		border-bottom: 1px solid var(--border-strong);
 		padding-bottom: 1rem;
 		position: relative;
 	}
@@ -53,7 +53,7 @@ const { frontmatter } = Astro.props;
 	h1 {
 		font-size: 1.8rem;
 		margin: 0 0 0.5rem 0;
-		color: var(--accent-color);
+		color: var(--text-color);
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 	}
 
@@ -61,12 +61,12 @@ const { frontmatter } = Astro.props;
 		font-size: 1.2rem;
 		margin: 0 0 1rem 0;
 		font-style: italic;
-		color: rgba(245, 245, 240, 0.8);
+		color: var(--secondary-text);
 	}
 
 	.post-meta {
 		font-size: 0.9rem;
-		color: var(--accent-color);
+		color: var(--muted-text);
 	}
 
 	.post-content {
@@ -75,9 +75,9 @@ const { frontmatter } = Astro.props;
 	}
 	
 	.post-content :global(h2) {
-		color: var(--accent-color);
+		color: var(--text-color);
 		margin-top: 2rem;
-		border-bottom: 1px dashed rgba(212, 175, 55, 0.3);
+		border-bottom: 1px dashed var(--border-color);
 		padding-bottom: 0.5rem;
 	}
 	
@@ -89,7 +89,7 @@ const { frontmatter } = Astro.props;
 		border-left: 3px solid var(--accent-color);
 		padding-left: 1rem;
 		margin-left: 0;
-		color: rgba(245, 245, 240, 0.8);
+		color: var(--secondary-text);
 		font-style: italic;
 	}
 
