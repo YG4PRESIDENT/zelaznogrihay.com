@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "zelaznogrihay",
+  "account_id": "51caab87ed84de33c5ccf4e86fb1ee28",
+  "compatibility_date": "2026-10-24",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "zelaznogrihay.com/*", "zone_name": "zelaznogrihay.com" },
+    { "pattern": "www.zelaznogrihay.com/*", "zone_name": "zelaznogrihay.com" }
+  ]
+}

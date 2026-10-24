@@ -1,14 +1,10 @@
 ---
-const travelQuests = [
-    { name: 'Cross Africa by rail', category: 'travel' },
-    { name: 'Visit Turkey with father', category: 'travel' },
-    { name: 'Cherry blossoms in Japan with wife', category: 'travel' },
-    { name: 'Get tradition needle tap tattoo by old saggy titter woman ', category: 'travel' },
-    { name: 'Live among African villages', category: 'travel' },
-    { name: 'Dance at Carnival in Brazil', category: 'travel' },
-    { name: 'Expedition to Antarctica', category: 'travel' },
-    { name: 'Trek through Patagonia with Huck', category: 'travel' },
-];
+import { getCollection } from 'astro:content';
+import { destinationUrl } from '../lib/voyages/model';
+
+const travelQuests = (await getCollection('voyages'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .flatMap(destination => destination.data.plans.map(plan => ({ name: plan.title, href: destinationUrl(destination.id) })));
 
 interface LifeQuest {
     name: string;
@@ -77,7 +73,7 @@ const { compact = false } = Astro.props;
     <div class="quests-container">
         {travelQuests.map(quest => (
             <div class="quest-item travel">
-                <span class="quest-name">{quest.name}</span>
+                <a class="quest-name" href={quest.href}>{quest.name}</a>
             </div>
         ))}
     </div>
