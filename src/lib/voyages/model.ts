@@ -2,7 +2,7 @@ export type Coordinates = { lat: number; lng: number };
 export type DestinationKind = 'country' | 'place' | 'region' | 'idea';
 export type TravelFilter = 'all' | 'been' | 'wanted';
 export type TravelExperience = 'visited' | 'passed-through' | 'lived';
-export interface StateVisit { code: string; stop?: Coordinates; stopLabel?: string }
+export interface StateVisit { code: string; stop?: Coordinates; stopLabel?: string; focus?: Coordinates }
 export const US_STATES: Record<string, string> = {
     AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
 };
@@ -148,8 +148,8 @@ export function getTimeline(destinations: Destination[]) {
 export interface ProjectedPoint { id: string; x: number; y: number }
 
 /** Stable screen-space groups; behind-the-globe points are removed by the caller. */
-export function clusterPoints(points: ProjectedPoint[], distance = 54): ProjectedPoint[][] {
-    const groups: ProjectedPoint[][] = [];
+export function clusterPoints<T extends ProjectedPoint>(points: T[], distance = 54): T[][] {
+    const groups: T[][] = [];
     for (const point of points) {
         const group = groups.find(items => Math.hypot(items[0].x - point.x, items[0].y - point.y) < distance);
         if (group) group.push(point);

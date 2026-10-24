@@ -4,7 +4,7 @@ Tell Codex the destination, what you want to record, and the folder containing y
 
 > Add a place to Voyages. Here is its name, when I visited, a few memories, and the photo folder. I also want to go back for these things.
 
-One destination entry drives the globe, country highlights, gallery, timeline, and sidebar. You can start with just a country or a wish and fill in the rest later. Existing entries live in `src/content/voyages/<destination-id>/index.md`. The folder name is its permanent ID and shareable link: `/voyages/?destination=<destination-id>`.
+One destination entry drives the globe, country highlights, gallery, and destination list. You can start with just a country or a wish and fill in the rest later. Existing entries live in `src/content/voyages/<destination-id>/index.md`. The folder name is its permanent ID and shareable link: `/voyages/?destination=<destination-id>`.
 
 ## A future country trip
 
@@ -66,7 +66,11 @@ The coordinates above are illustrative: use the actual place's location. Photos 
 - Use quoted `YYYY`, `YYYY-MM`, or `YYYY-MM-DD` dates, preserving the precision you actually know. A visit can have `endDate`. A plan can have a target `date` and/or a free-form `timeframe`.
 - Add another item to `visits` for a return trip and another item to `plans` for a future wish. A place may be both visited and on the wishlist.
 
-Country counts deduplicate countries across all visited entries. Antarctica is a region and does not increase the visited-country count. Undated visits stay undated; plans without a target date appear under **Someday**.
+Visited `region` and `place` entries with a matching country code appear inside that country's expanded row. Add a country entry when recording the first region in a new country. Each region or place keeps its own notes, visits, photos, and link. A region spanning multiple recorded countries appears beneath the first matching country; other ungrouped regions remain visible in the list. No location is inferred from a country visit.
+
+The US row contains the recorded states. Selecting it reveals state boundaries; selecting a state name frames that region. Airport stops stay as small dots. The map key uses dark ink for visited countries, pale gold for future countries, and sage for countries not yet visited. A country with both past visits and future plans keeps its visited color.
+
+Country counts deduplicate countries across all visited entries. Antarctica is a region and does not increase the visited-country count. Undated visits and plans stay undated.
 
 ## Check and publish
 
@@ -74,4 +78,6 @@ Run `npm test`, `npm run check:voyages`, and `npm run build`. Use `npm run dev` 
 
 ## Geography
 
-Country outlines are the public-domain Natural Earth 1:50m Admin 0 country data, downloaded from [the Natural Earth repository](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_0_countries.geojson). The bundled copy has reduced properties and rounded coordinates and is served locally. Regenerate both geometry and browsing index with `node scripts/sync-voyages-geography.mjs`; pass a downloaded GeoJSON filename as the argument for offline use. Geography is never fetched from a third party when someone opens the atlas.
+Country outlines are the public-domain Natural Earth 1:50m Admin 0 country data, downloaded from [the Natural Earth repository](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_0_countries.geojson). A build-time Mapshaper pass retains 7% of removable vertices, shared boundaries, and every country, including small countries. US states use the same source's Admin 1 outlines, simplified to 12%. Coordinates are rounded to 0.001 degrees and spherical winding is normalized for D3.
+
+Regenerate outlines and browsing indexes with `npm run sync:geography`; for offline use, pass country and state GeoJSON files as the first and second arguments to `node scripts/sync-voyages-geography.mjs`. Geography is served locally; visitors never fetch it from a third party. Country geometry loads with the lightweight globe; state geometry is a separate request on US selection.

@@ -7,28 +7,29 @@
     "build": "astro build",
     "sync:brain": "node scripts/sync-secondbrain.mjs",
     "sync:geography": "node scripts/sync-voyages-geography.mjs",
-    "test": "npm run build && node --experimental-strip-types --test tests/voyages.test.ts tests/voyages-ui.test.ts",
+    "test": "npm run build && node --experimental-strip-types --test tests/voyages.test.ts tests/voyages-ui.test.ts tests/voyages-globe.test.ts",
     "check:voyages": "tsc --noEmit --target es2022 --module preserve --moduleResolution bundler --lib es2022,dom --strict --skipLibCheck --allowImportingTsExtensions --types vite/client --ignoreConfig src/lib/voyages/model.ts src/lib/voyages/schema.ts src/lib/voyages/globe.ts src/lib/voyages/client.ts src/lib/voyages/journal.ts src/lib/voyages/rendering.ts",
     "preview": "astro preview",
+    "preview:cloudflare": "npm test && npm run check:voyages && wrangler versions upload --preview-alias voyages",
     "astro": "astro",
     "deploy": "npm test && npm run check:voyages && wrangler deploy"
   },
   "dependencies": {
     "astro": "^7.0.9",
-    "globe.gl": "^2.46.2",
+    "d3-geo": "^3.1.1",
     "graphology": "^0.26.0",
     "graphology-layout-forceatlas2": "^0.10.1",
     "gray-matter": "^4.0.3",
     "marked": "^16.1.1",
     "sanitize-html": "^2.17.0",
-    "sigma": "^3.0.2",
-    "three": "^0.186.1"
+    "sigma": "^3.0.2"
   },
   "devDependencies": {
+    "@types/d3-geo": "^3.1.1",
     "@types/geojson": "^7946.0.16",
     "@types/sanitize-html": "^2.16.2",
-    "@types/three": "^0.186.0",
     "jsdom": "^29.1.1",
+    "mapshaper": "^0.7.98",
     "typescript": "^7.0.2",
     "wrangler": "^4.152.0"
   }

@@ -1,0 +1,402 @@
+[
+  {
+    "code": "AK",
+    "name": "Alaska",
+    "center": {
+      "lat": 65.3609,
+      "lng": -151.604
+    }
+  },
+  {
+    "code": "AL",
+    "name": "Alabama",
+    "center": {
+      "lat": 32.8551,
+      "lng": -86.7184
+    }
+  },
+  {
+    "code": "AR",
+    "name": "Arkansas",
+    "center": {
+      "lat": 34.7563,
+      "lng": -92.1428
+    }
+  },
+  {
+    "code": "AZ",
+    "name": "Arizona",
+    "center": {
+      "lat": 34.3046,
+      "lng": -111.935
+    }
+  },
+  {
+    "code": "CA",
+    "name": "California",
+    "center": {
+      "lat": 36.7496,
+      "lng": -119.591
+    }
+  },
+  {
+    "code": "CO",
+    "name": "Colorado",
+    "center": {
+      "lat": 38.9998,
+      "lng": -105.543
+    }
+  },
+  {
+    "code": "CT",
+    "name": "Connecticut",
+    "center": {
+      "lat": 41.6486,
+      "lng": -72.7594
+    }
+  },
+  {
+    "code": "DE",
+    "name": "Delaware",
+    "center": {
+      "lat": 38.8657,
+      "lng": -75.4112
+    }
+  },
+  {
+    "code": "FL",
+    "name": "Florida",
+    "center": {
+      "lat": 28.1568,
+      "lng": -81.6228
+    }
+  },
+  {
+    "code": "GA",
+    "name": "Georgia",
+    "center": {
+      "lat": 32.8547,
+      "lng": -83.4078
+    }
+  },
+  {
+    "code": "HI",
+    "name": "Hawaii",
+    "center": {
+      "lat": 21.4919,
+      "lng": -157.999
+    }
+  },
+  {
+    "code": "IA",
+    "name": "Iowa",
+    "center": {
+      "lat": 42.0423,
+      "lng": -93.3891
+    }
+  },
+  {
+    "code": "ID",
+    "name": "Idaho",
+    "center": {
+      "lat": 43.7825,
+      "lng": -114.133
+    }
+  },
+  {
+    "code": "IL",
+    "name": "Illinois",
+    "center": {
+      "lat": 39.946,
+      "lng": -89.1991
+    }
+  },
+  {
+    "code": "IN",
+    "name": "Indiana",
+    "center": {
+      "lat": 39.8874,
+      "lng": -86.1396
+    }
+  },
+  {
+    "code": "KS",
+    "name": "Kansas",
+    "center": {
+      "lat": 38.5,
+      "lng": -98.3309
+    }
+  },
+  {
+    "code": "KY",
+    "name": "Kentucky",
+    "center": {
+      "lat": 37.3994,
+      "lng": -85.5729
+    }
+  },
+  {
+    "code": "LA",
+    "name": "Louisiana",
+    "center": {
+      "lat": 30.5274,
+      "lng": -91.9991
+    }
+  },
+  {
+    "code": "MA",
+    "name": "Massachusetts",
+    "center": {
+      "lat": 42.3739,
+      "lng": -71.9993
+    }
+  },
+  {
+    "code": "MD",
+    "name": "Maryland",
+    "center": {
+      "lat": 39.3874,
+      "lng": -77.0454
+    }
+  },
+  {
+    "code": "ME",
+    "name": "Maine",
+    "center": {
+      "lat": 45.148,
+      "lng": -69.1973
+    }
+  },
+  {
+    "code": "MI",
+    "name": "Michigan",
+    "center": {
+      "lat": 43.4343,
+      "lng": -84.9479
+    }
+  },
+  {
+    "code": "MN",
+    "name": "Minnesota",
+    "center": {
+      "lat": 46.0592,
+      "lng": -93.364
+    }
+  },
+  {
+    "code": "MO",
+    "name": "Missouri",
+    "center": {
+      "lat": 38.5487,
+      "lng": -92.446
+    }
+  },
+  {
+    "code": "MS",
+    "name": "Mississippi",
+    "center": {
+      "lat": 32.8657,
+      "lng": -89.7189
+    }
+  },
+  {
+    "code": "MT",
+    "name": "Montana",
+    "center": {
+      "lat": 46.9965,
+      "lng": -110.044
+    }
+  },
+  {
+    "code": "NC",
+    "name": "North Carolina",
+    "center": {
+      "lat": 35.6152,
+      "lng": -78.866
+    }
+  },
+  {
+    "code": "ND",
+    "name": "North Dakota",
+    "center": {
+      "lat": 47.4675,
+      "lng": -100.302
+    }
+  },
+  {
+    "code": "NE",
+    "name": "Nebraska",
+    "center": {
+      "lat": 41.5002,
+      "lng": -99.6855
+    }
+  },
+  {
+    "code": "NH",
+    "name": "New Hampshire",
+    "center": {
+      "lat": 43.5993,
+      "lng": -71.6301
+    }
+  },
+  {
+    "code": "NJ",
+    "name": "New Jersey",
+    "center": {
+      "lat": 40.0449,
+      "lng": -74.4653
+    }
+  },
+  {
+    "code": "NM",
+    "name": "New Mexico",
+    "center": {
+      "lat": 34.5002,
+      "lng": -106.024
+    }
+  },
+  {
+    "code": "NV",
+    "name": "Nevada",
+    "center": {
+      "lat": 39.4299,
+      "lng": -117.02
+    }
+  },
+  {
+    "code": "NY",
+    "name": "New York",
+    "center": {
+      "lat": 43.1988,
+      "lng": -75.3242
+    }
+  },
+  {
+    "code": "OH",
+    "name": "Ohio",
+    "center": {
+      "lat": 40.0924,
+      "lng": -82.6719
+    }
+  },
+  {
+    "code": "OK",
+    "name": "Oklahoma",
+    "center": {
+      "lat": 35.452,
+      "lng": -97.1309
+    }
+  },
+  {
+    "code": "OR",
+    "name": "Oregon",
+    "center": {
+      "lat": 43.8333,
+      "lng": -120.386
+    }
+  },
+  {
+    "code": "PA",
+    "name": "Pennsylvania",
+    "center": {
+      "lat": 40.8601,
+      "lng": -77.6094
+    }
+  },
+  {
+    "code": "RI",
+    "name": "Rhode Island",
+    "center": {
+      "lat": 41.6242,
+      "lng": -71.5082
+    }
+  },
+  {
+    "code": "SC",
+    "name": "South Carolina",
+    "center": {
+      "lat": 33.8578,
+      "lng": -80.6471
+    }
+  },
+  {
+    "code": "SD",
+    "name": "South Dakota",
+    "center": {
+      "lat": 44.4711,
+      "lng": -100.255
+    }
+  },
+  {
+    "code": "TN",
+    "name": "Tennessee",
+    "center": {
+      "lat": 35.7514,
+      "lng": -86.3415
+    }
+  },
+  {
+    "code": "TX",
+    "name": "Texas",
+    "center": {
+      "lat": 31.131,
+      "lng": -98.7607
+    }
+  },
+  {
+    "code": "UT",
+    "name": "Utah",
+    "center": {
+      "lat": 39.5007,
+      "lng": -111.544
+    }
+  },
+  {
+    "code": "VA",
+    "name": "Virginia",
+    "center": {
+      "lat": 37.7403,
+      "lng": -78.2431
+    }
+  },
+  {
+    "code": "VT",
+    "name": "Vermont",
+    "center": {
+      "lat": 44.0886,
+      "lng": -72.7317
+    }
+  },
+  {
+    "code": "WA",
+    "name": "Washington",
+    "center": {
+      "lat": 47.4865,
+      "lng": -120.361
+    }
+  },
+  {
+    "code": "WI",
+    "name": "Wisconsin",
+    "center": {
+      "lat": 44.3709,
+      "lng": -89.5831
+    }
+  },
+  {
+    "code": "WV",
+    "name": "West Virginia",
+    "center": {
+      "lat": 38.6422,
+      "lng": -80.7128
+    }
+  },
+  {
+    "code": "WY",
+    "name": "Wyoming",
+    "center": {
+      "lat": 42.9999,
+      "lng": -107.552
+    }
+  }
+]

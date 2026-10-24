@@ -39,7 +39,7 @@ async function setup(options: { width?: number; url?: string; entries?: Destinat
         if (options.failGlobe) throw new Error('Deliberately unavailable WebGL');
         return { createGlobe: async callbacks => {
             state.callbacks = callbacks;
-            return { select(id) { state.selected = id; }, show(ids) { state.shown = ids; }, focus(position) { state.focused = position; }, zoom() {}, reset() {}, resize() {}, destroy() { state.destroyed = true; } };
+            return { select(id) { state.selected = id; }, show(ids) { state.shown = ids; }, focus(position) { state.focused = position; }, zoom() {}, toggleMotion() { return false; }, reset() {}, resize() {}, destroy() { state.destroyed = true; } };
         } };
     });
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -71,7 +71,20 @@ test('production page is a single list with the supplied history and no extra ch
     assert.equal(data.destinations.filter(d=>d.experience==='passed-through').length,3);
     assert.equal(data.destinations.find(d=>d.id==='china').experience,'lived');
     assert.equal(data.destinations.find(d=>d.id==='united-states').states.length,19);
+    assert.equal(document.querySelectorAll('.voyages-key li').length,3);
+    assert.equal(document.querySelectorAll('#destination-united-states [data-region-focus]').length,19);
     dom.window.close();
+});
+
+test('a linked region expands its country and keeps the globe in view on initial load',async()=>{
+    const region={...base,id:'test-region',kind:'region' as const,coordinates:undefined};
+    const env=await setup({entries:[base,region]});try{
+        const parent=env.document.querySelector<HTMLDetailsElement>('[data-destination="test-harbor"]')!;
+        const child=env.document.querySelector<HTMLDetailsElement>('[data-destination="test-region"]')!;
+        parent.appendChild(child);
+        env.state.callbacks.onSelect('test-region');
+        assert.equal(parent.open,true);assert.equal(child.open,true);assert.equal(env.state.selected,'test-region');
+    }finally{env.dispose();}
 });
 
 test('journals expand in place, keep other entries visible, and update the globe and URL',async()=>{

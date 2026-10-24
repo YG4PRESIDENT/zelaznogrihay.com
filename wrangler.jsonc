@@ -4,6 +4,7 @@
   "account_id": "51caab87ed84de33c5ccf4e86fb1ee28",
   "compatibility_date": "2026-10-24",
   "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",

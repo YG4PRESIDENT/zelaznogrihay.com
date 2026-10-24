@@ -1,6 +1,8 @@
 ---
 import Sidequests from '../components/Sidequests.astro';
 import SiteNav from '../components/SiteNav.astro';
+import { Image } from 'astro:assets';
+import shipImage from '../../public/images/full-logo-new.png';
 
 interface Props {
     title: string;
@@ -55,7 +57,7 @@ const {
                             <span class="ship-track" aria-hidden="true">
                                 {[0, 1].map(() => (
                                     <span class="ship-lap">
-                                        <img src="/images/full-logo-new.png" alt="" width="728" height="728" class="logo-image" />
+                                        <Image src={shipImage} alt="" width={500} widths={[156, 300, 500]} sizes={compactHeader ? '(max-width: 800px) 78px, 150px' : '(max-width: 800px) 155px, 245px'} format="webp" quality={85} loading="eager" fetchpriority="high" class="logo-image" />
                                     </span>
                                 ))}
                             </span>

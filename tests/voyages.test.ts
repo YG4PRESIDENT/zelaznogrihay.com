@@ -131,22 +131,42 @@ test('travel history preserves the supplied stop and residency classifications',
     assert.ok(states.find(state=>state.code==='NY')!.stop);assert.ok(states.find(state=>state.code==='OH')!.stop);
 });
 
-test('US polygon faces remain well above the ocean between their vertices', async () => {
-    const {GLOBE_RENDERING}=await import('../src/lib/voyages/rendering.ts');
-    const {Triangle,Vector3}=await import('three');
-    const original=(globalThis as any).window;
-    (globalThis as any).window={};
-    const {default:Geometry}=await import('three-conic-polygon-geometry');
-    if(original===undefined)delete (globalThis as any).window;else (globalThis as any).window=original;
-    const geography=JSON.parse(await readFile(new URL('../public/data/voyages/countries.json',import.meta.url),'utf8'));
-    const us=geography.features.find(feature=>feature.properties.code==='US');
-    let minimum=Infinity;
-    for(const polygon of us.geometry.coordinates){
-        const geometry=new Geometry(polygon,0,100,false,true,false,GLOBE_RENDERING.countryCurvature);
-        const positions=geometry.attributes.position,index=geometry.index!;
-        const a=new Vector3(),b=new Vector3(),c=new Vector3(),near=new Vector3(),origin=new Vector3(),triangle=new Triangle();
-        for(let i=0;i<index.count;i+=3){a.fromBufferAttribute(positions,index.getX(i));b.fromBufferAttribute(positions,index.getX(i+1));c.fromBufferAttribute(positions,index.getX(i+2));triangle.set(a,b,c).closestPointToPoint(origin,near);minimum=Math.min(minimum,near.length()*(1+GLOBE_RENDERING.countryAltitude));}
-        geometry.dispose();
+test('simplified geography retains every visited country and spherical winding', async () => {
+    const {geoContains,geoArea}=await import('d3-geo');
+    const text=await readFile(new URL('../public/data/voyages/countries.json',import.meta.url),'utf8');
+    const geography=JSON.parse(text);
+    assert.ok(Buffer.byteLength(text)<220000,'Keep the initial geography download small');
+    assert.equal(geography.features.length,242);
+    for(const code of ['MX','US','PE','CR','FR','EG','IL','JO','AE','IN','NP','CN','LA','TH','VN','MY','SG','KR']){
+        const country=geography.features.find(feature=>feature.properties.code===code);
+        assert.ok(country?.geometry,code+' must survive simplification');
+        assert.ok(geoArea(country)>0 && geoArea(country)<2*Math.PI,code+' must describe the smaller spherical area');
     }
-    assert.ok(minimum>100.5,`Country cap must clear the ocean, got ${minimum}`);
+    const us=geography.features.find(feature=>feature.properties.code==='US');
+    assert.ok(geoContains(us,[-98,39]));assert.equal(geoContains(us,[15,20]),false);
+    const states=JSON.parse(await readFile(new URL('../public/data/voyages/states-us.json',import.meta.url),'utf8'));
+    assert.equal(states.features.length,50);
+    assert.ok(states.features.every(state=>geoArea(state)>0 && geoArea(state)<Math.PI));
+});
+
+test('country colors keep visited countries darkest, including repeat-trip wishes',async()=>{
+    const {countryFill,ATLAS_COLORS}=await import('../src/lib/voyages/rendering.ts');
+    const entries=[destination({visited:true,plans:[{title:'Return',thingsToDo:[],links:[]}]}),destination({countryCodes:['BR'],plans:[{title:'Carnival',thingsToDo:[],links:[]}]})];
+    assert.equal(countryFill(entries,'JP'),ATLAS_COLORS.visited);
+    assert.equal(countryFill(entries,'BR'),ATLAS_COLORS.wanted);
+    assert.equal(countryFill(entries,'AU'),ATLAS_COLORS.unvisited);
+});
+
+test('globe projection stays compact, picks the visible hemisphere, and crosses the date line smoothly',async()=>{
+    const {globeProjection,globePoint,shortestLongitude}=await import('../src/lib/voyages/rendering.ts');
+    for(const [width,height] of [[1090,797],[390,354]]){
+        const projection=globeProjection(width,height,15,20);
+        const point=projection([15,20])!;
+        assert.ok(projection.scale()*2<height*.8);
+        const coordinates=globePoint(projection,point)!;
+        assert.ok(Math.abs(coordinates[0]-15)<.0001 && Math.abs(coordinates[1]-20)<.0001);
+        assert.equal(globePoint(projection,[point[0]+projection.scale()+2,point[1]]),null);
+    }
+    assert.equal(shortestLongitude(179,-179),181);
+    assert.equal(shortestLongitude(-179,179),-181);
 });

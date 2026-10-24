@@ -1,4 +1,4 @@
-import { formatTravelDate, type Coordinates, type Country, type Destination } from './model.ts';
+import { formatTravelDate, type Coordinates, type Destination } from './model.ts';
 import type { AtlasGlobe } from './globe.ts';
 
 export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe.ts'), 'createGlobe'>> = () => import('./globe.ts')) {
@@ -6,7 +6,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
     if (!root || root.dataset.initialized) return;
     const payload = document.getElementById('voyages-data')?.textContent;
     if (!payload) return;
-    let data: {destinations: Destination[]; countries: Country[]};
+    let data: {destinations: Destination[]};
     try { data = JSON.parse(payload); } catch { return; }
     root.dataset.initialized = 'true';
     const {destinations} = data;
@@ -16,6 +16,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
     const live = find('voyages-live');
     const canvas = find('voyages-canvas');
     const status = find('voyages-map-status');
+    const loadStarted = performance.now();
     let selected: string | null = null;
     let globe: AtlasGlobe | null = null;
     let disposed = false;
@@ -32,6 +33,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
         const entry = entryFor(id);
         if (!destination || !entry) return;
         selected = id;
+        for (let parent = entry.parentElement?.closest('details'); parent; parent = parent.parentElement?.closest('details')) parent.open = true;
         entry.open = true;
         for (const row of entries) row.classList.toggle('is-selected', row.dataset.destination === id);
         globe?.select(id);
@@ -41,7 +43,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
     }
     function readSelection() {
         const id = new URL(location.href).searchParams.get('destination') || (location.hash.startsWith('#destination-') ? location.hash.slice(13) : null);
-        if (id) select(id, {scroll: true});
+        if (id) select(id);
         else {
             if (selected) for (const entry of entries) if (entry.dataset.destination === selected) entry.open = false;
             selected = null; globe?.select(null);
@@ -60,10 +62,11 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
             } else select(entry.dataset.destination, {history: true});
             return;
         }
-        const stop = target?.closest<HTMLElement>('[data-state-stop]');
+        const stop = target?.closest<HTMLElement>('[data-region-focus], [data-state-stop]');
         if (stop) { globe?.focus({lat:Number(stop.dataset.lat),lng:Number(stop.dataset.lng)}); return; }
         const mapButton = target?.closest<HTMLElement>('[data-map-action]');
-        if (mapButton) globe?.zoom(mapButton.dataset.mapAction === 'in' ? 1 : -1);
+        if (mapButton?.dataset.mapAction === 'motion') globe?.toggleMotion();
+        else if (mapButton) globe?.zoom(mapButton.dataset.mapAction === 'in' ? 1 : -1);
         const photoButton = target?.closest<HTMLElement>('[data-photo]');
         const photoEntry = photoButton?.closest<HTMLElement>('[data-destination]');
         if (photoButton && photoEntry?.dataset.destination) openGallery(photoEntry.dataset.destination, Number(photoButton.dataset.photo));
@@ -120,9 +123,11 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
             const {createGlobe}=await loadGlobe();if(disposed)return;
             const instance=await createGlobe({container:canvas,destinations,onSelect:id=>select(id,{history:true,scroll:true}),onCountry:code=>{
                 const destination=destinations.find(destination=>destination.countryCodes.includes(code));if(destination)select(destination.id,{history:true,scroll:true});
-            },onCluster:ids=>{if(ids[0])select(ids[0],{history:true,scroll:true});},onCoordinates:()=>{}});
+            },onCluster:ids=>{if(ids[0])select(ids[0],{history:true,scroll:true});},onCoordinates:()=>{},onMotionChange:spinning=>{
+                const button=find<HTMLButtonElement>('voyages-motion');button.hidden=false;button.textContent=spinning?'Pause rotation':'Rotate globe';button.setAttribute('aria-pressed',String(spinning));
+            }});
             if(disposed){instance.destroy();return;}
-            globe=instance;status.hidden=true;find('voyages-map-tools').hidden=false;if(selected)globe.select(selected);
+            globe=instance;status.hidden=true;find('voyages-map-tools').hidden=false;canvas.dataset.loadMs=String(Math.round(performance.now()-loadStarted));if(selected)globe.select(selected);
         } catch(error) {
             if(disposed)return;console.error('The travel globe could not be loaded.',error);canvas.replaceChildren();status.textContent='The globe is unavailable. All destinations are in the list.';status.hidden=false;
         }
