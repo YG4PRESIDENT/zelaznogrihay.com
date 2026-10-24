@@ -4,4 +4,6 @@ export const GLOBE_RENDERING = {
     countryCurvature: 2,
     borderAltitude: .009,
     surfaceCurvature: 2,
+    cameraNearRatio: .1,
+    cameraFarRatio: 10,
 } as const;

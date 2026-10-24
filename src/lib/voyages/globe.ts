@@ -1,5 +1,5 @@
 import Globe, { type GlobeInstance } from 'globe.gl';
-import { AmbientLight, BufferGeometry, Color, DirectionalLight, Float32BufferAttribute, LineBasicMaterial, LineSegments, MeshPhongMaterial } from 'three';
+import { AmbientLight, BufferGeometry, Color, DirectionalLight, Float32BufferAttribute, LineBasicMaterial, LineSegments, MeshPhongMaterial, PerspectiveCamera } from 'three';
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { clusterPoints, getCountryStatus, hasBeen, type Country, type Destination, type Coordinates } from './model';
 import { GLOBE_RENDERING } from './rendering';
@@ -70,6 +70,14 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         .showPointerCursor((type, data) => type === 'polygon' && !!countryStatuses.get((data as CountryFeature)?.properties?.code)?.destinations.length)
         .pointOfView({ lat: 18, lng: 15, altitude: desktop.matches ? 1.85 : 2.05 }, 0);
     globe.renderer().setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    const camera = globe.camera();
+    if (camera instanceof PerspectiveCamera) {
+        // Keep useful depth precision at the planet, instead of spending it
+        // across the renderer's generic near-to-infinity camera range.
+        camera.near = globe.getGlobeRadius() * GLOBE_RENDERING.cameraNearRatio;
+        camera.far = globe.getGlobeRadius() * GLOBE_RENDERING.cameraFarRatio;
+        camera.updateProjectionMatrix();
+    }
     const controls = globe.controls();
     controls.enablePan = false;
     controls.enableDamping = !reduceMotion.matches;
