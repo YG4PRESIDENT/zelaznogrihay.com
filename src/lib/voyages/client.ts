@@ -16,6 +16,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
     const live = find('voyages-live');
     const canvas = find('voyages-canvas');
     const status = find('voyages-map-status');
+    const current = find('voyages-current');
     const loadStarted = performance.now();
     let selected: string | null = null;
     let globe: AtlasGlobe | null = null;
@@ -28,7 +29,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
         if (url.hash.startsWith('#destination-')) url.hash = '';
         if (url.href !== location.href) history.pushState(null, '', url);
     }
-    function select(id: string, options: {history?: boolean; scroll?: boolean} = {}) {
+    function select(id: string, options: {history?: boolean} = {}) {
         const destination = destinations.find(destination => destination.id === id);
         const entry = entryFor(id);
         if (!destination || !entry) return;
@@ -37,8 +38,8 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
         entry.open = true;
         for (const row of entries) row.classList.toggle('is-selected', row.dataset.destination === id);
         globe?.select(id);
+        current.textContent = [destination.name, destination.states?.length ? `${destination.states.length} states` : ''].filter(Boolean).join(' · ');
         if (options.history) updateUrl(id);
-        if (options.scroll) entry.scrollIntoView?.({block:'nearest', behavior:'auto'});
         live.textContent = destination.name;
     }
     function readSelection() {
@@ -47,6 +48,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
         else {
             if (selected) for (const entry of entries) if (entry.dataset.destination === selected) entry.open = false;
             selected = null; globe?.select(null);
+            current.textContent = 'Drag to wander';
             for (const entry of entries) entry.classList.remove('is-selected');
         }
     }
@@ -58,12 +60,12 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
             event.preventDefault();
             if (entry.open) {
                 entry.open = false;
-                if (selected === entry.dataset.destination) { selected = null; entry.classList.remove('is-selected'); globe?.select(null); updateUrl(null); }
+                if (selected === entry.dataset.destination) { selected = null; entry.classList.remove('is-selected'); globe?.select(null); current.textContent = 'Drag to wander'; updateUrl(null); }
             } else select(entry.dataset.destination, {history: true});
             return;
         }
         const stop = target?.closest<HTMLElement>('[data-region-focus], [data-state-stop]');
-        if (stop) { globe?.focus({lat:Number(stop.dataset.lat),lng:Number(stop.dataset.lng)}); return; }
+        if (stop) { globe?.focus({lat:Number(stop.dataset.lat),lng:Number(stop.dataset.lng)}); current.textContent=stop.textContent?.trim() || current.textContent; return; }
         const mapButton = target?.closest<HTMLElement>('[data-map-action]');
         if (mapButton?.dataset.mapAction === 'motion') globe?.toggleMotion();
         else if (mapButton) globe?.zoom(mapButton.dataset.mapAction === 'in' ? 1 : -1);
@@ -111,19 +113,13 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
         const missing = document.createElement('span'); missing.className='voyages-image-missing';missing.textContent='Photo unavailable';event.target.replaceWith(missing);
     }, {capture:true,signal});
     window.addEventListener('popstate', () => {if(dialog.open)dialog.close();readSelection();}, {signal});
-    function sizeStage() {
-        const top = root!.getBoundingClientRect().top + window.scrollY;
-        root!.style.setProperty('--atlas-height', `${Math.max(0,window.innerHeight-top)}px`);
-    }
-    const observer = new ResizeObserver(sizeStage);
-    const header = document.getElementById('main-header'); if(header)observer.observe(header);
-    window.addEventListener('resize', sizeStage, {signal});sizeStage();readSelection();
+    readSelection();
     void (async () => {
         try {
             const {createGlobe}=await loadGlobe();if(disposed)return;
-            const instance=await createGlobe({container:canvas,destinations,onSelect:id=>select(id,{history:true,scroll:true}),onCountry:code=>{
-                const destination=destinations.find(destination=>destination.countryCodes.includes(code));if(destination)select(destination.id,{history:true,scroll:true});
-            },onCluster:ids=>{if(ids[0])select(ids[0],{history:true,scroll:true});},onCoordinates:()=>{},onMotionChange:spinning=>{
+            const instance=await createGlobe({container:canvas,destinations,onSelect:id=>select(id,{history:true}),onCountry:code=>{
+                const destination=destinations.find(destination=>destination.countryCodes.includes(code));if(destination)select(destination.id,{history:true});
+            },onCluster:ids=>{if(ids[0])select(ids[0],{history:true});},onCoordinates:()=>{},onMotionChange:spinning=>{
                 const button=find<HTMLButtonElement>('voyages-motion');button.hidden=false;button.textContent=spinning?'Pause rotation':'Rotate globe';button.setAttribute('aria-pressed',String(spinning));
             }});
             if(disposed){instance.destroy();return;}
@@ -132,6 +128,6 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
             if(disposed)return;console.error('The travel globe could not be loaded.',error);canvas.replaceChildren();status.textContent='The globe is unavailable. All destinations are in the list.';status.hidden=false;
         }
     })();
-    const cleanup=()=>{disposed=true;if(dialog.open)dialog.close();abort.abort();observer.disconnect();globe?.destroy();delete root.dataset.initialized;};
+    const cleanup=()=>{disposed=true;if(dialog.open)dialog.close();abort.abort();globe?.destroy();delete root.dataset.initialized;};
     document.addEventListener('astro:before-swap',cleanup,{once:true,signal});if(import.meta.hot)import.meta.hot.dispose(cleanup);
 }

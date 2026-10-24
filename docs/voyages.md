@@ -68,7 +68,7 @@ The coordinates above are illustrative: use the actual place's location. Photos 
 
 Visited `region` and `place` entries with a matching country code appear inside that country's expanded row. Add a country entry when recording the first region in a new country. Each region or place keeps its own notes, visits, photos, and link. A region spanning multiple recorded countries appears beneath the first matching country; other ungrouped regions remain visible in the list. No location is inferred from a country visit.
 
-The US row contains the recorded states. Selecting it reveals state boundaries; selecting a state name frames that region. Airport stops stay as small dots. The map key uses dark ink for visited countries, pale gold for future countries, and sage for countries not yet visited. A country with both past visits and future plans keeps its visited color.
+The US row contains the recorded states. Selecting it reveals state boundaries; selecting a state name frames that region. Airport stops stay as small dots. The map key uses dark green for visited countries, pale green for future countries, and muted sage for countries not yet visited. A country with both past visits and future plans keeps its visited color. The index sits directly beneath the centered globe; country selection keeps the current view in place rather than scrolling the page away from the map.
 
 Country counts deduplicate countries across all visited entries. Antarctica is a region and does not increase the visited-country count. Undated visits and plans stay undated.
 

@@ -3,8 +3,8 @@ import { getCountryStatus, type Destination } from './model.ts';
 
 // Shared by the map and its key. Selection never changes a country's status color.
 export const ATLAS_COLORS = {
-    visited: '#203d36', wanted: '#edc780', unvisited: '#bdc9bd',
-    ocean: '#e1e9e5', border: '#f5f3eb', selected: '#aa693b',
+    visited: '#10251a', wanted: '#badd9a', unvisited: '#8b9a82',
+    ocean: '#68816f', border: '#526c55', selected: '#78ff28',
 };
 
 export function countryFill(destinations: Destination[], code: string): string {

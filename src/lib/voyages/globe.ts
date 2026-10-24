@@ -103,13 +103,13 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         ctx.clearRect(0, 0, width, height);
         // A soft, offset shadow gives the globe weight without a luminous halo.
         const shadow = ctx.createRadialGradient(cx + radius * .10, cy + radius * 1.05, 0, cx + radius * .10, cy + radius * 1.05, radius * .73);
-        shadow.addColorStop(0, '#29443814'); shadow.addColorStop(1, '#29443800');
+        shadow.addColorStop(0, '#00000060'); shadow.addColorStop(1, '#00000000');
         ctx.save(); ctx.translate(0, cy + radius * .97); ctx.scale(1, .12); ctx.translate(0, -(cy + radius * .97));
         ctx.fillStyle = shadow; ctx.fillRect(0, 0, width, height * 12); ctx.restore();
         ctx.save();
         ctx.beginPath(); ctx.arc(cx, cy, radius, 0, 2 * Math.PI); ctx.clip();
         ctx.fillStyle = ATLAS_COLORS.ocean; ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
-        ctx.beginPath(); path(graticule); ctx.strokeStyle = '#859e9228'; ctx.lineWidth = .6; ctx.stroke();
+        ctx.beginPath(); path(graticule); ctx.strokeStyle = '#b4cfb228'; ctx.lineWidth = .6; ctx.stroke();
         for (const feature of geography.features) {
             ctx.beginPath(); path(feature);
             ctx.fillStyle = colors.get(feature.properties.code)!; ctx.fill();
@@ -135,7 +135,7 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         }
         // Restrained spherical shading keeps the three status colors legible.
         const shade = ctx.createRadialGradient(cx - radius * .35, cy - radius * .4, radius * .1, cx, cy, radius);
-        shade.addColorStop(0, '#ffffff08'); shade.addColorStop(.65, '#19372c00'); shade.addColorStop(1, '#19372c28');
+        shade.addColorStop(0, '#ffffff06'); shade.addColorStop(.65, '#030c0600'); shade.addColorStop(1, '#030c0640');
         ctx.fillStyle = shade; ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
         ctx.restore();
         layoutMarkers();
@@ -173,7 +173,8 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     function layoutMarkers() {
         const placed: { id: string; x: number; y: number; marker: Marker }[] = [];
         for (const marker of markers) {
-            const point = visible.has(marker.destination.id) ? project(marker.position) : null;
+            const selectedCountry = marker.destination.kind !== 'country' || !hasBeen(marker.destination) || marker.destination.id === selected || marker.airport;
+            const point = visible.has(marker.destination.id) && selectedCountry ? project(marker.position) : null;
             marker.element.hidden = !point;
             if (!point) continue;
             marker.element.style.transform = `translate(${point[0]}px,${point[1]}px)`;
@@ -215,7 +216,7 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     }
     for (const destination of destinations) {
         const position = destination.coordinates || destination.focus;
-        if (position && destination.kind !== 'idea' && (destination.kind !== 'country' || !hasBeen(destination))) addMarker(destination, position);
+        if (position && destination.kind !== 'idea') addMarker(destination, position);
         for (const state of destination.states || []) if (state.stop) addMarker(destination, state.stop, state.stopLabel || state.code);
     }
     function resize() {

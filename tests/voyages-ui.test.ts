@@ -32,7 +32,8 @@ async function setup(options: { width?: number; url?: string; entries?: Destinat
     install('CSS', { escape: (value: string) => value.replace(/["\\]/g, '\\$&') });
     window.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
     window.HTMLDialogElement.prototype.close = function () { this.open = false; this.dispatchEvent(new window.Event('close')); };
-    const state = { shown: [] as string[], selected: null as string | null, destroyed: false, focused: null as {lat:number;lng:number}|null, callbacks: null as any };
+    const state = { shown: [] as string[], selected: null as string | null, destroyed: false, focused: null as {lat:number;lng:number}|null, callbacks: null as any, scrolls: 0 };
+    window.HTMLElement.prototype.scrollIntoView = function () { state.scrolls++; };
     const document = window.document;
     document.getElementById('voyages-results')!.innerHTML = (options.entries || [base,second]).map(destination => '<details class="voyages-place" data-destination="'+escapeHtml(destination.id)+'"><summary>'+escapeHtml(destination.name)+'</summary><div class="voyages-inline-journal">'+journalContent(destination)+'</div></details>').join('');
     initVoyages(async () => {
@@ -65,7 +66,9 @@ test('production page is a single list with the supplied history and no extra ch
     const dom = new JSDOM(html); const document = dom.window.document;
     assert.equal(document.querySelector('.voyages-heading h1')!.textContent,'Voyages');
     assert.doesNotMatch(html,/A personal atlas|voyages-compass|data-filter=|data-view=|voyages-detail-panel|voyages-sheet-toggle/);
-    assert.match(document.querySelector('.voyages-list-section h2')!.textContent!,/Countries\s*18/);
+    assert.match(document.querySelector('.voyages-list-section h2')!.textContent!,/Where I've been\s*18 countries/);
+    assert.equal(document.querySelector('aside.voyages-explorer'),null);
+    assert.equal(document.getElementById('voyages-stage')!.nextElementSibling!.id,'voyages-explorer');
     const data=JSON.parse(document.getElementById('voyages-data')!.textContent!);
     assert.equal(data.destinations.filter(d=>d.visited).length,18);
     assert.equal(data.destinations.filter(d=>d.experience==='passed-through').length,3);
@@ -91,12 +94,17 @@ test('journals expand in place, keep other entries visible, and update the globe
     const env=await setup();try{
         env.click('[data-destination="test-harbor"] summary');
         assert.equal(env.state.selected,'test-harbor');assert.equal(env.window.location.search,'?destination=test-harbor');
+        assert.equal(env.document.getElementById('voyages-current')!.textContent,'Test harbor');
         assert.equal((env.document.querySelector('[data-destination="test-harbor"]') as HTMLDetailsElement).open,true);
         assert.match(env.document.querySelector('[data-destination="test-harbor"]')!.textContent!,/A memory from this test trip/);
         env.click('[data-destination="test-wish"] summary');
         assert.equal((env.document.querySelector('[data-destination="test-harbor"]') as HTMLDetailsElement).open,true);
         assert.equal((env.document.querySelector('[data-destination="test-wish"]') as HTMLDetailsElement).open,true);
         env.click('[data-destination="test-wish"] summary');assert.equal(env.window.location.search,'');
+        env.state.callbacks.onCountry('JP');
+        assert.equal(env.state.selected,'test-harbor');
+        assert.equal(env.document.getElementById('voyages-current')!.textContent,'Test harbor');
+        assert.equal(env.state.scrolls,0,'Selecting the globe should keep the current map view in place');
     }finally{env.dispose();}
 });
 

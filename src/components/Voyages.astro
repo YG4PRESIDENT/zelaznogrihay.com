@@ -13,22 +13,22 @@ const wanted = destinations.filter(destination => destination.plans.length);
 const payload = JSON.stringify({ destinations }).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 ---
 <section class="voyages" id="voyages" aria-label="Travel map">
-    <header class="voyages-heading"><h1>Voyages</h1><p>Where I've been. Where I'm heading.</p>
+    <header class="voyages-heading"><h1>Voyages</h1><p>Where I've been. Where I'm heading.</p></header>
+    <div class="voyages-stage" id="voyages-stage">
         <ul class="voyages-key" aria-label="Map key">
             <li><i style={`--swatch:${ATLAS_COLORS.visited}`} aria-hidden="true"></i>Been</li>
             <li><i style={`--swatch:${ATLAS_COLORS.wanted}`} aria-hidden="true"></i>Want to go</li>
             <li><i style={`--swatch:${ATLAS_COLORS.unvisited}`} aria-hidden="true"></i>Not yet</li>
         </ul>
-    </header>
-    <div class="voyages-stage" id="voyages-stage">
         <div class="voyages-canvas" id="voyages-canvas" role="group" aria-label="Travel globe. All destinations are also available in the list."></div>
         <p class="voyages-map-status" id="voyages-map-status" role="status">Loading the globe…</p>
-        <div class="voyages-map-tools" id="voyages-map-tools" hidden aria-label="Globe controls"><button type="button" data-map-action="in" aria-label="Zoom in">+</button><button type="button" data-map-action="out" aria-label="Zoom out">−</button></div>
-        <div class="voyages-map-caption"><span>Drag to wander</span><button type="button" id="voyages-motion" data-map-action="motion" aria-pressed="true" hidden>Pause rotation</button></div>
+        <div class="voyages-map-caption"><span id="voyages-current">Drag to wander</span><button type="button" id="voyages-motion" data-map-action="motion" aria-pressed="true" hidden>Pause rotation</button>
+            <div class="voyages-map-tools" id="voyages-map-tools" hidden aria-label="Globe controls"><button type="button" data-map-action="in" aria-label="Zoom in">+</button><button type="button" data-map-action="out" aria-label="Zoom out">−</button></div>
+        </div>
     </div>
-    <aside class="voyages-explorer" id="voyages-explorer" aria-label="Places and travel plans">
+    <section class="voyages-explorer" id="voyages-explorer" aria-label="Places and travel plans">
         <div class="voyages-results" id="voyages-results">
-            <section class="voyages-list-section"><h2>Countries <span>{stats.countries}</span></h2><div class="voyages-country-grid">
+            <section class="voyages-list-section"><h2>Where I've been <span>{stats.countries} countries</span></h2><div class="voyages-country-grid">
                 {been.length ? been.map(destination => <details class="voyages-place" id={`destination-${destination.id}`} data-destination={destination.id}>
                     <summary><span class="voyages-place-name">{destination.name}</span>{destination.experience === 'passed-through' && <small>Passed through</small>}{destination.experience === 'lived' && <small>Lived here</small>}{!!destination.states?.length && <small>{destination.states.length} states</small>}{!!regions(destination.countryCodes[0]).length && <small>{regions(destination.countryCodes[0]).length} regions & places</small>}</summary>
                     <div class="voyages-inline-journal" set:html={journalContent(destination)} />
@@ -36,14 +36,14 @@ const payload = JSON.stringify({ destinations }).replace(/</g, '\\u003c').replac
                 </details>) : <p class="voyages-empty">Past journeys will appear here as they're added.</p>}
             </div></section>
             {ungrouped.length > 0 && <section class="voyages-list-section"><h2>Regions & places</h2>{ungrouped.map(destination => <details class="voyages-place" id={`destination-${destination.id}`} data-destination={destination.id}><summary><span class="voyages-place-name">{destination.name}</span></summary><div class="voyages-inline-journal" set:html={journalContent(destination)} /></details>)}</section>}
-            <section class="voyages-list-section voyages-wishlist"><h2>Want to go</h2>
+            <section class="voyages-list-section voyages-wishlist"><h2>Where I'm heading</h2><div class="voyages-wish-grid">
                 {wanted.map(destination => <details class="voyages-place" id={hasBeen(destination) ? `wish-${destination.id}` : `destination-${destination.id}`} data-destination={destination.id}>
                     <summary><span class="voyages-place-name">{destination.plans.map(plan => plan.title).join(' · ')}</span></summary>
                     <div class="voyages-inline-journal" set:html={journalContent(destination)} />
                 </details>)}
-            </section>
+            </div></section>
         </div>
-    </aside>
+    </section>
     <p class="voyages-sr-only" id="voyages-live" aria-live="polite" aria-atomic="true"></p>
     <dialog class="voyages-lightbox" id="voyages-lightbox" aria-labelledby="voyages-photo-title">
         <div class="voyages-lightbox-bar"><h2 id="voyages-photo-title"></h2><span id="voyages-photo-count"></span><button type="button" id="voyages-photo-close" aria-label="Close photo">×</button></div>
