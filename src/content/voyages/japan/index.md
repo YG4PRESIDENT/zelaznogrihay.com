@@ -1,5 +1,6 @@
 ---
 name: Japan
+purpose: Family trip
 kind: country
 countryCodes: [JP]
 order: 3

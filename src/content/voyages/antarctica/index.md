@@ -1,5 +1,6 @@
 ---
 name: Antarctica
+purpose: Expedition
 kind: region
 countryCodes: [AQ]
 focus: { lat: -72, lng: 15 }

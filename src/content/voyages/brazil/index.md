@@ -1,5 +1,6 @@
 ---
 name: Brazil
+purpose: Carnival
 kind: country
 countryCodes: [BR]
 order: 6

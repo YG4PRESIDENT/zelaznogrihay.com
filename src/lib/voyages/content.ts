@@ -25,7 +25,7 @@ export async function getDestinations(): Promise<Destination[]> {
         }));
         return {
             ...data, id: entry.id, photos,
-            states: data.states.map(state => ({ ...state, focus: state.stop || stateIndex.find(item => item.code === state.code)?.center })),
+            states: data.states.filter(state => !state.stop).map(state => ({ code: state.code, visited: true, focus: stateIndex.find(item => item.code === state.code)?.center })),
             focus: data.coordinates || data.focus || countries.find(country => data.countryCodes.includes(country.code))?.center,
             html: sanitizeHtml(await marked.parse(entry.body || ''), {
                 allowedTags: ['p', 'br', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'h2', 'h3', 'blockquote', 'code', 'pre', 'hr'],

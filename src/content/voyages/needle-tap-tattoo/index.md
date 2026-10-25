@@ -1,5 +1,6 @@
 ---
-name: A traditional needle-tap tattoo
+name: Tattoo
+purpose: Needle tap
 kind: idea
 order: 4
 plans:

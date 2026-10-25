@@ -2,7 +2,7 @@ export type Coordinates = { lat: number; lng: number };
 export type DestinationKind = 'country' | 'place' | 'region' | 'idea';
 export type TravelFilter = 'all' | 'been' | 'wanted';
 export type TravelExperience = 'visited' | 'passed-through' | 'lived';
-export interface StateVisit { code: string; stop?: Coordinates; stopLabel?: string; focus?: Coordinates }
+export interface StateVisit { code: string; stop?: Coordinates; stopLabel?: string; focus?: Coordinates; visited?: boolean }
 export const US_STATES: Record<string, string> = {
     AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
 };
@@ -47,6 +47,7 @@ export interface Destination {
     experience?: TravelExperience;
     states?: StateVisit[];
     companions?: string;
+    purpose?: string;
     summary?: string;
     order: number;
     visits: Visit[];

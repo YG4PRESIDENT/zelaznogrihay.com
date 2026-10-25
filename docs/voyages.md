@@ -14,6 +14,7 @@ name: Japan
 kind: country
 countryCodes: [JP]
 companions: With my family
+purpose: Family trip
 plans:
   - title: Cherry blossoms in Japan with wife
     timeframe: Someday in spring
@@ -69,9 +70,9 @@ The coordinates above are illustrative: use the actual place's location. Photos 
 
 Visited `region` and `place` entries with a matching country code appear inside that country's expanded row. Add a country entry when recording the first region in a new country. Each region or place keeps its own notes, visits, photos, and link. A region spanning multiple recorded countries appears beneath the first matching country; other ungrouped regions remain visible in the list. No location is inferred from a country visit.
 
-The US row contains the recorded states. Selecting it reveals state boundaries; selecting a state name frames that region. Airport stops stay as small dots. The map key uses dark green for visited countries, pale green for future countries, and muted sage for countries not yet visited. A country with both past visits and future plans keeps its visited color. The index sits directly beneath the centered globe; country selection keeps the current view in place rather than scrolling the page away from the map.
+The US row contains the 17 visited states after excluding the airport-only New York and Ohio entries from the public list/count. Selecting it reveals state boundaries; selecting a state name frames the state center. Visited states receive a subtle lighter green fill. Airport-only states stay unhighlighted, without airport dots or labels. The map key uses dark green for visited countries, pale green for future countries, and muted sage for countries not yet visited. A country with both past visits and future plans keeps its visited color. The index sits directly beneath the centered globe; country selection keeps the current view in place rather than scrolling the page away from the map.
 
-Future trips show the destination name and optional `companions` line. Full goals and context stay in the expanded entry. Experience classifications remain in the source history without visible badges. The US state count and recorded place counts remain visible.
+Future trips show the destination name and a short `purpose` on one line, followed by optional `companions`. Full goals and context stay in the expanded entry. Experience classifications remain in the source history without visible badges. The US state count and recorded place counts remain visible.
 
 Country counts deduplicate countries across all visited entries. Antarctica is a region and does not increase the visited-country count. Undated visits and plans stay undated.
 
@@ -89,7 +90,9 @@ Named-city coordinates are city-level reference points from [Natural Earth popul
 
 ## Recorded routes
 
-`src/data/voyages-routes.json` contains only itineraries whose order is known. Each record has an `id`, `name`, ordered destination IDs in `stops`, and optional zero-based `approximateLegs`. Leg `0` connects stops `0` and `1`. A dashed leg connects broad areas or crosses omitted stops; these are schematic geographic links rather than exact transport paths.
+`src/data/voyages-routes.json` contains only itineraries whose order is known. Each record has an `id`, `name`, ordered destination IDs in `stops`, and optional zero-based `approximateLegs`. Leg `0` connects stops `0` and `1`. Approximate-leg metadata records broad areas or omitted stops without breaking the visual line. These are schematic journey links rather than exact transport paths.
+
+The renderer samples a centripetal Catmull–Rom curve in spherical coordinates once, then draws it as one continuous stroke. Every recorded stop remains on the curve. Extra samples at the joins keep short hops and longer legs connected smoothly, and the globe projection handles horizon clipping.
 
 The recorded route connects Chennai, Hyderabad, Varanasi, Delhi, Kathmandu, Pokhara, Chiang Mai, Chiang Rai, Southern Laos, Vietnam, Malaysia, and Singapore. The Thailand arrival, border crossing, and onward country-level links remain approximate. Shanghai, Chengdu, Beijing, Xi'an, and Fujian are recorded places without an invented China route. No dates, hotels, extra cities, or transport modes are inferred.
 

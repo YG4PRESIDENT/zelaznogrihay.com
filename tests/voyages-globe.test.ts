@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
 import { createGlobe } from '../src/lib/voyages/globe.ts';
-import { ATLAS_COLORS, globeProjection } from '../src/lib/voyages/rendering.ts';
+import { ATLAS_COLORS, STATE_COLORS, globeProjection } from '../src/lib/voyages/rendering.ts';
 import type { Destination, TravelRoute } from '../src/lib/voyages/model.ts';
 
 const geography = JSON.parse(await readFile(new URL('../public/data/voyages/countries.json', import.meta.url), 'utf8'));
 const states = JSON.parse(await readFile(new URL('../public/data/voyages/states-us.json', import.meta.url), 'utf8'));
 const us: Destination = { id: 'us', name: 'United States', kind: 'country', countryCodes: ['US'], focus: { lat: 39, lng: -98 },
-    visited: true, order: 1, visits: [], plans: [], photos: [], html: '', states: [{ code: 'CA' }, { code: 'NY', stop: { lat: 40.71, lng: -74 }, stopLabel: 'New York airport' }] };
+    visited: true, order: 1, visits: [], plans: [], photos: [], html: '', states: [{ code: 'CA' }, { code: 'NY', visited:false, stop: { lat: 40.71, lng: -74 }, stopLabel: 'New York airport' }] };
 const japan: Destination = { ...us, id: 'jp', name: 'Japan', countryCodes: ['JP'], states: [], focus: { lat: 36, lng: 138 }, visited: false, plans: [{ title: 'Blossoms', thingsToDo: [], links: [] }] };
 
 async function setup(reduced = false, options: { destinations?: Destination[]; routes?: TravelRoute[] } = {}) {
@@ -19,8 +19,9 @@ async function setup(reduced = false, options: { destinations?: Destination[]; r
     container.getBoundingClientRect = () => ({ x: 0, y: 0, left: 0, top: 0, right: 1000, bottom: 760, width: 1000, height: 760, toJSON() {} });
     const paints: unknown[] = [];
     const dashes: number[][] = [], selections: string[] = [];
-    const context = { fillStyle: '' as unknown, beginPath() {}, moveTo() {}, lineTo() {}, arc() {}, closePath() {}, setTransform() {}, clearRect() {},
-        save() {}, restore() {}, translate() {}, scale() {}, clip() {}, fillRect() {}, stroke() {}, setLineDash(value: number[]) { dashes.push(value); },
+    const strokes: unknown[] = [];
+    const context = { fillStyle: '' as unknown, strokeStyle: '' as unknown, beginPath() {}, moveTo() {}, lineTo() {}, arc() {}, closePath() {}, setTransform() {}, clearRect() {},
+        save() {}, restore() {}, translate() {}, scale() {}, clip() {}, fillRect() {}, stroke() { strokes.push(this.strokeStyle); }, setLineDash(value: number[]) { dashes.push(value); },
         fill() { paints.push(this.fillStyle); }, createRadialGradient() { return { addColorStop() {} }; } };
     window.HTMLCanvasElement.prototype.getContext = (() => context) as any;
     let sequence = 0, time = 0;
@@ -42,7 +43,7 @@ async function setup(reduced = false, options: { destinations?: Destination[]; r
     function advance(count = 120, milliseconds = 16) {
         for (let i = 0; i < count; i++) { time += milliseconds; const current = [...frames.values()]; frames.clear(); for (const callback of current) callback(time); }
     }
-    return { globe, container, requests, paints, dashes, selections, frames, advance, dom,
+    return { globe, container, requests, paints, strokes, dashes, selections, frames, advance, dom,
         get disconnected() { return disconnected; },
         dispose() { globe.destroy(); dom.window.close(); for (const [key, original] of originals) { if (original) Object.defineProperty(globalThis, key, original); else delete (globalThis as any)[key]; } },
     };
@@ -54,11 +55,13 @@ test('globe draws immediately with three status colors and loads states only on 
         assert.equal(env.container.dataset.ready, 'true');
         assert.deepEqual(env.requests, ['/data/voyages/countries.json']);
         for (const color of [ATLAS_COLORS.visited, ATLAS_COLORS.wanted, ATLAS_COLORS.unvisited]) assert.ok(env.paints.includes(color));
-        assert.equal(env.container.querySelectorAll('.is-airport').length, 1);
+        assert.equal(env.container.querySelectorAll('.is-airport').length, 0);
         env.globe.select('us'); await Promise.resolve(); await Promise.resolve(); env.advance();
         assert.deepEqual(env.requests, ['/data/voyages/countries.json', '/data/voyages/states-us.json']);
         env.globe.select('us'); await Promise.resolve();
         assert.equal(env.requests.length, 2);
+        assert.ok(env.paints.includes(STATE_COLORS.visited));
+        assert.ok(env.paints.includes(STATE_COLORS.other));
         env.advance(); assert.equal(env.frames.size, 0);
     } finally { env.dispose(); }
 });
@@ -92,7 +95,8 @@ test('route links stay light, quiet city dots are selectable on touch, and label
     const route: TravelRoute = { id:'test-route', name:'Test route', stops:[{destinationId:chennai.id,position:chennai.coordinates!},{destinationId:hyderabad.id,position:hyderabad.coordinates!}], approximateLegs:[0] };
     const env = await setup(true, { destinations:[chennai,hyderabad], routes:[route] });
     try {
-        assert.ok(env.dashes.some(dash => dash[0]===2.5 && dash[1]===3.5));
+        assert.ok(env.dashes.every(dash => dash.length===0),'Routes should never be dashed');
+        assert.equal(env.strokes.filter(color=>color==='#d2edb68c').length,1,'Each route should be one continuous stroke');
         const marker=env.container.querySelector<HTMLDivElement>('.voyage-marker')!;
         assert.equal(marker.hidden,true,'Unselected cities should not show label buttons');
         const canvas=env.container.querySelector('canvas')!;

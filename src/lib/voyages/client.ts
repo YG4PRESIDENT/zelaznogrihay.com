@@ -61,7 +61,7 @@ export function initVoyages(loadGlobe: () => Promise<Pick<typeof import('./globe
             } else select(entry.dataset.destination, {history: true});
             return;
         }
-        const stop = target?.closest<HTMLElement>('[data-region-focus], [data-state-stop]');
+        const stop = target?.closest<HTMLElement>('[data-region-focus]');
         if (stop) { globe?.focus({lat:Number(stop.dataset.lat),lng:Number(stop.dataset.lng)}); return; }
         const mapButton = target?.closest<HTMLElement>('[data-map-action]');
         if (mapButton) globe?.zoom(mapButton.dataset.mapAction === 'in' ? 1 : -1);

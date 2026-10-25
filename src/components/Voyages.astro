@@ -39,7 +39,7 @@ const payload = JSON.stringify({ destinations, routes }).replace(/</g, '\\u003c'
             </section>
             <section class="voyages-list-section voyages-wishlist"><h2>Where I'm heading</h2><div class="voyages-wish-grid">
                 {wanted.map(destination => <details class="voyages-place" id={hasBeen(destination) ? `wish-${destination.id}` : `destination-${destination.id}`} data-destination={destination.id}>
-                    <summary><span class="voyages-place-name">{destination.name}</span>{destination.companions && <small>{destination.companions}</small>}</summary>
+                    <summary><span class="voyages-wish-title"><span class="voyages-place-name">{destination.name}</span>{destination.purpose && <span class="voyages-wish-purpose"> · {destination.purpose}</span>}</span>{destination.companions && <small>{destination.companions}</small>}</summary>
                     <div class="voyages-inline-journal" set:html={journalContent(destination)} />
                 </details>)}
             </div></section>

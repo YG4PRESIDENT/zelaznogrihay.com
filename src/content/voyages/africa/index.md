@@ -1,5 +1,6 @@
 ---
 name: Africa
+purpose: Rail & villages
 kind: region
 focus: { lat: 3, lng: 20 }
 order: 1

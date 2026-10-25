@@ -1,11 +1,11 @@
 import { geoContains, geoDistance, geoGraticule10, geoPath, type GeoProjection } from 'd3-geo';
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { clusterPoints, hasBeen, type Country, type Destination, type Coordinates, type TravelRoute } from './model.ts';
-import { ATLAS_COLORS, countryFill, globePoint, globeProjection, shortestLongitude, wrapLongitude } from './rendering.ts';
+import { ATLAS_COLORS, STATE_COLORS, countryFill, globePoint, globeProjection, shortestLongitude, smoothRouteGeometry, wrapLongitude } from './rendering.ts';
 
 type CountryFeature = Feature<Polygon | MultiPolygon, Country>;
 type StateFeature = Feature<Polygon | MultiPolygon, { code: string; name: string; center: Coordinates }>;
-type Marker = { id: string; destination: Destination; position: Coordinates; element: HTMLDivElement; airport?: boolean };
+type Marker = { id: string; destination: Destination; position: Coordinates; element: HTMLDivElement };
 interface GlobeOptions {
     container: HTMLElement;
     destinations: Destination[];
@@ -29,7 +29,7 @@ const cameraIcon = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" s
 /** A spherical Canvas atlas: no WebGL startup, polygon meshes, or depth fighting. */
 export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     const { container, destinations } = options;
-    const routes = options.routes || [];
+    const routes = (options.routes || []).map(route => ({ ...route, geometry: smoothRouteGeometry(route.stops.map(stop => stop.position)) }));
     const visitedPlaces = destinations.filter(destination => destination.kind === 'place' && hasBeen(destination) && destination.coordinates);
     const abort = new AbortController();
     const { signal } = abort;
@@ -118,11 +118,11 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         }
         const us = activeUS();
         if (us && states) {
-            const visited = new Set(us.states!.filter(state => !state.stop).map(state => state.code));
+            const visited = new Set(us.states!.filter(state => state.visited !== false).map(state => state.code));
             for (const state of states) {
                 ctx.beginPath(); path(state);
-                ctx.fillStyle = visited.has(state.properties.code) ? ATLAS_COLORS.visited : ATLAS_COLORS.unvisited;
-                ctx.fill(); ctx.strokeStyle = ATLAS_COLORS.border; ctx.lineWidth = .65; ctx.stroke();
+                ctx.fillStyle = visited.has(state.properties.code) ? STATE_COLORS.visited : STATE_COLORS.other;
+                ctx.fill(); ctx.strokeStyle = STATE_COLORS.border; ctx.lineWidth = .55; ctx.stroke();
             }
         }
         const destination = destinations.find(destination => destination.id === selected);
@@ -133,17 +133,14 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         const shade = ctx.createRadialGradient(cx - radius * .35, cy - radius * .4, radius * .1, cx, cy, radius);
         shade.addColorStop(0, '#ffffff06'); shade.addColorStop(.65, '#030c0600'); shade.addColorStop(1, '#030c0640');
         ctx.fillStyle = shade; ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
-        // Fine great-circle links show the recorded sequence. Broad or omitted
-        // stops use dashes rather than implying an exact road, flight, or crossing.
+        // One flowing stroke follows the recorded sequence. This is a schematic
+        // journey curve, rather than a claim about exact roads or transport.
         for (const route of routes) {
             const active = route.stops.some(stop => stop.destinationId === selected || destinations.find(destination => destination.id === stop.destinationId)?.countryCodes.some(code => destination?.countryCodes.includes(code)));
             ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.lineWidth = active ? 1.2 : .85;
             ctx.strokeStyle = active ? '#d2edb6c4' : '#d2edb68c';
-            for (let index = 0; index < route.stops.length - 1; index++) {
-                const from = route.stops[index].position, to = route.stops[index + 1].position;
-                ctx.setLineDash(route.approximateLegs.includes(index) ? [2.5, 3.5] : []);
-                ctx.beginPath(); path({ type: 'LineString', coordinates: [[from.lng, from.lat], [to.lng, to.lat]] }); ctx.stroke();
-            }
+            ctx.setLineDash([]);
+            ctx.beginPath(); path(route.geometry); ctx.stroke();
             ctx.restore();
         }
         for (const place of visitedPlaces) {
@@ -192,7 +189,7 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
     function layoutMarkers() {
         const placed: { id: string; x: number; y: number; marker: Marker }[] = [];
         for (const marker of markers) {
-            const selectedCountry = marker.destination.kind !== 'country' || marker.destination.id === selected || marker.airport;
+            const selectedCountry = marker.destination.kind !== 'country' || marker.destination.id === selected;
             const quietPlace = hasBeen(marker.destination) && !marker.destination.photos.length && (marker.destination.kind === 'place' || marker.destination.kind === 'region') && marker.destination.id !== selected;
             const point = visible.has(marker.destination.id) && selectedCountry && !quietPlace ? project(marker.position) : null;
             marker.element.hidden = !point;
@@ -210,19 +207,19 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
             for (const point of group.slice(1)) point.marker.element.hidden = true;
         }
     }
-    function addMarker(destination: Destination, position: Coordinates, airport?: string) {
+    function addMarker(destination: Destination, position: Coordinates) {
         const element = document.createElement('div');
-        element.className = `voyage-marker is-${airport ? 'airport' : destination.kind}${hasBeen(destination) ? ' is-been' : ''}`;
+        element.className = `voyage-marker is-${destination.kind}${hasBeen(destination) ? ' is-been' : ''}`;
         element.classList.toggle('has-photos', destination.photos.length > 0);
         const button = document.createElement('button'); button.type = 'button';
-        const name = airport || destination.name;
-        button.setAttribute('aria-label', airport ? `${name} — ${destination.name}` : `Show ${name}`);
+        const name = destination.name;
+        button.setAttribute('aria-label', `Show ${name}`);
         const symbol = document.createElement('span'); symbol.className = 'voyage-marker-symbol'; symbol.setAttribute('aria-hidden', 'true');
-        if (destination.photos.length && !airport) symbol.innerHTML = cameraIcon;
+        if (destination.photos.length) symbol.innerHTML = cameraIcon;
         button.append(symbol);
         const label = document.createElement('span'); label.className = 'voyage-marker-label'; label.textContent = name; button.append(label);
         const count = document.createElement('span'); count.className = 'voyage-marker-count'; count.setAttribute('aria-hidden', 'true'); button.append(count);
-        if (destination.photos.length && !airport) {
+        if (destination.photos.length) {
             const photo = destination.photos.find(photo => photo.cover) || destination.photos[0];
             const image = document.createElement('img'); image.className = 'voyage-marker-preview'; image.src = photo.thumbnail; image.alt = ''; image.loading = 'lazy'; button.append(image);
             image.addEventListener('error', () => { image.remove(); element.classList.add('preview-unavailable'); }, { signal });
@@ -230,15 +227,13 @@ export async function createGlobe(options: GlobeOptions): Promise<AtlasGlobe> {
         button.addEventListener('click', () => {
             const group = element.dataset.group?.split(',') || [];
             if (group.length > 1) options.onCluster(group); else options.onSelect(destination.id);
-            if (airport) go(position, 1.75);
         }, { signal });
         element.append(button); container.append(element);
-        markers.push({ id: airport ? `${destination.id}:${airport}` : destination.id, destination, position, element, airport: !!airport });
+        markers.push({ id: destination.id, destination, position, element });
     }
     for (const destination of destinations) {
         const position = destination.coordinates || destination.focus;
         if (position && destination.kind !== 'idea') addMarker(destination, position);
-        for (const state of destination.states || []) if (state.stop) addMarker(destination, state.stop, state.stopLabel || state.code);
     }
     function resize() {
         const bounds = container.getBoundingClientRect(); width = bounds.width; height = bounds.height;

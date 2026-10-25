@@ -77,9 +77,13 @@ test('production page is a single list with the supplied history and no extra ch
     assert.equal(data.destinations.filter(d=>d.visited&&d.kind==='country').length,18);
     assert.equal(data.destinations.filter(d=>d.experience==='passed-through').length,3);
     assert.equal(data.destinations.find(d=>d.id==='china').experience,'lived');
-    assert.equal(data.destinations.find(d=>d.id==='united-states').states.length,19);
+    assert.equal(data.destinations.find(d=>d.id==='united-states').states.length,17);
+    assert.ok(!data.destinations.find(d=>d.id==='united-states').states.some(state=>state.code==='NY'||state.code==='OH'));
     assert.equal(document.querySelectorAll('.voyages-key li').length,3);
-    assert.equal(document.querySelectorAll('#destination-united-states [data-region-focus]').length,19);
+    const japan=document.querySelector('#destination-japan summary')!.textContent!;
+    assert.match(japan,/Japan.*Family trip.*With my mom, brother & sister/);
+    assert.match(document.querySelector('#destination-brazil summary')!.textContent!,/Brazil.*Carnival.*With the boys/);
+    assert.equal(document.querySelectorAll('#destination-united-states [data-region-focus]').length,17);
     dom.window.close();
 });
 
@@ -129,10 +133,12 @@ test('mobile uses the same inline list without replacing the browsing view',asyn
     }finally{env.dispose();}
 });
 
-test('airport stops focus their map dots directly from the state list',async()=>{
-    const env=await setup({entries:[{...base,countryCodes:['US'],states:[{code:'NY',stop:{lat:40.71,lng:-74},stopLabel:'New York airport'}]}]});try{
-        env.click('[data-destination="test-harbor"] summary');env.click('[data-state-stop="NY"]');
-        assert.deepEqual(env.state.focused,{lat:40.71,lng:-74});
+test('state links focus state centers without airport dots or labels',async()=>{
+    const env=await setup({entries:[{...base,countryCodes:['US'],states:[{code:'NY',focus:{lat:42.17,lng:-74.94},stop:{lat:40.71,lng:-74},stopLabel:'New York airport'}]}]});try{
+        env.click('[data-destination="test-harbor"] summary');env.click('[data-region-focus]');
+        assert.deepEqual(env.state.focused,{lat:42.17,lng:-74.94});
+        assert.equal(env.document.querySelector('.voyages-stop-dot'),null);
+        assert.doesNotMatch(env.document.querySelector('.voyages-results')!.innerHTML,/New York airport|data-state-stop/);
     }finally{env.dispose();}
 });
 

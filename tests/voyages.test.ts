@@ -201,3 +201,30 @@ test('routes reject unrecorded stops and invalid segment references', () => {
     assert.throws(() => resolveRoutes([{id:'route',name:'Route',stops:['known','future']}], entries), /Unrecorded route stop/);
     assert.throws(() => resolveRoutes([{id:'route',name:'Route',stops:['known','known'],approximateLegs:[1]}], entries), /Invalid route leg/);
 });
+
+test('the journey is one smooth spherical curve through every recorded stop', async () => {
+    const {smoothRouteGeometry,globeProjection}=await import('../src/lib/voyages/rendering.ts');
+    const html=await readFile(new URL('../dist/voyages/index.html',import.meta.url),'utf8');
+    const data=JSON.parse(html.match(/<script[^>]*id="voyages-data"[^>]*>([\s\S]*?)<\/script>/)![1]);
+    const stops=data.routes[0].stops.map(stop=>stop.position);
+    const curve=smoothRouteGeometry(stops);
+    const projection=globeProjection(1400,1200,90,25,2);
+    for(const stop of stops){
+        assert.ok(curve.coordinates.some(point=>point[0]===stop.lng && point[1]===stop.lat),'The curve must retain each recorded stop');
+    }
+    for(const stop of stops.slice(1,-1)){
+        const index=curve.coordinates.findIndex(point=>point[0]===stop.lng && point[1]===stop.lat);
+        const a=projection(curve.coordinates[index-1])!,b=projection(curve.coordinates[index])!,c=projection(curve.coordinates[index+1])!;
+        const incoming=[b[0]-a[0],b[1]-a[1]],outgoing=[c[0]-b[0],c[1]-b[1]];
+        const cosine=(incoming[0]*outgoing[0]+incoming[1]*outgoing[1])/(Math.hypot(...incoming)*Math.hypot(...outgoing));
+        assert.ok(cosine>Math.cos(2*Math.PI/180),'Route joins should be smooth, including the tight Nepal turns');
+    }
+});
+
+test('route smoothing handles repeated stops and the date line without a globe-spanning detour', async () => {
+    const {smoothRouteGeometry}=await import('../src/lib/voyages/rendering.ts');
+    const curve=smoothRouteGeometry([{lat:0,lng:179},{lat:0,lng:179},{lat:2,lng:-179},{lat:4,lng:-177}]);
+    assert.ok(curve.coordinates.every(point=>point.every(Number.isFinite) && Math.abs(point[0])>170 && Math.abs(point[1])<=90));
+    assert.deepEqual(smoothRouteGeometry([]).coordinates,[]);
+    assert.ok(smoothRouteGeometry([{lat:0,lng:0},{lat:0,lng:0}]).coordinates.every(point=>point.every(Number.isFinite)));
+});

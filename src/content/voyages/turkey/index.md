@@ -1,5 +1,6 @@
 ---
 name: Turkey
+purpose: Family trip
 kind: country
 countryCodes: [TR]
 order: 2

@@ -1,5 +1,6 @@
 ---
 name: Central Asia
+purpose: Explore
 kind: region
 countryCodes: [KZ, UZ, TJ, KG]
 focus: { lat: 41, lng: 67 }

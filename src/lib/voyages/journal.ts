@@ -6,8 +6,8 @@ export const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>"
 export function journalContent(destination: Destination): string {
     const e = escapeHtml;
     const states = destination.states?.length ? `<section class="voyages-states"><h3>States <span>${destination.states.length}</span></h3><ul>${destination.states.map(state => {
-        const position = state.stop || state.focus;
-        return `<li>${position ? `<button type="button" data-region-focus ${state.stop ? `data-state-stop="${e(state.code)}"` : ''} data-lat="${position.lat}" data-lng="${position.lng}" aria-label="Show ${e(state.stopLabel || US_STATES[state.code])} on the globe">${state.stop ? '<span class="voyages-stop-dot" aria-hidden="true"></span>' : ''}${e(US_STATES[state.code])}</button>` : e(US_STATES[state.code])}</li>`;
+        const position = state.focus;
+        return `<li>${position ? `<button type="button" data-region-focus data-lat="${position.lat}" data-lng="${position.lng}" aria-label="Show ${e(US_STATES[state.code])} on the globe">${e(US_STATES[state.code])}</button>` : e(US_STATES[state.code])}</li>`;
     }).join('')}</ul></section>` : '';
     const gallery = destination.photos.length ? `<div class="voyages-gallery">${destination.photos.map((photo, index) => `<button type="button" data-photo="${index}" aria-label="Open photo ${index + 1}: ${e(photo.alt)}"><img src="${e(photo.thumbnail)}" alt="${e(photo.alt)}" width="${photo.width}" height="${photo.height}" loading="lazy" decoding="async" /></button>`).join('')}</div>` : '';
     const visits = destination.visits.map(visit => `<article><h3>${e(visit.title || 'A visit')}</h3>${visit.date ? `<p class="voyages-date">${e(formatTravelDate(visit.date))}${visit.endDate ? ` — ${e(formatTravelDate(visit.endDate))}` : ''}</p>` : ''}${visit.memories ? `<p>${e(visit.memories)}</p>` : ''}</article>`).join('');
