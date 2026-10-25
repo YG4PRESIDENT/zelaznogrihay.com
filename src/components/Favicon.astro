@@ -1,0 +1,15 @@
+---
+import { getImage } from 'astro:assets';
+import ship from '../../public/favicon.png';
+
+// One source and versioned asset URLs keep the browser icon consistent on
+// every page, including tabs that previously cached a different icon.
+const [small, standard, touch] = await Promise.all([
+    getImage({ src: ship, width: 16, height: 16, format: 'png' }),
+    getImage({ src: ship, width: 32, height: 32, format: 'png' }),
+    getImage({ src: ship, width: 180, height: 180, format: 'png' }),
+]);
+---
+<link rel="icon" type="image/png" sizes="16x16" href={small.src} />
+<link rel="icon" type="image/png" sizes="32x32" href={standard.src} />
+<link rel="apple-touch-icon" sizes="180x180" href={touch.src} />
